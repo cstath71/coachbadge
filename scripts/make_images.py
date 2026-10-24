@@ -1,56 +1,58 @@
-"""One-off: draw the PNG brand images from the hand-written SVGs in site/brand/ (made by scripts/brand.py):
-site/og.png (1200x630 share card, logo on the LEFT), site/logo-512.png (structured-data logo), site/apple-touch-icon.png (180),
-site/favicon.ico (16/32/48) and site/email-logo.png (96, shown at 28px in emails; Gmail does not show SVG).
-Run by hand when the brand changes: python3 scripts/brand.py && python3 scripts/make_images.py
-Needs Pillow and cairosvg (not needed by the build, which only copies the files)."""
-import io, json, os
-import cairosvg
+"""One-off: make the PNG brand images from the coach-shield mockup Gus picked (assets/coachbadge-mockup.jpg, cut out by
+scripts/emblem.py, never redrawn or recoloured): site/logo.png (256, header icon shown at 40px, logo on the LEFT),
+site/og.png (1200x630 share card, emblem on the LEFT), site/logo-512.png (structured-data logo), site/apple-touch-icon.png (180),
+site/favicon.png (32), site/favicon.ico (16/32/48) and site/email-logo.png (96, shown at 28px in emails).
+Run by hand when the brand changes: python3 scripts/make_images.py  (needs Pillow and numpy; the build only copies the files)."""
+import json, os
 from PIL import Image, ImageDraw, ImageFont
+from emblem import emblem
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SITE, BRAND = os.path.join(ROOT, "site"), os.path.join(ROOT, "site", "brand")
+SITE = os.path.join(ROOT, "site")
 CFG = json.load(open(os.path.join(ROOT, "config", "site.json")))
-INK, LIME = (11, 31, 51), (198, 244, 50)
+INK, LIME, WHITE = (11, 31, 51), (198, 244, 50), (255, 255, 255)
 FONT = "/usr/share/fonts/truetype/sand-box/google/Inter/Inter-VariableFont_opsz,wght.ttf"
+WORD = "/usr/share/fonts/truetype/sand-box/google/Outfit/Outfit-VariableFont_wght.ttf"
+E = emblem()
 
-def svg(name, w, h=None):
-    png = cairosvg.svg2png(url=os.path.join(BRAND, name), output_width=w, output_height=h)
-    return Image.open(io.BytesIO(png)).convert("RGBA")
-
-def font(size, wght):
-    f = ImageFont.truetype(FONT, size)
-    try: f.set_variation_by_axes([size if size < 32 else 32, wght])
+def font(path, size, axes):
+    f = ImageFont.truetype(path, size)
+    try: f.set_variation_by_axes(axes)
     except Exception: pass
     return f
+
+def icon(size, bg=None, pad=0):
+    im = Image.new("RGBA", (size, size), (bg + (255,)) if bg else (0, 0, 0, 0)); s = size - 2 * pad
+    im.alpha_composite(E.resize((s, s), Image.LANCZOS), (pad, pad)); return im
 
 def og():
     W, H = 1200, 630
     im = Image.new("RGBA", (W, H), INK + (255,)); d = ImageDraw.Draw(im)
     d.rectangle((0, H - 14, W, H), fill=LIME)
-    lk = svg("coachbadge-lockup-dark.svg", 860)  # icon left, wordmark right
-    im.alpha_composite(lk, (80, 150))
-    x = 80 + int(860 * 73 / float(open(os.path.join(BRAND, "coachbadge-lockup-dark.svg")).read().split('viewBox="0 0 ')[1].split()[0]))
-    words, lines, cur, ft = CFG["tagline"].split(), [], "", font(42, 600)
+    es = 230; im.alpha_composite(E.resize((es, es), Image.LANCZOS), (70, 130))  # emblem on the LEFT
+    x = 70 + es + 30; wf = font(WORD, 112, [800]); wm = CFG["wordmark"]
+    yb = 130 + es // 2 + 45
+    d.text((x, yb), wm[:5], font=wf, fill=WHITE, anchor="ls")
+    d.text((x + d.textlength(wm[:5], font=wf), yb), wm[5:], font=wf, fill=LIME, anchor="ls")
+    words, lines, cur, ft = CFG["tagline"].split(), [], "", font(FONT, 42, [32, 600])
     for w_ in words:
         t = (cur + " " + w_).strip()
         if d.textlength(t, font=ft) > W - x - 90: lines.append(cur); cur = w_
         else: cur = t
     lines.append(cur)
-    y0 = 150 + lk.height + 34
+    y0 = 130 + es + 20
     for i, ln in enumerate(lines): d.text((x, y0 + i * 58), ln, font=ft, fill=(223, 232, 238))
     im.convert("RGB").save(os.path.join(SITE, "og.png"), optimize=True)
 
-def square(size, pad, variant="coachbadge-icon.svg"):
-    im = Image.new("RGBA", (size, size), INK + (255,)); s = size - 2 * pad
-    im.alpha_composite(svg(variant, s, s), (pad, pad)); return im.convert("RGB")
-
 def main():
     og()
-    square(512, 40).save(os.path.join(SITE, "logo-512.png"), optimize=True)
-    square(180, 16).save(os.path.join(SITE, "apple-touch-icon.png"), optimize=True)
-    svg("coachbadge-icon-small.svg", 96, 96).save(os.path.join(SITE, "email-logo.png"), optimize=True)
-    ico = {16: svg("coachbadge-icon-small.svg", 16, 16), 32: svg("coachbadge-icon-small.svg", 32, 32), 48: svg("coachbadge-icon.svg", 48, 48)}
+    icon(256).save(os.path.join(SITE, "logo.png"), optimize=True)
+    icon(512, INK, 40).convert("RGB").save(os.path.join(SITE, "logo-512.png"), optimize=True)
+    icon(180, INK, 12).convert("RGB").save(os.path.join(SITE, "apple-touch-icon.png"), optimize=True)
+    icon(96).save(os.path.join(SITE, "email-logo.png"), optimize=True)
+    icon(32).save(os.path.join(SITE, "favicon.png"), optimize=True)
+    ico = {s: icon(s) for s in (16, 32, 48)}
     ico[48].save(os.path.join(SITE, "favicon.ico"), sizes=[(16, 16), (32, 32), (48, 48)], append_images=[ico[16], ico[32]])
-    print("wrote site/og.png, logo-512.png, apple-touch-icon.png, email-logo.png, favicon.ico")
+    print("wrote site/logo.png, og.png, logo-512.png, apple-touch-icon.png, email-logo.png, favicon.png, favicon.ico")
 
 if __name__ == "__main__":
     main()

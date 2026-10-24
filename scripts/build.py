@@ -75,8 +75,8 @@ COUNTRIES = sorted({c["country"] for c in COURSES} | {s["country"] for s in ALL_
 LEVELS = sorted({c["level"] for c in COURSES})
 SPORTS = sorted({c["sport"] for c in COURSES})
 
-# Coach-shield icon (hand-written SVG from scripts/brand.py), inlined in the header, logo on the LEFT.
-BADGE = open(os.path.join(ROOT, "site", "brand", "coachbadge-icon.svg")).read().strip().replace("<svg ", '<svg aria-hidden="true" focusable="false" ', 1)
+# Coach-shield emblem: the mockup Gus picked (assets/coachbadge-mockup.jpg -> site/logo.png via scripts/make_images.py), logo on the LEFT.
+def badge(r): return f'<img class="logo" src="{r}logo.png" width="40" height="40" alt="{e(BRAND)} logo">'
 
 def counter_js():
     ep = json.dumps(CFG.get("counter_endpoint", ""))
@@ -184,9 +184,9 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
 <meta property="og:image" content="{e(OG_IMAGE)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{e(OG_ALT)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(full_title)}"><meta name="twitter:description" content="{e(desc)}">
 <meta name="twitter:image" content="{e(OG_IMAGE)}"><meta name="twitter:image:alt" content="{e(OG_ALT)}">
-<link rel="icon" href="{r}favicon.ico" sizes="48x48"><link rel="icon" href="{r}favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="{r}apple-touch-icon.png">
+<link rel="icon" href="{r}favicon.ico" sizes="48x48"><link rel="icon" href="{r}favicon.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="{r}apple-touch-icon.png">
 <link rel="stylesheet" href="{r}style.css">{extra_head}{ld}</head>
-<body><header class="top"><div class="wrap"><a class="brand" id="wordmark" href="{home}" aria-label="{e(BRAND)} home">{BADGE}<span>{e(CFG['wordmark'][:5])}<b>{e(CFG['wordmark'][5:])}</b></span></a>
+<body><header class="top"><div class="wrap"><a class="brand" id="wordmark" href="{home}" aria-label="{e(BRAND)} home">{badge(r)}<span>{e(CFG['wordmark'][:5])}<b>{e(CFG['wordmark'][5:])}</b></span></a>
 <nav class="main">{''.join(f'<a href="{(r + h) or "./"}">{t}</a>' for h, t in nav)}</nav></div></header>
 {crumb_nav}{body.replace('{HOME}', home).replace('{R}', r)}
 <footer><div class="wrap"><p><strong>{e(BRAND)}</strong> · {e(CFG['tagline'])}.</p>
@@ -433,11 +433,9 @@ def build():
     if os.path.exists(DIST): shutil.rmtree(DIST)
     os.makedirs(DIST); PAGES.clear()
     shutil.copy(os.path.join(ROOT, "site", "style.css"), DIST)
-    shutil.copy(os.path.join(ROOT, "site", "brand", "coachbadge-icon-small.svg"), os.path.join(DIST, "favicon.svg"))  # simplified for 16-32px tabs
-    shutil.copytree(os.path.join(ROOT, "site", "brand"), os.path.join(DIST, "brand"))  # icon + lockup SVGs
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     shutil.copy(os.path.join(ROOT, "site", "email-logo.png"), DIST)  # PNG for emails (Gmail does not show SVG)
-    for f in ("og.png", "logo-512.png", "apple-touch-icon.png", "favicon.ico"): shutil.copy(os.path.join(ROOT, "site", f), DIST)  # share card + structured-data logo (scripts/make_images.py)
+    for f in ("logo.png", "og.png", "logo-512.png", "apple-touch-icon.png", "favicon.ico", "favicon.png"): shutil.copy(os.path.join(ROOT, "site", f), DIST)  # share card + structured-data logo (scripts/make_images.py)
     shutil.copy(os.path.join(ROOT, "CNAME"), DIST)  # custom domain for GitHub Pages
     open(os.path.join(DIST, seo.INDEXNOW_KEY + ".txt"), "w").write(seo.INDEXNOW_KEY)  # IndexNow ownership file
     os.makedirs(os.path.join(DIST, "data"))

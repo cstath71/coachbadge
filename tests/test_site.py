@@ -106,7 +106,9 @@ class TestSite(unittest.TestCase):
                 self.assertEqual(kids[0].get("id"), "wordmark", "wordmark must be first (left) in the header")
                 self.assertEqual(kids[0].get_text(), CFG["wordmark"])
                 self.assertEqual(kids[1].name, "nav")
-                self.assertEqual(soup.find_all("img"), [], "no logo images")
+                imgs = soup.find_all("img")  # the only image is the coach-shield logo, first (LEFT) inside the wordmark link
+                self.assertEqual([i["src"].rsplit("/", 1)[-1] for i in imgs], ["logo.png"])
+                self.assertIs(kids[0].find_all(recursive=False)[0], imgs[0])
                 self.assertIn(CFG["disclaimer"], soup.get_text())
                 self.assertIn(CFG["brand"], soup.title.get_text())
         css = open(os.path.join(DIST, "style.css")).read()
