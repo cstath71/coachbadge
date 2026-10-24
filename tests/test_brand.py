@@ -2,7 +2,11 @@
 No vector redraw anywhere; favicons and PNGs ship at the right sizes; header logo on the LEFT."""
 import os, struct, sys, unittest
 from bs4 import BeautifulSoup
-from PIL import Image
+try:
+    import numpy, PIL  # only needed to re-cut the emblem; CI builds without them
+    HAVE_PIL = True
+except ImportError:
+    HAVE_PIL = False
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST, SITE = os.path.join(ROOT, "dist"), os.path.join(ROOT, "site")
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
@@ -19,7 +23,9 @@ class Brand(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(DIST, "favicon.svg")))
         self.assertNotIn("<svg", open(os.path.join(DIST, "index.html")).read().split("</header>")[0])
 
+    @unittest.skipUnless(HAVE_PIL, "needs Pillow + numpy")
     def test_emblem_is_the_mockup_pixels(self):
+        from PIL import Image
         from emblem import emblem, SRC, BOX
         self.assertTrue(os.path.exists(SRC))
         e = emblem()
