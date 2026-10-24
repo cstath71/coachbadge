@@ -7,6 +7,10 @@ CACHE = os.path.join(ROOT, "raw", "cache")
 _last = {}
 _robots = {}
 
+def iri(url):
+    """Percent-encode non-ASCII characters in a URL (e.g. 'OÖFV-...pdf') so urllib can request it."""
+    return urllib.parse.quote(url, safe=":/?#[]@!$&'()*+,;=%~")
+
 def robots_ok(url):
     p = urllib.parse.urlsplit(url)
     base = f"{p.scheme}://{p.netloc}"
@@ -44,7 +48,7 @@ def fetch(url, refresh=False):
         if wait > 0: time.sleep(wait)
         _last[host] = time.time()
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "en,de;q=0.8,*;q=0.5"})
+            req = urllib.request.Request(iri(url), headers={"User-Agent": UA, "Accept-Language": "en,de;q=0.8,*;q=0.5"})
             with urllib.request.urlopen(req, timeout=40) as r:
                 body = r.read(); meta["status"] = r.status; meta["ctype"] = r.headers.get("Content-Type", "")
                 meta["final_url"] = r.geturl()
