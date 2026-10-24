@@ -3,3 +3,6 @@ dist/
 __pycache__/
 *.pyc
 .DS_Store
+data/courses.candidate.json
+data/source_state.json
+reports/

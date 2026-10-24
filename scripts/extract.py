@@ -180,8 +180,10 @@ def main():
     dup = {x for x in ids if ids.count(x) > 1}
     if dup: raise SystemExit(f"duplicate ids: {dup}")
     courses.sort(key=lambda c: (c["sport"], c["country"], c.get("start_date") or "9999", c["id"]))
+    out = os.path.join(ROOT, "data", "courses.json")
+    if "--out" in sys.argv: out = sys.argv[sys.argv.index("--out") + 1]
     json.dump({"generated": today, "count": len(courses), "parsers": notes, "courses": courses},
-              open(os.path.join(ROOT, "data", "courses.json"), "w"), ensure_ascii=False, indent=1)
+              open(out, "w"), ensure_ascii=False, indent=1)
     print(json.dumps(notes), len(courses))
 
 if __name__ == "__main__":
