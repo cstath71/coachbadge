@@ -100,7 +100,7 @@ def subject_for(issue):
 def _facts(c):
     return [("Provider", c.get("provider")), ("Country", c.get("country")), ("Level", c.get("level")),
             ("Deadline", fdate(c.get("deadline")) or c.get("application_window") or "Not stated"),
-            ("Starts", fdate(c.get("start_date")) or "Not stated"), ("Price", price_text(c))]
+            ("Starts", c.get("start_note") or fdate(c.get("start_date")) or "Not stated"), ("Price", price_text(c))]
 
 def _item_html(c):
     facts = " · ".join(f"{k}: {e(v)}" for k, v in _facts(c) if v)

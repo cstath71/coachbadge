@@ -69,6 +69,8 @@ COURSES.sort(key=sortkey)
 LIVE = [c for c in COURSES if c["display_status"] in ("open", "closing_soon")]
 
 ALL_SOURCES = [dict(s, sport=sp) for sp, lst in SOURCES.items() for s in lst]
+_DIP = os.path.join(ROOT, "data", "diplomas.yaml")
+DIPLOMAS = (yaml.safe_load(open(_DIP, encoding="utf-8")) or {}) if os.path.exists(_DIP) else {}  # background info, never courses
 COUNTRIES = sorted({c["country"] for c in COURSES} | {s["country"] for s in ALL_SOURCES})
 LEVELS = sorted({c["level"] for c in COURSES})
 SPORTS = sorted({c["sport"] for c in COURSES})
@@ -202,6 +204,7 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
 def tag(st): return f'<span class="tag s-{st}">{STATUS_LABEL[st]}</span>'
 
 def when(c):
+    if c.get("start_note"): return c["start_note"]  # e.g. 'May/June 2027' when the page gives no exact start
     if c.get("start_date"):
         s = fdate(c["start_date"])
         return s + (" – " + fdate(c["end_date"]) if c.get("end_date") else "")
@@ -268,7 +271,7 @@ def item_list(name, url, cs):
 def sources_list(srcs):
     li = []
     for s in srcs:
-        rd = {"yes": "read", "partial": "read, no course dates", "no": "could not be read"}[s["readable"]]
+        rd = {"yes": "read", "partial": "read, no course dates", "browser": "read by a person in a browser", "no": "could not be read"}[s["readable"]]
         why = s.get("reason") or s.get("note") or ""
         li.append(f'<li><a href="{e(s["url"])}" rel="nofollow noopener">{e(s["association"])}</a> – {rd}{": " + e(why) if why else ""} <span class="small">(checked {fdate(s["checked"])})</span></li>')
     return "<ul>" + "".join(li) + "</ul>"
@@ -334,6 +337,29 @@ def empty_state(srcs, r, scope=""):
             + (f"<p>Check the association's course pages:</p><ul>{links}</ul>" if srcs else f'<p>See the <a href="{r}countries.html">country pages</a> for each association\'s course pages.</p>')
             + "</section>")
 
+def diploma_cost(d):
+    """The cost as the page states it, and how the registration fee relates to it (from the page's own breakdown)."""
+    sym = CUR.get(d.get("currency"), "")
+    if d.get("cost") is None: return "Not listed"
+    t = f"{sym}{d['cost']:,}" if sym else f"{d['cost']:,} {d.get('currency') or ''}".strip()
+    fee = d.get("registration_fee")
+    if fee is not None:
+        f = f"{sym}{fee:,}" if sym else f"{fee:,} {d.get('currency') or ''}".strip()
+        t += f", including the {f} registration fee" if d.get("registration_included") else f", plus {f} registration fee"
+    return t
+
+def diplomas_box(ct):
+    """National diplomas and the UEFA level each counts as. Information only: not courses, no Course JSON-LD."""
+    info = DIPLOMAS.get(ct)
+    if not info or not info.get("diplomas"): return ""
+    rows = "".join(f'<tr><td><strong>{e(d["short"])}</strong> – {e(d["name"])}</td><td>{e(d["uefa"])}</td>'
+                   f'<td>{e(diploma_cost(d))}</td><td>{e(d.get("where") or "Not stated")}</td>'
+                   f'<td><a href="{e(d["url"])}" rel="nofollow noopener">{e(d["short"])} page</a></td></tr>' for d in info["diplomas"])
+    return (f'<section class="diplomas" id="diplomas"><h2><span class="bar"></span>{e(info["title"])}</h2>'
+            f'<p>{e(info["note"])}</p>'
+            '<div style="overflow-x:auto"><table class="info"><thead><tr><th>Diploma</th><th>UEFA level (as stated)</th><th>Cost (as stated)</th><th>Where</th><th>Source</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table></div><p class="small">Checked {e(fdate(info["fetched_at"]))}. These are not dated courses, so they are not counted as courses on this site.</p></section>')
+
 def country_summary(ct, cs, srcs):
     live = [c for c in cs if is_live(c)]
     if not cs:
@@ -389,7 +415,7 @@ def country_faq(ct, cs, srcs, r):
         if n: a += f" The next deadline is {fdate(n['deadline'])}."
     else:
         a = f"Not on the pages we could read as of {GEN}. Many associations publish dates late or only inside members' portals, so check the sources below."
-    rd = {"yes": "read", "partial": "read, but without course dates", "no": "could not be read"}
+    rd = {"yes": "read", "partial": "read, but without course dates", "browser": "read by a person in a browser", "no": "could not be read"}
     b = (f"From {counted(len(srcs), 'page')} published by the provider{'s' if len(srcs) != 1 else ''}: " + e(and_list([f"{x['association']} ({rd[x['readable']]})" for x in srcs])) + f". Each is re-checked weekly; last checked {fdate(max(x['checked'] for x in srcs))}."
          if srcs else f"Only from the providers' own pages; see the <a href=\"{r}methodology.html\">methodology</a>.")
     return [(f"Are there open football coaching courses in {ct}?", a), (f"Where does {BRAND} get course information for {ct}?", b)]
@@ -457,6 +483,7 @@ def build():
         b = (f'<section class="hero"><div class="wrap"><h1>Football coaching courses in {e(ct)}</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">'
              + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else empty_state(srcs, "../", " in " + ct))
+             + diplomas_box(ct)
              + (f'<h2><span class="bar"></span>All courses in {e(ct)}</h2>{table(cs, "../")}' if cs else "")
              + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "")
              + seo.faq_html(faq) + resources_box("../") + "</div></main>")
@@ -504,7 +531,8 @@ status, a link to the source page and the date we last checked it. If a page doe
 <li><strong>Check provider</strong>: the page lists the course but does not say whether you can apply now.</li></ul>
 <p>We keep the exact sentence from the page that supports each status and date, so every claim can be traced back.</p>
 <h2>How often we check</h2><p>Every source is re-read once a week by a small script that identifies itself as CoachBadgeBot, follows each site's robots.txt and waits between requests.
-Changes are reviewed by a person before they appear here; nothing is published automatically.</p>
+Changes are reviewed by a person before they appear here; nothing is published automatically.
+A few sites refuse automated visitors but show their course pages to people. Those we read by hand in a normal browser, mark as “read by a person in a browser” and re-check by hand; the script does not visit them.</p>
 <h2>Sources we could not read</h2><p>Some sites block automated reading or load their course lists with JavaScript or behind a login. We respect that and do not work around it, so these countries may have courses we do not list yet:</p>
 {sources_list(unread)}
 <h2>Corrections</h2><p>Spotted something wrong or missing? <a href="{e(CFG['corrections_url'])}">Open a correction</a> with the course and a link to the provider's page. Corrections are public GitHub issues, so please do not include personal details.</p>
@@ -571,7 +599,7 @@ def llms_txt():
 {BRAND} lists football coaching courses in Europe from the providers' own pages. Levels in the data: {and_list(LEVELS)}.
 Each entry has provider, country, level, deadline or application window, start date, price, language, format, status, a source link and the date it was last checked, plus the verbatim sentences from the source page that support it.
 
-How the data is gathered: a small script (CoachBadgeBot) re-reads every source page once a week, follows each site's robots.txt and waits between requests. Changes are reviewed by a person before they are published; nothing is published automatically. If a page does not state something, the field is left blank instead of guessed. Sites that block automated reading or need a login are listed as "could not be read".
+How the data is gathered: a small script (CoachBadgeBot) re-reads every source page once a week, follows each site's robots.txt and waits between requests. Changes are reviewed by a person before they are published; nothing is published automatically. If a page does not state something, the field is left blank instead of guessed. Sites that block automated reading or need a login are listed as "could not be read"; a few that refuse automated visitors are read by a person in a normal browser instead and marked "read by a person in a browser".
 Status: "Open" only when the page says applications or booking are open (or its booking calendar shows free places); "Closing soon" means open with a deadline within {CLOSING_DAYS} days.
 Data last checked: {DATA['generated']}. Update cadence: weekly.
 {CFG['disclaimer']} {BRAND} does not run courses, take applications or sell places.

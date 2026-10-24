@@ -59,7 +59,9 @@ class TestFootballOnly(unittest.TestCase):
         import refresh
         urls = set(refresh.urls())
         self.assertFalse(urls & bb, "refresh.py must not fetch disabled sources")
-        self.assertTrue({s["url"] for s in sources.load_all()["football"]} <= urls)
+        by_hand = {s["url"] for s in sources.load_all()["football"] if s.get("readable") == "browser"}
+        self.assertTrue({s["url"] for s in sources.load_all()["football"]} - by_hand <= urls)
+        self.assertFalse(urls & by_hand, "sites read by hand in a browser are not fetched")
 
     def test_extract_leaves_out_disabled_sports(self):
         d = json.load(open(os.path.join(ROOT, "data", "courses.json")))

@@ -1,0 +1,50 @@
+# National coaching diplomas and the UEFA licence each one counts as, quoted from the federation's own pages.
+# This is background information, not courses: it has no dates and is never turned into Course JSON-LD.
+# Read by a person in a normal browser (the site refuses automated visitors). Never invent a field; leave unknown ones null.
+France:
+  title: French diplomas and UEFA level
+  fetched_at: "2026-10-24"
+  note: >-
+    The FFF publishes no session dates on these pages. Registration for the selection tests opened in March/April 2026,
+    and the dates are set by each regional league (Ligue / IR2F).
+  diplomas:
+    - short: BMF
+      name: Brevet de Moniteur de Football
+      uefa: UEFA B
+      cost: 2498
+      currency: EUR
+      registration_fee: 50
+      registration_included: true
+      evidence: ["Equivalence UEFA : licence UEFA B", "Coût pédagogique de la formation : 2498€", "50€ de frais d’inscription", "les inscriptions aux tests de sélection ouvrent à partir de mars/avril 2026"]
+      where: null
+      url: https://maformation.fff.fr/formation/110-brevet-de-moniteur-de-football-traditionnel.html
+    - short: BEF
+      name: Brevet d'Entraîneur de Football
+      uefa: UEFA A
+      cost: 3054
+      currency: EUR
+      registration_fee: 50
+      registration_included: true
+      evidence: ["Equivalence UEFA : licence UEFA A", "Coût pédagogique de la formation : 3 054€", "50€ de frais d’inscription", "les inscriptions aux tests de sélection ouvrent à partir de mars/avril 2026"]
+      where: null
+      url: https://maformation.fff.fr/formation/8-brevet-d-entraineur-de-football.html
+    - short: BEFF
+      name: Brevet d'Entraîneur Formateur de Football
+      uefa: UEFA Elite Youth A
+      cost: 15680
+      currency: EUR
+      registration_fee: 50
+      registration_included: false
+      evidence: ["Equivalence UEFA : Licence UEFA Elite Youth A", "Coût pédagogique : 15 680 €", "50€ de frais d’inscription", "Centre National du Football (CNF), Clubs professionnels"]
+      where: Centre National du Football (CNF) and professional clubs
+      url: https://maformation.fff.fr/formation/5-entraineurs-beff-foormation-continue.html
+    - short: BEPF
+      name: Brevet d'Entraîneur Professionnel de Football
+      uefa: UEFA Pro
+      cost: 24640
+      currency: EUR
+      registration_fee: 50
+      registration_included: false
+      evidence: ["Equivalence UEFA : Licence UEFA Pro", "Coût pédagogique : 24 640€", "50€ de frais d’inscription", "Centre National du Football (CNF), Clubs professionnels"]
+      where: Centre National du Football (CNF) and professional clubs
+      url: https://maformation.fff.fr/formation/3-brevet-d-entraineur-professionnel-de-football.html

@@ -11,6 +11,12 @@ DATA = json.load(open(os.path.join(ROOT, "data", "courses.json")))
 CFG = json.load(open(os.path.join(ROOT, "config", "site.json")))
 STATUSES = {"open", "full", "closed", "upcoming", "unknown"}
 FORMATS = {None, "residential", "online", "blended"}
+def browser_snapshot(url):
+    """Text of a page a person read in a browser, saved as raw/browser/<sha256(url)[:24]>.txt (not committed)."""
+    import hashlib
+    p = os.path.join(ROOT, "raw", "browser", hashlib.sha256(url.encode()).hexdigest()[:24] + ".txt")
+    return norm(open(p, encoding="utf-8").read()) if os.path.exists(p) else None
+
 norm = lambda s: re.sub(r"\s+", " ", s.replace("\xa0", " ")).strip()
 HTML = sorted(glob.glob(os.path.join(DIST, "**", "*.html"), recursive=True))
 
@@ -48,6 +54,13 @@ class TestData(unittest.TestCase):
             self.skipTest("raw/ cache not present (it is not committed)")
         cache = {}
         for c in DATA["courses"]:
+            if c.get("read_with") == "browser":
+                # the site refuses automated visitors; check against the text a person read in a browser (raw/browser/)
+                snap = browser_snapshot(c["source_url"])
+                if snap is None: continue
+                for ev in c["evidence"]:
+                    with self.subTest(c["id"], ev=ev[:40]): self.assertIn(norm(ev), snap)
+                continue
             urls = [c["source_url"]] + (c.get("extra_sources") or [])
             for u in urls:
                 if u not in cache: cache[u] = norm(to_text(get(u, rendered=bool(c.get("render")))))
@@ -60,7 +73,8 @@ class TestData(unittest.TestCase):
         src = yaml.safe_load(open(os.path.join(ROOT, "data", "sources.yaml")))
         for s in src["football"] + src["basketball"]:
             with self.subTest(s["association"]):
-                self.assertIn(s["readable"], {"yes", "no", "partial"})
+                self.assertIn(s["readable"], {"yes", "no", "partial", "browser"})
+                if s["readable"] in ("browser", "partial"): self.assertTrue(s.get("note") or s.get("reason"))
                 self.assertTrue(s["url"].startswith("https://"))
                 if s["readable"] == "no": self.assertTrue(s.get("reason"))
 
@@ -119,6 +133,7 @@ class TestSite(unittest.TestCase):
         if os.path.isdir(os.path.join(ROOT, "raw", "cache")):
             from fetch import fetch
             for c in DATA["courses"]:
+                if c.get("read_with") == "browser": continue  # refuses automated visitors; re-checked by hand
                 with self.subTest(c["source_url"]):
                     self.assertEqual(fetch(c["source_url"]).get("status"), 200)
 

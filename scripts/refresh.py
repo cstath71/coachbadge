@@ -24,6 +24,19 @@ STATE = os.path.join(ROOT, "data", "source_state.json")
 SNAP = os.path.join(ROOT, "raw", "snapshots")
 
 RENDERED = set()  # URLs whose content needs JavaScript (render: true); read with scripts/render.py
+BY_HAND = {}  # URL -> what to re-check: sites that refuse automated visitors and were read by a person in a browser
+
+def by_hand():
+    """readable: browser sources and read_with: browser courses. The script never fetches these (they refuse automated
+    visitors); the report lists them for a person to re-check. Their courses are manual entries, so they stay."""
+    from sources import enabled
+    out = {}
+    for sport in enabled().values():
+        for s in sport:
+            if s.get("readable") == "browser": out.setdefault(s["url"], []).append(s["association"])
+    for c in json.load(open(os.path.join(ROOT, "data", "courses.json")))["courses"]:
+        if c.get("read_with") == "browser": out.setdefault(c["source_url"], []).append(c["id"])
+    return out
 
 def urls():
     out = []
@@ -34,9 +47,10 @@ def urls():
     for c in json.load(open(os.path.join(ROOT, "data", "courses.json")))["courses"]:
         out.append(c["source_url"]); out += c.get("extra_sources") or []
         if c.get("render"): RENDERED.add(c["source_url"])
+    BY_HAND.clear(); BY_HAND.update(by_hand())
     seen, uniq = set(), []
     for u in out:
-        if u not in seen: seen.add(u); uniq.append(u)
+        if u not in seen and u not in BY_HAND: seen.add(u); uniq.append(u)
     return uniq
 
 def load_state():
@@ -89,7 +103,12 @@ def main():
                 b = open(os.path.join(SNAP, key + ".txt")).read().splitlines()
                 d = list(difflib.unified_diff(a, b, lineterm="", n=1))[:120]
                 f.write(f"### {u}\n\n```diff\n" + "\n".join(d) + "\n```\n\n")
-        f.write("## Fetch problems\n\n")
+        f.write("## Check by hand in a browser\n\n")
+        f.write("These sites refuse automated visitors, so the script does not read them. Open each in a normal browser, "
+                "compare with data/manual_courses.yaml and update checked/fetched_at.\n\n")
+        if not BY_HAND: BY_HAND.update(by_hand())
+        for u, what in sorted(BY_HAND.items()): f.write(f"- {u}: {', '.join(what)}\n")
+        f.write("\n## Fetch problems\n\n")
         for u, r in st.items():
             if r.get("error"): f.write(f"- {u}: {r['error']}\n")
         f.write(f"\n## Course candidates\n\n- added: {added}\n- removed: {removed}\n- modified: {modified}\n")
