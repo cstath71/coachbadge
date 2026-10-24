@@ -1,7 +1,7 @@
 """Polite fetcher: robots.txt check, descriptive User-Agent, 1 request per host per 3 s, on-disk cache.
 Usage: python3 scripts/fetch.py URL [--text] [--refresh]"""
 import hashlib, os, sys, time, urllib.parse, urllib.robotparser, urllib.request, json, re, subprocess
-UA = "CoachBadgeBot/1.0 (+https://cstath71.github.io/coachbadge/methodology.html; weekly check of public course pages)"
+UA = "CoachBadgeBot/1.0 (+https://coachbadge.com/methodology.html; weekly check of public course pages)"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "raw", "cache")
 _last = {}

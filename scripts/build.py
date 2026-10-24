@@ -257,6 +257,7 @@ def build():
     open(os.path.join(DIST, "favicon.svg"), "w").write(BADGE.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '))
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     shutil.copy(os.path.join(ROOT, "site", "email-logo.png"), DIST)  # PNG for emails (Gmail does not show SVG)
+    shutil.copy(os.path.join(ROOT, "CNAME"), DIST)  # custom domain for GitHub Pages
     os.makedirs(os.path.join(DIST, "data"))
     pub = {"name": BRAND, "description": CFG["tagline"], "generated": DATA["generated"], "build_date": TODAY.isoformat(),
            "disclaimer": CFG["disclaimer"], "license": "All rights reserved. Linking and short quotes with credit and a link are welcome.",
@@ -368,7 +369,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p>Each issue follows the weekly review of every source described in the <a href="methodology.html">methodology</a>. {"You get a short welcome email when you sign up." if WELCOME else ""}</p>
 <p>See <a href="privacy.html">privacy</a> for what we store and how to unsubscribe.</p>""")
     page("unsubscribe.html", "Unsubscribe", f"Unsubscribe from the {BRAND} email.", unsubscribe_body(), robots="noindex,nofollow")  # not in the sitemap
-    page("404.html", "Page not found", "Page not found.", '<main><div class="wrap"><h1>Page not found</h1><p><a href="https://cstath71.github.io/coachbadge/">Back to the course board</a></p></div></main>')
+    page("404.html", "Page not found", "Page not found.", f'<main><div class="wrap"><h1>Page not found</h1><p><a href="{BASE}">Back to the course board</a></p></div></main>')
     # robots, sitemap, llms
     open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {BASE}sitemap.xml\n")
     open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +

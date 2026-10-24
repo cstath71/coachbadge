@@ -2,7 +2,7 @@
 
 **Every open football coaching course in Europe, with deadlines and prices.**
 
-Live: https://cstath71.github.io/coachbadge/
+Live: https://coachbadge.com/ (until the custom domain is switched on: https://cstath71.github.io/coachbadge/)
 
 CoachBadge is a static board of football coaching courses (UEFA C, B, A, Pro, Elite Youth and goalkeeper courses).
 Each entry carries provider, country, level, deadline or application window, start date, price, language, format, status,

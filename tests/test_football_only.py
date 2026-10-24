@@ -20,7 +20,8 @@ class TestFootballOnly(unittest.TestCase):
     def test_sitemap_has_no_removed_pages(self):
         locs = re.findall(r"<loc>([^<]+)</loc>", open(os.path.join(DIST, "sitemap.xml")).read())
         for u in locs:
-            path = u.split("/coachbadge/", 1)[1] or "index.html"
+            base = json.load(open(os.path.join(ROOT, "config", "site.json")))["base_url"]
+            path = u[len(base):] or "index.html"
             with self.subTest(u): self.assertTrue(os.path.exists(os.path.join(DIST, path)), "sitemap entry without a page")
         for gone in ("country/europe-fiba-europe.html", "country/serbia.html", "country/lithuania.html", "country/turkiye.html"):
             self.assertFalse(os.path.exists(os.path.join(DIST, gone)), gone)
