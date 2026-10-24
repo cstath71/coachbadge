@@ -17,8 +17,10 @@ class TestSignupForm(unittest.TestCase):
     def test_config_points_at_function_and_has_no_keys(self):
         self.assertEqual(CFG["newsletter_table"], TABLE)
         self.assertEqual(CFG["subscribe_function"], "coachbadge-subscribe")
-        self.assertEqual(CFG["email"]["provider"], "agentmail")
-        self.assertEqual(CFG["email"]["from_address"], "coachbadge@agentmail.to")
+        self.assertEqual(CFG["email"]["provider"], "resend")
+        self.assertEqual(CFG["email"]["from_address"], "hello@coachbadge.com")
+        self.assertEqual(CFG["email"]["from_name"], "CoachBadge")
+        self.assertEqual(CFG["email"]["reply_to"], "hello@coachbadge.com")
         self.assertIs(CFG["email"]["welcome_enabled"], False, "welcome email stays off until the domain is set up")
         blob = json.dumps(CFG)
         for bad in ("service_role", "sb_secret_", "sb_publishable_", "am_", "api_key"): self.assertNotIn(bad, blob)
@@ -77,7 +79,7 @@ class TestSignupForm(unittest.TestCase):
         t = re.sub(r"\s+", " ", soup("privacy.html").get_text(" "))
         self.assertIn("your email address, the time you signed up, a random unsubscribe code", t)
         self.assertIn("Why:", t); self.assertIn("How to unsubscribe:", t); self.assertIn("one-click unsubscribe link", t)
-        self.assertIn("AgentMail", t); self.assertIn("one-way hash of your IP address", t); self.assertIn("after two hours", t)
+        self.assertIn("Resend", t); self.assertNotIn("AgentMail", t); self.assertIn("hello@coachbadge.com", t); self.assertIn("one-way hash of your IP address", t); self.assertIn("after two hours", t)
         self.assertNotIn("No emails yet", t); self.assertNotIn("no IP address", t)
         for bad in ("PrimeLogic", "Stathopoulos", "Switzerland", "Swiss"): self.assertNotIn(bad.lower(), t.lower())
         self.assertIsNone(soup("privacy.html").select_one("form"), "the open removal form is gone; removal is by token link only")
@@ -85,7 +87,7 @@ class TestSignupForm(unittest.TestCase):
 
     def test_readme_describes_sending(self):
         r = open(os.path.join(ROOT, "README.md")).read()
-        self.assertIn(TABLE, r); self.assertIn("coachbadge@agentmail.to", r); self.assertIn("send_newsletter.py", r)
+        self.assertIn(TABLE, r); self.assertIn("hello@coachbadge.com", r); self.assertIn("MAIL_PROVIDER=resend", r); self.assertIn("send_newsletter.py", r)
         self.assertNotRegex(r, r"(?i)no emails? (are|is) sent")
 
 NODE_HARNESS = r"""
@@ -150,7 +152,7 @@ class TestMigration(unittest.TestCase):
         for fn in ("coachbadge_unsubscribe(uuid)", "coachbadge_mail_config()"):
             self.assertIn(f"revoke all on function public.{fn} from public, anon, authenticated", sql)
             self.assertIn(f"grant execute on function public.{fn} to service_role", sql)
-        self.assertIn("vault.decrypted_secrets where name = 'coachbadge_agentmail_api_key'", sql)
+        self.assertIn("vault.decrypted_secrets where name = 'coachbadge_resend_api_key'", sql)
         self.assertNotRegex(sql, r"(?i)\bam_[a-z0-9]{8,}|sb_secret_", "no key in the repo")
         self.assertNotRegex(sql, r"(?i)\bdrop table\b")
 

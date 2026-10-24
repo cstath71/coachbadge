@@ -6,7 +6,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist")
 FN_DIR = os.path.join(ROOT, "supabase", "functions", "coachbadge-subscribe")
 FUNCTION_URL = "https://uufmlmwgvoqhhtqgrclu.supabase.co/functions/v1/coachbadge-subscribe"
-SITE = "https://cstath71.github.io/coachbadge/"
+SITE = "https://coachbadge.com/"
 TOKEN = "3f2a1b4c-5d6e-4f70-8a9b-0c1d2e3f4a5b"
 BANNED = ("official", "mandatory", "primelogic", "stathopoulos", "switzerland", "swiss", "basketball",
           "shopbotindex", "fusionupdates")
@@ -35,7 +35,7 @@ class TestWelcomeEmail(unittest.TestCase):
         cls.r = json.loads(out.stdout); cls.w = cls.r["w"]
 
     def test_sender_and_subject(self):
-        self.assertEqual(self.r["from"], "coachbadge@agentmail.to")
+        self.assertEqual(self.r["from"], "hello@coachbadge.com")
         self.assertEqual(self.r["fn"], FUNCTION_URL)
         self.assertEqual(self.w["subject"], "Welcome to CoachBadge")
 
@@ -76,25 +76,33 @@ class TestEdgeFunctionSource(unittest.TestCase):
         self.assertIn("rows && rows.length", self.src, "a duplicate (no row back) gets no welcome")
         self.assertIn("status: s", self.src); self.assertIn("429", self.src)
 
-    def test_sends_via_agentmail_from_coachbadge_inbox_only(self):
-        self.assertIn('"https://api.agentmail.to/v0"', self.src)
-        self.assertIn("/inboxes/${encodeURIComponent(MAIL_FROM)}/messages/send", self.src)
-        self.assertIn('import { FROM_ADDRESS, FUNCTION_URL, SITE, welcomeEmail } from "./email.mjs"', self.src)
-        self.assertIn("headers: m.headers", self.src)
+    def test_sends_via_resend_from_hello_by_default(self):
+        self.assertIn('env("MAIL_PROVIDER") || "resend"', self.src)
+        self.assertIn('resend: "https://api.resend.com"', self.src)
+        self.assertIn("fetch(`${MAIL_API_BASE}/emails`", self.src)
+        self.assertIn('env("MAIL_FROM") || `${FROM_NAME} <${FROM_ADDRESS}>`', self.src)
+        self.assertIn("reply_to: MAIL_REPLY_TO", self.src)
+        self.assertIn('import { FROM_ADDRESS, FROM_NAME, FUNCTION_URL, REPLY_TO, SITE, welcomeEmail } from "./email.mjs"', self.src)
+        self.assertEqual(self.src.count("headers: m.headers"), 2, "List-Unsubscribe headers go to every provider")
+        mjs = open(os.path.join(FN_DIR, "email.mjs")).read()
+        for line in ('FROM_ADDRESS = "hello@coachbadge.com"', 'FROM_NAME = "CoachBadge"', 'REPLY_TO = "hello@coachbadge.com"',
+                     'SITE = "https://coachbadge.com/"'):
+            self.assertIn(line, mjs)
+        self.assertNotIn("agentmail.to", mjs)
 
     def test_sender_and_provider_are_settings_and_welcome_off_by_default(self):
         for k in ("MAIL_PROVIDER", "MAIL_FROM", "MAIL_API_BASE", "MAIL_API_KEY", "SITE_URL", "PUBLIC_FUNCTION_URL"):
             self.assertIn(f'env("{k}")', self.src)
         self.assertIn('const WELCOME_ENABLED = env("WELCOME_ENABLED") === "true"', self.src)
         self.assertIn("if (created && WELCOME_ENABLED", self.src)
+        self.assertIn('env("MAIL_REPLY_TO")', self.src)
         check_copy(self, self.src)
-        self.assertNotIn("resend", self.src.lower())
 
     def test_no_secrets_in_source(self):
         for f in os.listdir(FN_DIR):
             t = open(os.path.join(FN_DIR, f)).read()
-            self.assertNotRegex(t, r"\bam_[A-Za-z0-9]{10,}|sb_secret_|eyJhbGci", f)
-        self.assertIn('env("AGENTMAIL_API_KEY")', self.src); self.assertIn('rpc("coachbadge_mail_config")', self.src)
+            self.assertNotRegex(t, r"\bam_[A-Za-z0-9]{10,}|\bre_[A-Za-z0-9_]{10,}|sb_secret_|eyJhbGci", f)
+        self.assertIn('env("RESEND_API_KEY")', self.src); self.assertIn('rpc("coachbadge_mail_config")', self.src)
 
     def test_unsubscribe_paths(self):
         self.assertIn('searchParams.get("unsubscribe")', self.src, "RFC 8058 one-click POST")
@@ -170,13 +178,13 @@ class TestNewsletter(unittest.TestCase):
 
     def test_subscriber_send_needs_confirm_and_keys(self):
         out = os.path.join(self.tmp, "out"); env = dict(os.environ)
-        for k in ("AGENTMAIL_API_KEY", "MAIL_API_KEY", "SUPABASE_SERVICE_ROLE_KEY"): os.environ.pop(k, None)
+        for k in ("RESEND_API_KEY", "AGENTMAIL_API_KEY", "MAIL_API_KEY", "SUPABASE_SERVICE_ROLE_KEY"): os.environ.pop(k, None)
         orig_b = nl.build_issue; nl.build_issue = lambda today: self.issue
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as err:
                 self.assertEqual(nl.main(["--today", "2026-10-24", "--out", out, "--send-to-subscribers"]), 2)
-                self.assertIn("AGENTMAIL_API_KEY", err.getvalue())
-                os.environ["AGENTMAIL_API_KEY"] = "dummy"
+                self.assertIn("RESEND_API_KEY", err.getvalue())
+                os.environ["RESEND_API_KEY"] = "dummy"
                 self.assertEqual(nl.main(["--today", "2026-10-24", "--out", out, "--send-to-subscribers", "--confirm", "2026-10-23"]), 2)
                 self.assertIn("--confirm 2026-10-24", err.getvalue())
         finally:
@@ -192,10 +200,26 @@ class TestNewsletter(unittest.TestCase):
         finally: nl.build_issue = orig_b
 
     def test_sender_is_config(self):
-        self.assertEqual((nl.PROVIDER, nl.FROM_ADDRESS), ("agentmail", "coachbadge@agentmail.to"))
-        self.assertIn("agentmail", nl.SENDERS)
+        self.assertEqual((nl.PROVIDER, nl.FROM_ADDRESS, nl.FROM_HEADER, nl.REPLY_TO),
+                         ("resend", "hello@coachbadge.com", "CoachBadge <hello@coachbadge.com>", "hello@coachbadge.com"))
+        self.assertEqual(nl.API_BASE, "https://api.resend.com")
+        self.assertIn("resend", nl.SENDERS); self.assertIn("agentmail", nl.SENDERS)
         src = open(os.path.join(ROOT, "scripts", "send_newsletter.py")).read()
-        self.assertNotIn('"coachbadge@agentmail.to"', src, "sender address only in config/site.json")
+        self.assertNotIn('"hello@coachbadge.com"', src, "sender address only in config/site.json")
+
+    def test_resend_request_shape(self):
+        sent = []
+        orig = nl._http; nl._http = lambda url, method="GET", headers=None, body=None: sent.append((url, method, headers, body)) or {"id": "x"}
+        try: nl.resend_send("dummy-key", "reader@example.org", nl.message(self.issue, TOKEN))
+        finally: nl._http = orig
+        url, method, headers, body = sent[0]
+        self.assertEqual((url, method), ("https://api.resend.com/emails", "POST"))
+        self.assertEqual(headers["Authorization"], "Bearer dummy-key")
+        self.assertEqual(body["from"], "CoachBadge <hello@coachbadge.com>"); self.assertEqual(body["reply_to"], "hello@coachbadge.com")
+        self.assertEqual(body["to"], ["reader@example.org"])
+        self.assertEqual(body["headers"], {"List-Unsubscribe": f"<{FUNCTION_URL}?unsubscribe={TOKEN}>",
+                                           "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"})
+        self.assertTrue(body["html"] and body["text"] and body["subject"])
 
     def test_not_scheduled(self):
         wf = os.path.join(ROOT, ".github", "workflows")

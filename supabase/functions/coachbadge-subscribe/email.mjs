@@ -3,9 +3,11 @@
 
 // Defaults only. The Edge Function overrides them from its secrets (SITE_URL, MAIL_FROM), so moving to coachbadge.com and
 // hello@coachbadge.com is a settings change.
-export const SITE = "https://cstath71.github.io/coachbadge/";
+export const SITE = "https://coachbadge.com/";
 export const FUNCTION_URL = "https://uufmlmwgvoqhhtqgrclu.supabase.co/functions/v1/coachbadge-subscribe";
-export const FROM_ADDRESS = "coachbadge@agentmail.to";
+export const FROM_ADDRESS = "hello@coachbadge.com";
+export const FROM_NAME = "CoachBadge";
+export const REPLY_TO = "hello@coachbadge.com";
 export const DISCLAIMER = "Independent; not affiliated with UEFA or any association listed.";
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

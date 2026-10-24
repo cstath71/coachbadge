@@ -11,7 +11,7 @@ Usage:
   python3 scripts/send_newsletter.py --to you@example.com                 one test send, subject starts with [Test]
   python3 scripts/send_newsletter.py --send-to-subscribers --confirm DATE send to every subscriber (deliberate runs only)
 
-Sending needs MAIL_API_KEY (or AGENTMAIL_API_KEY) in the environment (and SUPABASE_SERVICE_ROLE_KEY for --send-to-subscribers).
+Sending needs MAIL_API_KEY (or RESEND_API_KEY / AGENTMAIL_API_KEY for that provider) in the environment (and SUPABASE_SERVICE_ROLE_KEY for --send-to-subscribers).
 Nothing schedules this script.
 """
 import argparse, ast, datetime, glob, html, json, os, re, string, sys, time, urllib.parse, urllib.request
@@ -20,12 +20,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = json.load(open(os.path.join(ROOT, "config", "site.json")))
 SITE = CFG["base_url"].rstrip("/") + "/"
 FUNCTION_URL = CFG["supabase_url"].rstrip("/") + "/functions/v1/" + CFG["subscribe_function"]
-# Sender and provider are config values (config/site.json "email"), overridable with MAIL_PROVIDER / MAIL_FROM / MAIL_API_BASE,
-# so moving to hello@coachbadge.com later is a config change, not a code change.
+# Sender and provider are config values (config/site.json "email"), overridable with MAIL_PROVIDER / MAIL_FROM /
+# MAIL_REPLY_TO / MAIL_API_BASE, so changing sender or provider is a config change, not a code change.
 EMAIL = CFG["email"]
 PROVIDER = os.environ.get("MAIL_PROVIDER") or EMAIL["provider"]
-FROM_ADDRESS = os.environ.get("MAIL_FROM") or EMAIL["from_address"]
-API_BASE = (os.environ.get("MAIL_API_BASE") or EMAIL.get("api_base") or "https://api.agentmail.to/v0").rstrip("/")
+_from = os.environ.get("MAIL_FROM") or f'{EMAIL["from_name"]} <{EMAIL["from_address"]}>'
+FROM_HEADER = _from                                                                   # "CoachBadge <hello@coachbadge.com>"
+FROM_ADDRESS = (re.search(r"<([^>]+)>", _from) or re.match(r"(.*)", _from)).group(1).strip()  # bare address
+REPLY_TO = os.environ.get("MAIL_REPLY_TO") or EMAIL.get("reply_to") or FROM_ADDRESS
+DEFAULT_API_BASE = {"resend": "https://api.resend.com", "agentmail": "https://api.agentmail.to/v0"}
+API_BASE = (os.environ.get("MAIL_API_BASE") or (EMAIL.get("api_base") if PROVIDER == EMAIL["provider"] else None)
+            or DEFAULT_API_BASE.get(PROVIDER, "")).rstrip("/")
+KEY_ENV = {"resend": "RESEND_API_KEY", "agentmail": "AGENTMAIL_API_KEY"}
 WINDOW_DAYS = 30
 TEST_TOKEN = "00000000-0000-0000-0000-000000000000"  # test sends: the link works but matches nobody
 CUR = {"GBP": "£", "EUR": "€"}
@@ -149,7 +155,14 @@ def agentmail_send(key, to, msg):
     url = f"{API_BASE}/inboxes/{urllib.parse.quote(FROM_ADDRESS)}/messages/send"
     return _http(url, "POST", {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, dict(msg, to=[to]))
 
-SENDERS = {"agentmail": agentmail_send}  # add another provider here if ever needed; same (key, to, msg) signature
+def resend_send(key, to, msg):
+    # Resend /emails: one recipient per call; List-Unsubscribe and List-Unsubscribe-Post go in "headers".
+    body = {"from": FROM_HEADER, "to": [to], "reply_to": REPLY_TO, "subject": msg["subject"], "html": msg["html"],
+            "text": msg["text"], "headers": msg["headers"], "tags": [{"name": "type", "value": (msg.get("labels") or ["coachbadge"])[0]}]}
+    return _http(f"{API_BASE}/emails", "POST", {"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                                               "User-Agent": "CoachBadge-newsletter/1.0"}, body)
+
+SENDERS = {"resend": resend_send, "agentmail": agentmail_send}  # same (key, to, msg) signature
 
 def send(key, to, msg):
     if PROVIDER not in SENDERS: raise SystemExit(f"unknown mail provider {PROVIDER!r}")
@@ -176,7 +189,7 @@ def main(argv=None):
     open(base + ".html", "w", encoding="utf-8").write(m["html"])
     open(base + ".txt", "w", encoding="utf-8").write(m["text"])
     json.dump(m, open(base + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"sender {FROM_ADDRESS} via {PROVIDER}")
+    print(f"sender {FROM_HEADER} (reply-to {REPLY_TO}) via {PROVIDER}")
     print(f"issue {today}: {len(issue['newly_opened'])} newly opened, {len(issue['updated_open'])} updated, "
           f"{len(issue['deadlines'])} deadlines (report {issue['report']}); wrote {base}.html/.txt/.json")
     if not (a.to or a.send_to_subscribers):
@@ -184,10 +197,11 @@ def main(argv=None):
     empty = not (issue["newly_opened"] or issue["updated_open"] or issue["deadlines"])
     if empty and not a.allow_empty:
         print("refusing to send an empty issue (use --allow-empty)", file=sys.stderr); return 2
-    key = os.environ.get("MAIL_API_KEY") or os.environ.get("AGENTMAIL_API_KEY")
-    if not key: print("MAIL_API_KEY / AGENTMAIL_API_KEY is not set", file=sys.stderr); return 2
+    kenv = KEY_ENV.get(PROVIDER, "MAIL_API_KEY")
+    key = os.environ.get("MAIL_API_KEY") or os.environ.get(kenv)
+    if not key: print(f"MAIL_API_KEY / {kenv} is not set", file=sys.stderr); return 2
     if a.to:
-        r = send(key, a.to, m); print("test sent to", a.to, (r or {}).get("message_id", "")); return 0
+        r = send(key, a.to, m); print("test sent to", a.to, (r or {}).get("message_id") or (r or {}).get("id", "")); return 0
     if a.confirm != today.isoformat():
         print(f"--send-to-subscribers needs --confirm {today.isoformat()}", file=sys.stderr); return 2
     sk = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")

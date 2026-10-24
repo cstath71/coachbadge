@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { FROM_ADDRESS, FUNCTION_URL, SITE, welcomeEmail } from "./email.mjs";
+import { FROM_ADDRESS, FROM_NAME, FUNCTION_URL, REPLY_TO, SITE, welcomeEmail } from "./email.mjs";
 
 // CoachBadge newsletter endpoint (deploy with verify_jwt = false: browsers and mailbox providers call it without a key).
 //   POST {email, cb_hp_note}                     sign up; a new address gets one welcome email
@@ -7,22 +7,32 @@ import { FROM_ADDRESS, FUNCTION_URL, SITE, welcomeEmail } from "./email.mjs";
 //   POST ?unsubscribe=<token>                    RFC 8058 one-click (List-Unsubscribe-Post) from mailbox providers
 // Settings (Supabase function secrets; nothing secret is in this file or in the site):
 //   WELCOME_ENABLED   "true" to send the welcome email. Anything else (or unset): sign-ups are stored, no email is sent.
-//   MAIL_PROVIDER     "agentmail" (default; the only one wired up)
-//   MAIL_FROM         sender address = AgentMail inbox id (default coachbadge@agentmail.to; later hello@coachbadge.com)
-//   MAIL_API_BASE     default https://api.agentmail.to/v0
-//   MAIL_API_KEY      provider API key; if unset, AGENTMAIL_API_KEY, then the Vault secret read by public.coachbadge_mail_config()
+//   MAIL_PROVIDER     "resend" (default) or "agentmail"
+//   MAIL_FROM         sender, "CoachBadge <hello@coachbadge.com>" (default) or a bare address
+//   MAIL_REPLY_TO     reply-to address (default hello@coachbadge.com)
+//   MAIL_API_BASE     default https://api.resend.com (resend) / https://api.agentmail.to/v0 (agentmail)
+//   MAIL_API_KEY      provider API key; if unset, RESEND_API_KEY / AGENTMAIL_API_KEY, then the Vault secret read by public.coachbadge_mail_config()
 //   SITE_URL / PUBLIC_FUNCTION_URL   links in the email (defaults: the GitHub Pages site and this function)
 const env = (k: string) => (Deno.env.get(k) || "").trim();
 const WELCOME_ENABLED = env("WELCOME_ENABLED") === "true";
-const MAIL_PROVIDER = env("MAIL_PROVIDER") || "agentmail";
-const MAIL_FROM = env("MAIL_FROM") || FROM_ADDRESS;
-const MAIL_API_BASE = (env("MAIL_API_BASE") || "https://api.agentmail.to/v0").replace(/\/+$/, "");
+const MAIL_PROVIDER = env("MAIL_PROVIDER") || "resend";
+const MAIL_FROM = env("MAIL_FROM") || `${FROM_NAME} <${FROM_ADDRESS}>`;
+const MAIL_FROM_ADDRESS = (MAIL_FROM.match(/<([^>]+)>/) || [, MAIL_FROM])[1].trim();  // bare address (AgentMail inbox id)
+const MAIL_REPLY_TO = env("MAIL_REPLY_TO") || REPLY_TO;
+const DEFAULT_API_BASE: Record<string, string> = { resend: "https://api.resend.com", agentmail: "https://api.agentmail.to/v0" };
+const MAIL_API_BASE = (env("MAIL_API_BASE") || DEFAULT_API_BASE[MAIL_PROVIDER] || "").replace(/\/+$/, "");
 const LINKS = { site: env("SITE_URL") || SITE, functionUrl: env("PUBLIC_FUNCTION_URL") || FUNCTION_URL };
 
 type Msg = { subject: string; text: string; html: string; headers: Record<string, string> };
-// One function per provider, same shape. Only AgentMail is wired up.
+// One function per provider, same shape. Resend carries the List-Unsubscribe headers as custom headers.
 const SENDERS: Record<string, (key: string, to: string, m: Msg) => Promise<Response>> = {
-  agentmail: (key, to, m) => fetch(`${MAIL_API_BASE}/inboxes/${encodeURIComponent(MAIL_FROM)}/messages/send`, {
+  resend: (key, to, m) => fetch(`${MAIL_API_BASE}/emails`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: MAIL_FROM, to: [to], reply_to: MAIL_REPLY_TO, subject: m.subject, text: m.text, html: m.html,
+      headers: m.headers, tags: [{ name: "type", value: "coachbadge-welcome" }] }),
+  }),
+  agentmail: (key, to, m) => fetch(`${MAIL_API_BASE}/inboxes/${encodeURIComponent(MAIL_FROM_ADDRESS)}/messages/send`, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({ to: [to], subject: m.subject, text: m.text, html: m.html, headers: m.headers, labels: ["coachbadge-welcome"] }),
@@ -98,7 +108,7 @@ Deno.serve(async (req) => {
   const created = rows && rows.length ? rows[0] : null;
 
   if (created && WELCOME_ENABLED && SENDERS[MAIL_PROVIDER] && !TEST_DOMAIN_RE.test(email)) {
-    let key = env("MAIL_API_KEY") || env("AGENTMAIL_API_KEY");
+    let key = env("MAIL_API_KEY") || (MAIL_PROVIDER === "resend" ? env("RESEND_API_KEY") : env("AGENTMAIL_API_KEY"));
     if (!key) {
       try { const { data } = await sb.rpc("coachbadge_mail_config"); key = (Array.isArray(data) ? data[0]?.api_key : data?.api_key) || undefined; } catch { /* no key: row kept, no welcome */ }
     }

@@ -55,9 +55,9 @@ Rules: only data that appears on the provider's own page; no invented dates, pri
   - `--to ADDRESS` one test copy (subject starts with `[Test]`).
   - `--send-to-subscribers --confirm DATE` everyone; only when run by hand. Nothing schedules it. Refuses an empty issue unless `--allow-empty`.
 - Sender and provider are settings, not code:
-  - site and script: `config/site.json` `email` (`provider`, `from_address`, `from_name`, `welcome_enabled`); env overrides `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_API_BASE`; key in `MAIL_API_KEY` (or `AGENTMAIL_API_KEY`), never in the repo.
-  - function: secrets `WELCOME_ENABLED`, `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_API_BASE`, `MAIL_API_KEY` (or Vault secret `coachbadge_agentmail_api_key`), `SITE_URL`, `PUBLIC_FUNCTION_URL`.
-  - Now: AgentMail, from coachbadge@agentmail.to. To move to hello@coachbadge.com: add the domain to AgentMail with its DNS records (SPF, DKIM, DMARC), create the `hello@coachbadge.com` inbox, then set `from_address` / `MAIL_FROM` to it; if the site moves to coachbadge.com, also change `base_url`, `SITE_URL` and the function's allowed origins.
+  - site and script: `config/site.json` `email` (`provider`, `from_address`, `from_name`, `reply_to`, `api_base`, `welcome_enabled`); env overrides `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_REPLY_TO`, `MAIL_API_BASE`; key in `MAIL_API_KEY` (or `RESEND_API_KEY`), never in the repo.
+  - function: secrets `WELCOME_ENABLED`, `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_REPLY_TO`, `MAIL_API_BASE`, `MAIL_API_KEY` (or `RESEND_API_KEY`, or Vault secret `coachbadge_resend_api_key`), `SITE_URL`, `PUBLIC_FUNCTION_URL`.
+  - Provider: Resend (`MAIL_PROVIDER=resend`), from `CoachBadge <hello@coachbadge.com>`, reply-to hello@coachbadge.com; List-Unsubscribe / List-Unsubscribe-Post go as custom headers. Needs coachbadge.com verified in Resend (DNS on the `send` subdomain + `resend._domainkey`, so Zoho's SPF on `@` is untouched). AgentMail (`MAIL_PROVIDER=agentmail`, earlier test inbox coachbadge@agentmail.to) is kept only as a fallback.
 - Tests: `tests/test_signup.py`, `tests/test_email.py`.
 
 ## Licence

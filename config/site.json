@@ -12,9 +12,11 @@
   "newsletter_table": "coachbadge_subscribers",
   "subscribe_function": "coachbadge-subscribe",
   "email": {
-    "provider": "agentmail",
-    "from_address": "coachbadge@agentmail.to",
+    "provider": "resend",
+    "from_address": "hello@coachbadge.com",
     "from_name": "CoachBadge",
+    "reply_to": "hello@coachbadge.com",
+    "api_base": "https://api.resend.com",
     "welcome_enabled": false
   }
 }

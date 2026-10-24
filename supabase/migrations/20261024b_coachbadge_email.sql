@@ -1,5 +1,5 @@
 -- CoachBadge emails (24 Oct 2026): sign-ups now go through the coachbadge-subscribe Edge Function, which sends a welcome
--- email through AgentMail. Every subscriber gets a random unsubscribe token; the old open removal form is switched off.
+-- email through Resend (from hello@coachbadge.com). Every subscriber gets a random unsubscribe token; the old open removal form is switched off.
 
 -- Per-subscriber unsubscribe token and the time the welcome email went out.
 alter table public.coachbadge_subscribers add column if not exists token uuid not null default gen_random_uuid();
@@ -35,11 +35,11 @@ end $$;
 revoke all on function public.coachbadge_unsubscribe(uuid) from public, anon, authenticated;
 grant execute on function public.coachbadge_unsubscribe(uuid) to service_role;
 
--- AgentMail API key from Supabase Vault (secret name coachbadge_agentmail_api_key), for when it is not set as a
--- function secret (AGENTMAIL_API_KEY). Callable by service_role only.
+-- Mail provider (Resend) API key from Supabase Vault (secret name coachbadge_resend_api_key), for when it is not set as a
+-- function secret (MAIL_API_KEY / RESEND_API_KEY). Callable by service_role only.
 create or replace function public.coachbadge_mail_config()
 returns table (api_key text) language sql security definer set search_path = '' stable as $$
-  select (select decrypted_secret from vault.decrypted_secrets where name = 'coachbadge_agentmail_api_key' limit 1);
+  select (select decrypted_secret from vault.decrypted_secrets where name = 'coachbadge_resend_api_key' limit 1);
 $$;
 revoke all on function public.coachbadge_mail_config() from public, anon, authenticated;
 grant execute on function public.coachbadge_mail_config() to service_role;

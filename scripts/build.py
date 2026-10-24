@@ -86,7 +86,7 @@ def counter_js():
             "if(n.sendBeacon)n.sendBeacon(E,location.pathname);})();</script>")
 
 # ---- newsletter (24 Oct 2026): the forms post to the coachbadge-subscribe Edge Function (honeypot, de-duplication,
-# rate limit, welcome email via AgentMail). No key of any kind is in the site. Removal is by the per-subscriber token link only.
+# rate limit, welcome email via Resend). No key of any kind is in the site. Removal is by the per-subscriber token link only.
 NL_PROMISE = "One free short email a week: newly opened courses and deadlines coming up. Every email has an unsubscribe link."
 FUNCTION_URL = CFG["supabase_url"].rstrip("/") + "/functions/v1/" + CFG["subscribe_function"]
 NL_ACTION = FUNCTION_URL
@@ -349,7 +349,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p><strong>Abuse protection:</strong> to limit sign-ups to five per connection per hour, the sign-up service keeps a one-way hash of your IP address combined with the current hour (not the address itself), and deletes it after two hours.</p>
 <p><strong>Why:</strong> to send you the weekly email you asked for, with newly opened courses and deadlines coming up. We do not sell or share the list, and we do not use it for anything else.</p>
 <p><strong>Where:</strong> the list is kept in a database run by Supabase, in its EU (Frankfurt) region. Only the site team can read it; the sign-up form can add an address but cannot read the list.</p>
-<p><strong>Sending:</strong> emails are sent through AgentMail, an email service, from {e(CFG['email']['from_address'])}. {"You get one welcome email when you sign up, then the weekly email." if WELCOME else "You get the weekly email; there is no welcome or confirmation email for now."} Your address is passed to AgentMail only to deliver them.</p>
+<p><strong>Sending:</strong> emails are sent through Resend, an email service, from {e(CFG['email']['from_address'])}. {"You get one welcome email when you sign up, then the weekly email." if WELCOME else "You get the weekly email; there is no welcome or confirmation email for now."} Your address is passed to Resend only to deliver them.</p>
 <p><strong>How to unsubscribe:</strong> every email has a one-click unsubscribe link (and an unsubscribe header your mail app can use). It deletes your address, sign-up time and unsubscribe code straight away and keeps no record of the request.</p>
 <h2>Visits</h2>
 <p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
