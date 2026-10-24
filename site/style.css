@@ -1,4 +1,4 @@
-:root{--ink:#0b1f33;--pitch:#0f8a46;--lime:#c6f432;--court:#ff7a1a;--bg:#f4f6f3;--card:#fff;--mut:#5b6b7a;--line:#dde3e8}
+:root{--ink:#0b1f33;--pitch:#0f8a46;--lime:#c6f432;--bg:#f4f6f3;--card:#fff;--mut:#5b6b7a;--line:#dde3e8}
 *{box-sizing:border-box}
 body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
 a{color:#0a6b37}
@@ -22,7 +22,6 @@ h2{font-size:1.5rem;margin:28px 0 10px;font-weight:850;letter-spacing:-.01em}
 h2 .bar{display:inline-block;width:10px;height:22px;background:var(--pitch);margin-right:8px;vertical-align:-3px;border-radius:2px}
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-left:6px solid var(--pitch)}
-.card.basketball{border-left-color:var(--court)}
 .card h3{margin:4px 0 6px;font-size:1.05rem}
 .card dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:6px 0;font-size:.92rem}
 .card dt{color:var(--mut)}.card dd{margin:0}

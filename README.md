@@ -1,14 +1,14 @@
 # CoachBadge
 
-**Every open coaching course in Europe, football and basketball, with deadlines and prices.**
+**Every open football coaching course in Europe, with deadlines and prices.**
 
 Live: https://cstath71.github.io/coachbadge/
 
-CoachBadge is a static board of coaching courses (UEFA C, B, A, Pro, Elite Youth; national basketball federations and FIBA Europe).
+CoachBadge is a static board of football coaching courses (UEFA C, B, A, Pro, Elite Youth and goalkeeper courses).
 Each entry carries provider, country, level, deadline or application window, start date, price, language, format, status,
 a source link, the date it was last checked, and the verbatim sentences from the source page that support it.
 
-Independent; not affiliated with UEFA, FIBA or any association listed.
+Independent; not affiliated with UEFA or any association listed.
 
 ## Layout
 
@@ -23,6 +23,13 @@ Independent; not affiliated with UEFA, FIBA or any association listed.
 | `scripts/refresh.py` | Weekly, restartable re-check. Writes `reports/refresh-DATE.md` with diffs. Never publishes. |
 | `scripts/build.py` | Builds the site into `dist/`. |
 | `tests/` | Data validation, banned words, wordmark position, link checks. |
+
+## Switched-off sources
+
+A source in `data/sources.yaml` with `enabled: false` stays in the file but is skipped everywhere: `scripts/refresh.py` does not fetch it,
+`scripts/extract.py` leaves out courses of any sport that has no enabled source, and `scripts/build.py` shows neither its courses nor its pages.
+The site is football-only for now; the other sport's sources are kept there, switched off, so they can come back later by removing the flag.
+The shared loader is `scripts/sources.py`.
 
 ## Weekly routine
 

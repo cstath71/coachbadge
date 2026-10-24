@@ -24,8 +24,8 @@ SNAP = os.path.join(ROOT, "raw", "snapshots")
 
 def urls():
     out = []
-    src = yaml.safe_load(open(os.path.join(ROOT, "data", "sources.yaml")))
-    for sport in src.values():
+    from sources import enabled
+    for sport in enabled().values():  # disabled sources (enabled: false) are not fetched
         out += [s["url"] for s in sport]
     for c in json.load(open(os.path.join(ROOT, "data", "courses.json")))["courses"]:
         out.append(c["source_url"]); out += c.get("extra_sources") or []

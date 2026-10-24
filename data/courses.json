@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-24",
- "count": 67,
+ "count": 62,
  "parsers": {
   "fa_uefa_c": {
    "rows": 32,
@@ -13,137 +13,10 @@
   "saarland": {
    "rows": 6,
    "error": null
-  }
+  },
+  "skipped_disabled_sport": 5
  },
  "courses": [
-  {
-   "id": "eur-fiba-fecc-next",
-   "sport": "basketball",
-   "country": "Europe (FIBA Europe)",
-   "provider": "FIBA Europe",
-   "level": "FIBA Europe Coaching Certificate (FECC)",
-   "title": "FIBA Europe Coaching Certificate – next cycle",
-   "location": null,
-   "language": "English",
-   "format": null,
-   "price": null,
-   "deadline": null,
-   "application_window": "Nomination by national federations; deadline announced at the start of the programme year",
-   "start_date": null,
-   "end_date": null,
-   "status": "unknown",
-   "status_basis": "Page: 'The registration deadline will be announced at the beginning of the year in which the program starts.'",
-   "source_url": "https://about.fiba.basketball/en/regions/europe/activities/fiba-europe-coaching-certificate",
-   "fetched_at": "2026-10-24",
-   "evidence": [
-    "The registration deadline will be announced at the beginning of the year in which the program starts.",
-    "FECC Examination Regulations 2025-27"
-   ]
-  },
-  {
-   "id": "ita-fip-toscana-regionale-2027",
-   "sport": "basketball",
-   "country": "Italy",
-   "provider": "FIP Comitato Regionale Toscana (CNA Toscana)",
-   "level": "Basketball – Allenatore Regionale",
-   "title": "Corso Allenatore Regionale 2027 (Toscana)",
-   "location": "Tuscany",
-   "language": "Italian",
-   "format": null,
-   "price": null,
-   "price_note": "Required intermediate lessons are free (pre-registration via form)",
-   "deadline": null,
-   "application_window": "Pre-registration for the required intermediate lessons",
-   "start_date": "2027-05",
-   "end_date": "2027-06",
-   "status": "upcoming",
-   "status_basis": "Course planned May–June 2027, dates and format still to be defined",
-   "source_url": "https://toscana.fip.it/lezioni-intermedie-per-accesso-al-corso-allenatore-regionale-2027/",
-   "fetched_at": "2026-10-24",
-   "evidence": [
-    "Corso Allenatore Regionale 2027 programmato in Toscana nel periodo Maggio-Giugno 2027",
-    "Per la partecipazione a tali lezioni non sono previsti costi"
-   ]
-  },
-  {
-   "id": "esp-fbclm-nivel2-2026-27",
-   "sport": "basketball",
-   "country": "Spain",
-   "provider": "Federación de Baloncesto de Castilla-La Mancha (FEB territorial federation)",
-   "level": "Basketball – national level 2",
-   "title": "Ciclo Final de Grado Medio (Nivel II federativo) 2026/2027",
-   "location": "Castilla-La Mancha",
-   "language": "Spanish",
-   "format": null,
-   "format_note": "In-person teaching block in June 2027",
-   "price": {
-    "amount": 625,
-    "currency": "EUR",
-    "note": "€550 with eligible reduction"
-   },
-   "deadline": "2026-08-30",
-   "application_window": "1 July – 30 August 2026",
-   "start_date": null,
-   "end_date": null,
-   "status": "closed",
-   "status_basis": "deadline passed",
-   "source_url": "https://fbclm.net/formacion-fbclm-convocados-los-cursos-oficiales-de-entrenador-de-baloncesto-ciclo-final-de-grado-medio-nivel-ii-federativo/",
-   "fetched_at": "2026-10-24",
-   "evidence": [
-    "inscripción del 1 julio al 30 de agosto de 2026.",
-    "(o nivel 2 federativo): 625 €.",
-    "La carga lectiva presencial se realizará durante el mes de junio de 2027"
-   ]
-  },
-  {
-   "id": "esp-fbcv-nivel1-2-2026-27",
-   "sport": "basketball",
-   "country": "Spain",
-   "provider": "Federació de Basquetbol de la Comunitat Valenciana (FEB territorial federation)",
-   "level": "Basketball – national levels 1 and 2",
-   "title": "Cursos de Entrenador Nivel 1 y Nivel 2, temporada 2026-2027",
-   "location": "Comunitat Valenciana",
-   "language": "Spanish",
-   "format": "online",
-   "format_note": "Online content and live video classes; exams in person",
-   "price": null,
-   "deadline": null,
-   "application_window": "No deadline shown",
-   "start_date": null,
-   "end_date": null,
-   "status": "unknown",
-   "status_basis": "Page dated 29 June 2026 said enrolment was still open; no deadline shown, so current status is not confirmed",
-   "source_url": "https://www.fbcv.es/noticias/continuan-las-inscripciones-a-los-cursos-nivel-1-y-nivel-2/",
-   "fetched_at": "2026-10-24",
-   "evidence": [
-    "Sigue abierto el plazo de inscripción para los",
-    "contenidos 100% online",
-    "29/06/2026"
-   ]
-  },
-  {
-   "id": "esp-feb-ces-2026",
-   "sport": "basketball",
-   "country": "Spain",
-   "provider": "Federación Española de Baloncesto (FEB)",
-   "level": "Basketball – top national level",
-   "title": "Curso de Entrenador Superior Madrid 2026",
-   "location": "Madrid",
-   "language": "Spanish",
-   "format": null,
-   "price": null,
-   "deadline": null,
-   "application_window": null,
-   "start_date": null,
-   "end_date": null,
-   "status": "closed",
-   "status_basis": "Page reports the 2026 edition already took place (232 enrolled)",
-   "source_url": "https://www.feb.es/entrenadores.aspx",
-   "fetched_at": "2026-10-24",
-   "evidence": [
-    "El Curso de Entrenador Superior Madrid 2026 ha roto registros"
-   ]
-  },
   {
    "id": "den-dbu-uefa-elite-youth-a-2026-27",
    "sport": "football",

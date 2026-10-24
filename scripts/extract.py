@@ -176,6 +176,11 @@ def main():
         courses += rows
     manual = yaml.safe_load(open(os.path.join(ROOT, "data", "manual_courses.yaml")))
     courses += manual
+    from sources import enabled_sports
+    on = enabled_sports()
+    skipped = sorted(c["id"] for c in courses if c["sport"] not in on)
+    courses = [c for c in courses if c["sport"] in on]  # sports with no enabled source (basketball, for now) stay out
+    notes["skipped_disabled_sport"] = len(skipped)
     ids = [c["id"] for c in courses]
     dup = {x for x in ids if ids.count(x) > 1}
     if dup: raise SystemExit(f"duplicate ids: {dup}")

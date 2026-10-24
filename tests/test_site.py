@@ -24,7 +24,7 @@ class TestData(unittest.TestCase):
         for c in DATA["courses"]:
             with self.subTest(c["id"]):
                 self.assertNotIn(c["id"], ids); ids.add(c["id"])
-                self.assertIn(c["sport"], {"football", "basketball"})
+                self.assertEqual(c["sport"], "football", "the site is football-only for now")
                 for k in ("country", "provider", "level", "title"): self.assertTrue(c.get(k))
                 self.assertTrue(urlparse(c["source_url"]).scheme == "https", c["source_url"])
                 datetime.date.fromisoformat(c["fetched_at"])

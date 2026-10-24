@@ -6,7 +6,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "dist")
 CFG = json.load(open(os.path.join(ROOT, "config", "site.json")))
 DATA = json.load(open(os.path.join(ROOT, "data", "courses.json")))
-SOURCES = yaml.safe_load(open(os.path.join(ROOT, "data", "sources.yaml")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from sources import enabled as enabled_sources
+SOURCES = enabled_sources()  # sources with enabled: false (basketball, for now) are left out of the site
 TODAY = datetime.date.fromisoformat(sys.argv[sys.argv.index("--today") + 1]) if "--today" in sys.argv else datetime.date.today()
 CLOSING_DAYS = 30
 BASE = CFG["base_url"].rstrip("/") + "/"
@@ -57,6 +59,7 @@ def status(c):
 
 COURSES = []
 for c in DATA["courses"]:
+    if c["sport"] not in SOURCES: continue  # belt and braces: no course from a switched-off sport
     c = dict(c); c["display_status"] = status(c); COURSES.append(c)
 ORDER = {"closing_soon": 0, "open": 1, "full": 2, "upcoming": 3, "unknown": 4, "closed": 5}
 def sortkey(c): return (ORDER[c["display_status"]], c.get("deadline") or "9999", c.get("start_date") or "9999", c["id"])
@@ -65,7 +68,8 @@ LIVE = [c for c in COURSES if c["display_status"] in ("open", "closing_soon")]
 
 ALL_SOURCES = [dict(s, sport=sp) for sp, lst in SOURCES.items() for s in lst]
 COUNTRIES = sorted({c["country"] for c in COURSES} | {s["country"] for s in ALL_SOURCES})
-LEVELS = sorted({c["level"] for c in COURSES}, key=lambda l: (l.startswith("Basketball") or "FIBA" in l, l))
+LEVELS = sorted({c["level"] for c in COURSES})
+SPORTS = sorted({c["sport"] for c in COURSES})
 
 BADGE = ('<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 35 8v11c0 9-6.5 16-15 19C11.5 35 5 28 5 19V8z" '
          'fill="#c6f432"/><path d="M20 6 31 10.5v8.5c0 7-4.8 12.6-11 15-6.2-2.4-11-8-11-15v-8.5z" fill="#0b1f33"/>'
@@ -185,7 +189,7 @@ def table(courses, r, with_filters=True):
     def opts(name, vals): return f'<label>{name}<select data-f="{name.lower()}"><option value="">All</option>' + "".join(f'<option value="{e(v)}">{e(l)}</option>' for v, l in vals) + "</select></label>"
     f = ""
     if with_filters:
-        f = ('<div class="filters" role="search">' + opts("Sport", [("football", "Football"), ("basketball", "Basketball")]) +
+        f = ('<div class="filters" role="search">' + (opts("Sport", [(sp, sp.capitalize()) for sp in SPORTS]) if len(SPORTS) > 1 else "") +
              opts("Level", [(l, l) for l in sorted({c["level"] for c in courses})]) +
              opts("Country", [(x, x) for x in sorted({c["country"] for c in courses})]) +
              opts("Format", [(k or "none", v) for k, v in FORMAT_LABEL.items() if any(c.get("format") == k for c in courses)]) +
@@ -229,11 +233,10 @@ def sources_list(srcs):
     return "<ul>" + "".join(li) + "</ul>"
 
 def summary_sentence():
-    fb = [c for c in LIVE if c["sport"] == "football"]; bb = [c for c in LIVE if c["sport"] == "basketball"]
     cn = sorted({c["country"] for c in LIVE})
     nxt = sorted([c for c in LIVE if c.get("deadline")], key=lambda c: c["deadline"])
-    s = (f"As of {fdate(DATA['generated'])}, {len(LIVE)} coaching courses in Europe are open for applications or booking on the providers' own pages: "
-         f"{len(fb)} football and {len(bb)} basketball, in {', '.join(cn)}.")
+    s = (f"As of {fdate(DATA['generated'])}, {len(LIVE)} football coaching courses in Europe are open for applications or booking on the providers' own pages, "
+         f"in {', '.join(cn)}.")
     if nxt: s += f" The next deadline is {nxt[0]['title']} ({nxt[0]['provider']}) on {fdate(nxt[0]['deadline'])}."
     return s
 
@@ -249,7 +252,6 @@ def build():
            "courses": [{k: v for k, v in c.items()} for c in COURSES]}
     json.dump(pub, open(os.path.join(DIST, "data", "courses.json"), "w"), ensure_ascii=False, indent=1)
     urls = []
-    fb_live = sum(c["sport"] == "football" for c in LIVE)
     # home
     board = "".join(card(c, "") for c in LIVE) or '<p class="note">No course is open right now on the pages we could read.</p>'
     soon = [c for c in LIVE if c["display_status"] == "closing_soon"]
@@ -285,9 +287,9 @@ def build():
         b = (f'<section class="hero"><div class="wrap"><h1>Coaching courses in {e(ct)}</h1><p class="answer">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">' + (f'<div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All courses</h2>{table(cs, "../")}' if cs else "")
              + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "") + "</div></main>")
-        urls.append(page(f"country/{slug(ct)}.html", f"Coaching courses in {ct}", f"{ans} Football and basketball coaching courses with deadlines and prices.", b,
+        urls.append(page(f"country/{slug(ct)}.html", f"Coaching courses in {ct}", f"{ans} Football coaching courses with deadlines and prices.", b,
                          [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
-    urls.append(page("countries.html", "Coaching courses by country", "Football and basketball coaching courses by country.",
+    urls.append(page("countries.html", "Coaching courses by country", "Football coaching courses by country.",
                      f'<main><div class="wrap"><h1>Courses by country</h1><ul class="pill-list">{"".join(items)}</ul></div></main>'))
     # levels
     items = []
@@ -299,13 +301,13 @@ def build():
              f'<main><div class="wrap"><div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}</div></main>')
         urls.append(page(f"level/{slug(lv)}.html", f"{lv} coaching courses in Europe", ans + " Deadlines, dates and prices.", b,
                          [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
-    urls.append(page("levels.html", "Coaching courses by level", "UEFA C, B, A, Pro, Elite Youth and basketball coaching courses.",
+    urls.append(page("levels.html", "Coaching courses by level", "UEFA C, B, A, Pro, Elite Youth and goalkeeper coaching courses.",
                      f'<main><div class="wrap"><h1>Courses by level</h1><ul class="pill-list">{"".join(items)}</ul></div></main>'))
     # methodology
     unread = [s for s in ALL_SOURCES if s["readable"] == "no"]
     prose = lambda h, t, d, x: urls.append(page(h, t, d, f'<main><div class="wrap prose"><h1>{e(t)}</h1>{x}</div></main>'))
     prose("methodology.html", "Methodology", "Where CoachBadge data comes from, how often it is checked and how to report a correction.", f"""
-<p>{e(BRAND)} lists coaching courses only from pages published by the football and basketball associations themselves, their regional or district associations,
+<p>{e(BRAND)} lists coaching courses only from pages published by the football associations themselves, their regional or district associations,
 and academies those associations run. We do not use forums, social posts or search-result snippets.</p>
 <h2>What every entry shows</h2><p>Provider, country, level, application window or deadline, start date, price, language, format (in person, online or blended),
 status, a link to the source page and the date we last checked it. If a page does not state something, we leave it blank instead of guessing.</p>
@@ -324,8 +326,8 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <h2>Corrections</h2><p>Spotted something wrong or missing? <a href="{e(CFG['corrections_url'])}">Open a correction</a> with the course and a link to the provider's page. Corrections are public GitHub issues, so please do not include personal details.</p>
 <h2>All sources</h2>{sources_list(ALL_SOURCES)}""")
     prose("about.html", "About CoachBadge", f"{BRAND}: {CFG['tagline']}.", f"""
-<p>{e(BRAND)} is an independent board of coaching courses in Europe: football from UEFA C to UEFA Pro, including Elite Youth and goalkeeper courses where they are listed, and basketball courses from national federations and FIBA Europe.</p>
-<p>Coaching course dates, deadlines and prices are scattered across dozens of association websites in many languages. {e(BRAND)} puts them in one place, with the deadline, the price and a link to the page where you actually apply.</p>
+<p>{e(BRAND)} is an independent board of football coaching courses in Europe, from UEFA C to UEFA Pro, including Elite Youth and goalkeeper courses where they are listed.</p>
+<p>Coaching course dates, deadlines and prices are scattered across dozens of football association websites in many languages. {e(BRAND)} puts them in one place, with the deadline, the price and a link to the page where you actually apply.</p>
 <p>{e(CFG['disclaimer'])} We do not run courses, take applications or sell places. Always confirm details with the provider.</p>
 <p>See the <a href="methodology.html">methodology</a> for how the data is collected.</p>""")
     prose("privacy.html", "Privacy", f"{BRAND} privacy notice: what the newsletter stores and how to unsubscribe.", f"""
@@ -367,7 +369,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 
 {summary_sentence()}
 
-{BRAND} lists football (UEFA C, B, A, Pro, Elite Youth) and basketball (national federations, FIBA Europe) coaching courses in Europe.
+{BRAND} lists football coaching courses in Europe: UEFA C, B, A, Pro, Elite Youth and goalkeeper courses.
 Each entry has provider, country, level, deadline or application window, start date, price, language, format, status, a source link and the date it was last checked.
 Data comes only from the associations' own pages and is re-checked weekly; changes are reviewed by a person before publishing.
 {CFG['disclaimer']}
