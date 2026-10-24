@@ -1,0 +1,12 @@
+{
+  "brand": "CoachBadge",
+  "domain": "coachbadge.com",
+  "base_url": "https://cstath71.github.io/coachbadge/",
+  "tagline": "Every open coaching course in Europe, football and basketball, with deadlines and prices",
+  "wordmark": "CoachBadge",
+  "repo": "cstath71/coachbadge",
+  "counter_endpoint": "",
+  "newsletter_endpoint": "",
+  "corrections_url": "https://github.com/cstath71/coachbadge/issues/new?template=correction.md",
+  "disclaimer": "Independent; not affiliated with UEFA, FIBA or any association listed."
+}

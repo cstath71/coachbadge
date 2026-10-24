@@ -1,0 +1,433 @@
+# Hand-verified course entries. Every field comes from the source page fetched on fetched_at.
+# evidence: verbatim snippets that must appear in the fetched page text (checked by tests when the local cache exists).
+# Unknown values stay null. Never fill a field from memory or from search snippets.
+- id: eng-fa-uefa-b-2026-27
+  sport: football
+  country: England
+  provider: The Football Association (England)
+  level: UEFA B
+  title: UEFA B Diploma
+  location: null
+  language: English
+  format: blended
+  price: {amount: 1250, currency: GBP}
+  deadline: null
+  application_window: "Register-your-interest form; no booking dates published"
+  start_date: null
+  end_date: null
+  status: unknown
+  status_basis: "Page offers 'Register your interest' only; no open booking shown"
+  source_url: https://learn.englandfootball.com/courses/football/uefa-b-licence
+  fetched_at: "2026-10-24"
+  evidence: ["Face-to-face & Online", "£1,250", "Register your interest"]
+- id: eng-fa-uefa-a-2027
+  sport: football
+  country: England
+  provider: The Football Association (England)
+  level: UEFA A
+  title: UEFA A Diploma (course starting January 2027)
+  location: null
+  language: English
+  format: residential
+  format_note: "Page lists delivery as 'Face-to-face'"
+  price: {amount: 4150, currency: GBP}
+  deadline: null
+  application_window: "Register-your-interest form"
+  start_date: "2027-01"
+  end_date: null
+  status: unknown
+  status_basis: "Page offers 'Register your interest' only"
+  source_url: https://learn.englandfootball.com/courses/football/uefa-a-licence
+  fetched_at: "2026-10-24"
+  evidence: ["£4,150", "Register your interest", "prior to the course starting in January 2027"]
+- id: ger-dfb-uefa-pro-2027
+  sport: football
+  country: Germany
+  provider: DFB-Akademie
+  level: UEFA Pro
+  title: Pro Lizenz-Lehrgang 2027 (assessment)
+  location: null
+  language: German
+  format: null
+  price: {amount: 19000, currency: EUR, note: "plus accommodation and meals"}
+  deadline: "2026-07-29"
+  application_window: "15–29 July 2026"
+  start_date: null
+  end_date: null
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://www.dfb-akademie.de/pro-lizenz/-/id-11009551
+  fetched_at: "2026-10-24"
+  evidence: ["Die nächste Bewerbungsphase für das Assessment des Pro Lizenz-Lehrgangs 2027 findet vom 15.-29.07.2026 statt.", "Die Lehrgangsgebühr beträgt für die Pro Lizenz 19.000 €."]
+- id: esp-rfef-uefa-pro-2026-27
+  sport: football
+  country: Spain
+  provider: RFEF Escuela Nacional de Entrenadores
+  level: UEFA Pro
+  title: Curso de Entrenador de Fútbol Diploma & Licencia UEFA PRO
+  location: null
+  language: Spanish
+  format: null
+  format_note: "Dual training system, minimum 12 months"
+  price: null
+  deadline: "2026-06-07"
+  application_window: "Pre-registration until 7 June 2026"
+  start_date: "2026-06-29"
+  end_date: "2027-06-25"
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://rfef.es/es/noticias/abierto-el-plazo-de-preinscripcion-para-el-curso-de-entrenador-de-futbol-diploma-4
+  fetched_at: "2026-10-24"
+  evidence: ["El plazo de preinscripción estará abierto hasta el próximo 7 de junio", "Del 29 de junio de 2026 al 25 de junio de 2027."]
+- id: por-afalgarve-uefa-c-2026
+  sport: football
+  country: Portugal
+  provider: Associação de Futebol do Algarve (FPF district association)
+  level: UEFA C
+  title: Curso de Treinadores de Futebol Grau I UEFA C
+  location: Algarve
+  language: Portuguese
+  format: null
+  price: null
+  price_note: "Application fees on page: €15 registration + €30 general-training component (€45 total); full course fee not stated"
+  deadline: "2026-09-16"
+  application_window: "3–16 September 2026"
+  start_date: null
+  end_date: null
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://afalgarve.pt/curso-de-treinadores-de-futebol-grau-i-uefa-c-inscricoes-abertas-ate-16-de-setembro-de-2026/
+  fetched_at: "2026-10-24"
+  evidence: ["O período de inscrições decorre até ao dia 16 de setembro de 2026.", "Valor total: 45 euros;"]
+- id: swe-halland-uefa-b-2027
+  sport: football
+  country: Sweden
+  provider: Hallands Fotbollförbund (SvFF district)
+  level: UEFA B
+  title: Tränarutbildning UEFA B – Halland 2027
+  location: Halmstad
+  language: Swedish
+  format: blended
+  format_note: "Physical modules in Halmstad plus digital evenings"
+  price: {amount: 24000, currency: SEK, note: "approx.; includes lodging, materials and meals"}
+  deadline: "2026-11-16"
+  application_window: "Open until 16 November 2026"
+  start_date: "2027-01-23"
+  end_date: "2027-12-02"
+  status: open
+  status_basis: "Page says 'Anmälan är nu öppen'; deadline 16 November 2026"
+  source_url: https://halland.svenskfotboll.se/nyheter/2026/09/tranarutb-2027/
+  fetched_at: "2026-10-24"
+  evidence: ["Anmälan är nu öppen för Hallands Fotbollförbund", "OBS! Senaste anmälan är 16 november 2026.", "24 000:-/deltagare"]
+  extra_sources: ["https://fogis.svenskfotboll.se/fogisklient/kurs/kurstillfalleanmalan.aspx?kid=102945"]
+- id: swe-smaland-uefa-b-2027-vimmerby
+  sport: football
+  country: Sweden
+  provider: Smålands Fotbollförbund (SvFF district)
+  level: UEFA B
+  title: UEFA B 2027 – course 1 (Vimmerby / Ronneby / Växjö)
+  location: Vimmerby, Ronneby, Växjö
+  language: Swedish
+  format: blended
+  format_note: "Physical modules plus Zoom sessions"
+  price: {amount: 24000, currency: SEK, note: "includes double-room lodging"}
+  deadline: "2026-11-30"
+  application_window: "Open until 30 November 2026"
+  start_date: "2027-01-23"
+  end_date: "2027-11-17"
+  status: open
+  status_basis: "Page title 'UEFA B 2027 - Ansökan öppen!'; deadline 2026-11-30"
+  source_url: https://www.smalandsfotbollen.se/nyheter/2026/10/uefa-b-2027-ansokan-oppen/
+  fetched_at: "2026-10-24"
+  evidence: ["UEFA B 2027 - Ansökan öppen!", "Sista anmälningsdag är 2026-11-30", "24 000 SEK", "Kursmodul 1 (8+8 h): 23-24 januari i Vimmerby", "Kursmodul 5 (4 h):  17 november digitalt via Zoom"]
+- id: swe-smaland-uefa-b-2027-kalmar
+  sport: football
+  country: Sweden
+  provider: Smålands Fotbollförbund (SvFF district)
+  level: UEFA B
+  title: UEFA B 2027 – course 2 (Kalmar)
+  location: Kalmar
+  language: Swedish
+  format: blended
+  price: {amount: 24000, currency: SEK, note: "includes double-room lodging"}
+  deadline: "2026-11-30"
+  application_window: "Open until 30 November 2026"
+  start_date: "2027-02-13"
+  end_date: null
+  status: open
+  status_basis: "Page title 'UEFA B 2027 - Ansökan öppen!'; deadline 2026-11-30"
+  source_url: https://www.smalandsfotbollen.se/nyheter/2026/10/uefa-b-2027-ansokan-oppen/
+  fetched_at: "2026-10-24"
+  evidence: ["UEFA B 2027 - Ansökan öppen!", "Sista anmälningsdag är 2026-11-30", "Datum och upplägg för utbildning 2 (Kalmar)", "Kursmodul 1 (8+8 h): 13-14 februari"]
+- id: swe-nafu-uefa-b-2027-alt1
+  sport: football
+  country: Sweden
+  provider: Södermanlands FF with Västmanlands, Värmlands and Örebro Läns FF (SvFF districts)
+  level: UEFA B
+  title: UEFA B 2027 – alternative 1 (Västmanland/Södermanland)
+  location: Västmanland / Södermanland
+  language: Swedish
+  format: blended
+  format_note: "Physical days plus digital modules"
+  price: {amount: 20000, currency: SEK}
+  deadline: "2026-12-06"
+  application_window: "Apply via form by 6 December 2026"
+  start_date: "2027-02-06"
+  end_date: "2027-11-14"
+  status: open
+  status_basis: "Page has application form ('Nedan ansöker du om plats') showing '(48 lediga)'; deadline 6 December 2026"
+  source_url: https://sodermanland.svenskfotboll.se/nyheter/2026/10/inbjudan-uefa-b-2027/
+  fetched_at: "2026-10-24"
+  evidence: ["Nedan ansöker du om plats på utbildningen.", "(48 lediga)", "senast 6 december 2026", "20 000 kr per deltagare", "ALTERNATIV 1 Västmanland/Södermanland", "Kursmodul 1: 2 dagar (08.00-18.00) 6-7 februari", "Kursmodul 4+5: 2 dagar (08.00-21.00) 13-14 november"]
+- id: swe-nafu-uefa-b-2027-alt2
+  sport: football
+  country: Sweden
+  provider: Södermanlands FF with Västmanlands, Värmlands and Örebro Läns FF (SvFF districts)
+  level: UEFA B
+  title: UEFA B 2027 – alternative 2 (Värmland/Örebro)
+  location: Värmland / Örebro
+  language: Swedish
+  format: blended
+  price: {amount: 20000, currency: SEK}
+  deadline: "2026-12-06"
+  application_window: "Apply via form by 6 December 2026"
+  start_date: "2027-02-13"
+  end_date: null
+  status: open
+  status_basis: "Page has application form showing '(48 lediga)'; deadline 6 December 2026"
+  source_url: https://sodermanland.svenskfotboll.se/nyheter/2026/10/inbjudan-uefa-b-2027/
+  fetched_at: "2026-10-24"
+  evidence: ["Nedan ansöker du om plats på utbildningen.", "(48 lediga)", "senast 6 december 2026", "ALTERNATIV 2 Värmland/Örebro", "Kursmodul 1: 2 dagar (08.00-18.00) 13-14 februari"]
+- id: nor-nff-uefa-a-2027
+  sport: football
+  country: Norway
+  provider: Norges Fotballforbund (NFF)
+  level: UEFA A
+  title: UEFA A 2027
+  location: null
+  language: Norwegian
+  format: residential
+  format_note: "5 physical gatherings (board and lodging included) with work in own club between them"
+  price: {amount: 90000, currency: NOK, note: "covers mentor fee, board and lodging at the 5 gatherings"}
+  deadline: "2026-09-30"
+  application_window: "September 2026"
+  start_date: "2026-12"
+  end_date: "2027-11"
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://tiim.no/artikkel/sok-na-uefa-a-2027
+  fetched_at: "2026-10-24"
+  evidence: ["Søknadsfrist er 30. september 2026.", "Utdanningsavgift: 90.000, -", "Utdanningen foregår fra desember 2026 og er ferdig november 2027."]
+- id: nor-nff-uefa-pro-2027-28
+  sport: football
+  country: Norway
+  provider: Norges Fotballforbund (NFF)
+  level: UEFA Pro
+  title: UEFA PRO 2027-2028
+  location: null
+  language: Norwegian
+  format: null
+  price: null
+  deadline: "2026-09-30"
+  application_window: "September (programmes starting 2027)"
+  start_date: "2027"
+  end_date: null
+  status: closed
+  status_basis: "deadline passed (30 September, programmes starting 2027)"
+  source_url: https://tiim.no/artikkel/utlysning-av-alle-uefa-utdanninger-med-oppstart-2027
+  fetched_at: "2026-10-24"
+  evidence: ["Endelig søknadsfrist for alle utdanninger er 30. september.", "Søk nå: UEFA PRO 2027-2028"]
+- id: nor-nff-uefa-elite-youth-a-2027
+  sport: football
+  country: Norway
+  provider: Norges Fotballforbund (NFF)
+  level: UEFA Elite Youth A
+  title: UEFA Spillerutvikler A 2027
+  location: null
+  language: Norwegian
+  format: null
+  price: null
+  deadline: "2026-09-30"
+  application_window: "September (programmes starting 2027)"
+  start_date: "2027"
+  end_date: null
+  status: closed
+  status_basis: "deadline passed (30 September, programmes starting 2027)"
+  source_url: https://tiim.no/artikkel/utlysning-av-alle-uefa-utdanninger-med-oppstart-2027
+  fetched_at: "2026-10-24"
+  evidence: ["Endelig søknadsfrist for alle utdanninger er 30. september.", "UEFA Spillerutvikler A"]
+- id: den-dbu-uefa-pro-2028-29
+  sport: football
+  country: Denmark
+  provider: DBU (Danish FA)
+  level: UEFA Pro
+  title: UEFA Pro 2028-29
+  location: null
+  language: Danish
+  format: null
+  price: null
+  deadline: null
+  application_window: "Applications open in summer 2027"
+  start_date: null
+  end_date: null
+  status: upcoming
+  status_basis: "Page: applications for UEFA Pro 2028-29 open in summer 2027"
+  source_url: https://www.dbu.dk/uddannelse/traeneruddannelse/kursusansoegninger/uefa-pro/
+  fetched_at: "2026-10-24"
+  evidence: ["Der åbnes for ansøgninger til UEFA Pro 2028-29 i sommeren 2027."]
+- id: den-dbu-uefa-a-2027
+  sport: football
+  country: Denmark
+  provider: DBU (Danish FA)
+  level: UEFA A
+  title: UEFA A 2027
+  location: null
+  language: Danish
+  format: null
+  price: {amount: 80000, currency: DKK, note: "plus UEFA A exam DKK 7,000"}
+  deadline: null
+  application_window: "Application form on page; no deadline shown"
+  start_date: null
+  end_date: null
+  status: unknown
+  status_basis: "Application form present but no deadline or 'open' statement found"
+  source_url: https://www.dbu.dk/uddannelse/traeneruddannelse/kursusansoegninger/uefa-pro/
+  fetched_at: "2026-10-24"
+  evidence: ["Ansøgningsskema UEFA A 2027", "Jeg er indforstået med gebyret for UEFA A 2027: 80.000 kr. + UEFA A eksamen: 7.000 kr."]
+- id: den-dbu-uefa-elite-youth-a-2026-27
+  sport: football
+  country: Denmark
+  provider: DBU (Danish FA)
+  level: UEFA Elite Youth A
+  title: UEFA Elite Youth A 2026-27
+  location: null
+  language: Danish
+  format: null
+  price: null
+  deadline: "2026-07-31"
+  application_window: "Closed 31 July 2026"
+  start_date: "2026-09-08"
+  end_date: "2027-05-12"
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://dbu.dk/uddannelse/traeneruddannelse/uefa-traeneruddannelser/?cat=60357&edu=60375
+  fetched_at: "2026-10-24"
+  evidence: ["Deadline for ansøgning til UEFA Elite Youth A 2026-27 var d. 31. juli 2026", "8.-10. sept. 2026", "11.-12. maj 2027"]
+- id: nir-ifa-uefa-2027
+  sport: football
+  country: Northern Ireland
+  provider: Irish Football Association
+  level: UEFA (various)
+  title: UEFA Diploma courses 2027
+  location: null
+  language: English
+  format: null
+  price: null
+  deadline: null
+  application_window: "Register-your-interest link for 2027"
+  start_date: "2027"
+  end_date: null
+  status: unknown
+  status_basis: "2026 window closed; page invites interest registrations for 2027"
+  source_url: https://www.irishfa.com/irish-football-association/coach-education
+  fetched_at: "2026-10-24"
+  evidence: ["The application window for our UEFA Diploma courses have now closed.", "To register your interest in applying for courses in 2027"]
+# ---------------- Basketball ----------------
+- id: eur-fiba-fecc-next
+  sport: basketball
+  country: Europe (FIBA Europe)
+  provider: FIBA Europe
+  level: FIBA Europe Coaching Certificate (FECC)
+  title: FIBA Europe Coaching Certificate – next cycle
+  location: null
+  language: English
+  format: null
+  price: null
+  deadline: null
+  application_window: "Nomination by national federations; deadline announced at the start of the programme year"
+  start_date: null
+  end_date: null
+  status: unknown
+  status_basis: "Page: 'The registration deadline will be announced at the beginning of the year in which the program starts.'"
+  source_url: https://about.fiba.basketball/en/regions/europe/activities/fiba-europe-coaching-certificate
+  fetched_at: "2026-10-24"
+  evidence: ["The registration deadline will be announced at the beginning of the year in which the program starts.", "FECC Examination Regulations 2025-27"]
+- id: esp-feb-ces-2026
+  sport: basketball
+  country: Spain
+  provider: Federación Española de Baloncesto (FEB)
+  level: Basketball – top national level
+  title: Curso de Entrenador Superior Madrid 2026
+  location: Madrid
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: null
+  end_date: null
+  status: closed
+  status_basis: "Page reports the 2026 edition already took place (232 enrolled)"
+  source_url: https://www.feb.es/entrenadores.aspx
+  fetched_at: "2026-10-24"
+  evidence: ["El Curso de Entrenador Superior Madrid 2026 ha roto registros"]
+- id: esp-fbclm-nivel2-2026-27
+  sport: basketball
+  country: Spain
+  provider: Federación de Baloncesto de Castilla-La Mancha (FEB territorial federation)
+  level: Basketball – national level 2
+  title: Ciclo Final de Grado Medio (Nivel II federativo) 2026/2027
+  location: Castilla-La Mancha
+  language: Spanish
+  format: null
+  format_note: "In-person teaching block in June 2027"
+  price: {amount: 625, currency: EUR, note: "€550 with eligible reduction"}
+  deadline: "2026-08-30"
+  application_window: "1 July – 30 August 2026"
+  start_date: null
+  end_date: null
+  status: closed
+  status_basis: "deadline passed"
+  source_url: https://fbclm.net/formacion-fbclm-convocados-los-cursos-oficiales-de-entrenador-de-baloncesto-ciclo-final-de-grado-medio-nivel-ii-federativo/
+  fetched_at: "2026-10-24"
+  evidence: ["inscripción del 1 julio al 30 de agosto de 2026.", "(o nivel 2 federativo): 625 €.", "La carga lectiva presencial se realizará durante el mes de junio de 2027"]
+- id: esp-fbcv-nivel1-2-2026-27
+  sport: basketball
+  country: Spain
+  provider: Federació de Basquetbol de la Comunitat Valenciana (FEB territorial federation)
+  level: Basketball – national levels 1 and 2
+  title: Cursos de Entrenador Nivel 1 y Nivel 2, temporada 2026-2027
+  location: Comunitat Valenciana
+  language: Spanish
+  format: online
+  format_note: "Online content and live video classes; exams in person"
+  price: null
+  deadline: null
+  application_window: "No deadline shown"
+  start_date: null
+  end_date: null
+  status: unknown
+  status_basis: "Page dated 29 June 2026 said enrolment was still open; no deadline shown, so current status is not confirmed"
+  source_url: https://www.fbcv.es/noticias/continuan-las-inscripciones-a-los-cursos-nivel-1-y-nivel-2/
+  fetched_at: "2026-10-24"
+  evidence: ["Sigue abierto el plazo de inscripción para los", "contenidos 100% online", "29/06/2026"]
+- id: ita-fip-toscana-regionale-2027
+  sport: basketball
+  country: Italy
+  provider: FIP Comitato Regionale Toscana (CNA Toscana)
+  level: Basketball – Allenatore Regionale
+  title: Corso Allenatore Regionale 2027 (Toscana)
+  location: Tuscany
+  language: Italian
+  format: null
+  price: null
+  price_note: "Mandatory intermediate lessons are free (pre-registration via form)"
+  deadline: null
+  application_window: "Pre-registration for mandatory intermediate lessons"
+  start_date: "2027-05"
+  end_date: "2027-06"
+  status: upcoming
+  status_basis: "Course planned May–June 2027, dates and format still to be defined"
+  source_url: https://toscana.fip.it/lezioni-intermedie-per-accesso-al-corso-allenatore-regionale-2027/
+  fetched_at: "2026-10-24"
+  evidence: ["Corso Allenatore Regionale 2027 programmato in Toscana nel periodo Maggio-Giugno 2027", "Per la partecipazione a tali lezioni non sono previsti costi"]
