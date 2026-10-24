@@ -3,6 +3,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily rebuild so Closing soon / Closed statuses are right on the day.
+  # 23:05 UTC = 00:05 Zurich in winter (CET), 01:05 in summer (CEST).
+  # Build only: no source refetch, no newsletter, no IndexNow.
+  schedule:
+    - cron: '5 23 * * *'
 permissions:
   contents: read
   pages: write
