@@ -17,18 +17,23 @@ import datetime, difflib, hashlib, json, os, subprocess, sys
 import yaml
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch import fetch, to_text
+from render import get as get_page
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "data", "source_state.json")
 SNAP = os.path.join(ROOT, "raw", "snapshots")
+
+RENDERED = set()  # URLs whose content needs JavaScript (render: true); read with scripts/render.py
 
 def urls():
     out = []
     from sources import enabled
     for sport in enabled().values():  # disabled sources (enabled: false) are not fetched
         out += [s["url"] for s in sport]
+        RENDERED.update(s["url"] for s in sport if s.get("render"))
     for c in json.load(open(os.path.join(ROOT, "data", "courses.json")))["courses"]:
         out.append(c["source_url"]); out += c.get("extra_sources") or []
+        if c.get("render"): RENDERED.add(c["source_url"])
     seen, uniq = set(), []
     for u in out:
         if u not in seen: seen.add(u); uniq.append(u)
@@ -51,7 +56,7 @@ def main():
             prev = st.get(u, {})
             if prev.get("checked") == today and not force:
                 continue
-            m = fetch(u, refresh=True)
+            m = get_page(u, rendered=u in RENDERED, refresh=True)
             text = to_text(m) if m.get("body") else ""
             h = hashlib.sha256(text.encode()).hexdigest() if text else None
             key = hashlib.sha256(u.encode()).hexdigest()[:16]

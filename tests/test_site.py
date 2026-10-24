@@ -42,14 +42,15 @@ class TestData(unittest.TestCase):
                     self.assertTrue(any(cue.search(x) for x in c["evidence"] + [c["status_basis"]]), c["status_basis"])
 
     def test_evidence_is_on_cached_page(self):
-        from fetch import fetch, to_text
+        from fetch import to_text
+        from render import get
         if not os.path.isdir(os.path.join(ROOT, "raw", "cache")):
             self.skipTest("raw/ cache not present (it is not committed)")
         cache = {}
         for c in DATA["courses"]:
             urls = [c["source_url"]] + (c.get("extra_sources") or [])
             for u in urls:
-                if u not in cache: cache[u] = norm(to_text(fetch(u)))
+                if u not in cache: cache[u] = norm(to_text(get(u, rendered=bool(c.get("render")))))
             text = " ".join(cache[u] for u in urls)
             for ev in c["evidence"]:
                 with self.subTest(c["id"], ev=ev[:40]):

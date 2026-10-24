@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-24",
- "count": 62,
+ "count": 77,
  "parsers": {
   "fa_uefa_c": {
    "rows": 32,
@@ -17,6 +17,431 @@
   "skipped_disabled_sport": 5
  },
  "courses": [
+  {
+   "id": "aut-kfv-uefa-b-2026",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "KFV (Carinthia FA)",
+   "level": "UEFA B",
+   "title": "UEFA-B-Diplomkurs 2026",
+   "location": "BSFZ Faak am See",
+   "language": "German",
+   "format": "residential",
+   "price": null,
+   "deadline": null,
+   "application_window": "Only via Fußball Online (login); aptitude test was 15 Sep 2026",
+   "start_date": "2026-11-15",
+   "end_date": "2027-01-31",
+   "status": "unknown",
+   "status_basis": "The aptitude test (15 Sep 2026) has passed and the page does not say whether places are left",
+   "source_url": "https://kfv-fussball.at/kfv/Trainerwesen/Trainerausbildung/Aktuelle-Trainerkurse",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA-B-Diplomkurs 2026",
+    "15. bis 21. November 2026, 15. bis 17. Jänner 2027 und 29. Jänner bis 31. Jänner 2027 im BSFZ Faak am See",
+    "Eignungstest: 15. September 2026"
+   ]
+  },
+  {
+   "id": "aut-kfv-uefa-c-2026-3",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "KFV (Carinthia FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C-Diplomkurs 3 2026",
+   "location": "BSFZ Faak am See",
+   "language": "German",
+   "format": "residential",
+   "price": null,
+   "deadline": null,
+   "application_window": "Only via Fußball Online (login)",
+   "start_date": "2026-11-22",
+   "end_date": "2026-12-13",
+   "status": "unknown",
+   "status_basis": "The page lists the dates only; places and registration status are behind the Fußball Online login",
+   "source_url": "https://kfv-fussball.at/kfv/Trainerwesen/Trainerausbildung/Aktuelle-Trainerkurse",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA-C-Diplomkurs 3 2026",
+    "22. bis 27. November und 12./13. Dezember 2026 im BSFZ Faak am See"
+   ]
+  },
+  {
+   "id": "aut-ooefv-uefa-c-2027-1",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "OÖFV (Upper Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA C-Diplom 2027, Termin 1",
+   "location": "BSFZ Obertraun",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 780,
+    "currency": "EUR"
+   },
+   "deadline": null,
+   "application_window": "Online registration (Fußball Online) open since 19 Oct 2026, 18:00",
+   "start_date": "2027-02-12",
+   "end_date": "2027-04-30",
+   "status": "open",
+   "status_basis": "Online registration open since 19 Oct 2026 per the course list; the number of free places is not shown publicly",
+   "source_url": "https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA C-Diplom Termin 1 Teil I: Kursbeginn: Fr. 12. Februar 2027",
+    "Kursende: Fr. 30. April 2027 16:00 Uhr Teilnehmerzahl: 36 Teilnehmer",
+    "Online-Anmeldung möglich ab 19. Oktober 2026, 18 Uhr Kursbeitrag: € 780,--"
+   ]
+  },
+  {
+   "id": "aut-noefv-uefa-c-2027-1",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "NÖFV (Lower Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C Diplom 2027, Kurs C/1",
+   "location": "Sportschule Lindabrunn, Enzesfeld-Lindabrunn",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 1200,
+    "currency": "EUR",
+    "note": "members of NÖFV clubs, board and lodging included; external without overnight stay € 770"
+   },
+   "deadline": null,
+   "application_window": "Only via 'Anmeldung Trainerkurse' in Fußball Online (login)",
+   "start_date": "2027-02-15",
+   "end_date": "2027-03-05",
+   "status": "unknown",
+   "status_basis": "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login",
+   "source_url": "https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Kurs C/1: Teil1: 15. bis 19. Februar 2027 Teil2: 3. bis 5. März 2027 (24 Personen)",
+    "Sportschule Lindabrunn - Talleitengasse 15, 2551 Enzesfeld-Lindabrunn",
+    "Kostenbeitrag von € 1.200,-"
+   ]
+  },
+  {
+   "id": "aut-tfv-uefa-c-2027-reichenau",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "TFV (Tyrol FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C-Diplom 2027, Reichenau",
+   "location": "Reichenau",
+   "language": "German",
+   "format": null,
+   "price": {
+    "amount": 450,
+    "currency": "EUR"
+   },
+   "deadline": "2027-02-01",
+   "application_window": "2 Oct 2026 – 1 Feb 2027, online (Fußball Online)",
+   "start_date": "2027-03-04",
+   "end_date": "2027-03-21",
+   "status": "open",
+   "status_basis": "Today is inside the published registration window (open 2 Oct 2026 – 1 Feb 2027); free places are not shown publicly",
+   "source_url": "https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA-C-DIPLOM-KURSE",
+    "Reichenau 04.03.27",
+    "02.10.26 - 01.02.27",
+    "€ 450,--"
+   ]
+  },
+  {
+   "id": "aut-ooefv-uefa-b-2027",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "OÖFV (Upper Austria FA)",
+   "level": "UEFA B",
+   "title": "UEFA B-Diplom 2027",
+   "location": "BSFZ Obertraun",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 480,
+    "currency": "EUR",
+    "note": "excluding accommodation and meals at BSFZ Obertraun"
+   },
+   "deadline": null,
+   "application_window": "Online registration from 4 Jan 2027, 18:00; aptitude test 17 Apr 2027",
+   "start_date": "2027-05-02",
+   "end_date": "2027-07-11",
+   "status": "upcoming",
+   "status_basis": "Registration opens 4 Jan 2027",
+   "source_url": "https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA B-Diplom Teil I: Kursbeginn: So. 02. Mai 2027",
+    "Kursende: So. 11. Juli 2027 13:00 Uhr",
+    "Eignungstest: Sa. 17. April 2027 Online-Anmeldung möglich ab 04. Jänner 2027, 18 Uhr Kursbeitrag: € 480,-- exkl. Nächtigungs- und Verpflegungskosten im BSFZ Obertraun"
+   ]
+  },
+  {
+   "id": "aut-noefv-uefa-c-2027-2",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "NÖFV (Lower Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C Diplom 2027, Kurs C/2",
+   "location": "Sportschule Lindabrunn, Enzesfeld-Lindabrunn",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 1200,
+    "currency": "EUR",
+    "note": "members of NÖFV clubs, board and lodging included; external without overnight stay € 770"
+   },
+   "deadline": null,
+   "application_window": "Only via 'Anmeldung Trainerkurse' in Fußball Online (login)",
+   "start_date": "2027-05-24",
+   "end_date": "2027-06-11",
+   "status": "unknown",
+   "status_basis": "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login",
+   "source_url": "https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Kurs C/2: Teil1: 24. bis 26. Mai 2027 Teil2: 7. bis 11. Juni 2027 (24 Personen)",
+    "Kostenbeitrag von € 1.200,-"
+   ]
+  },
+  {
+   "id": "aut-ooefv-uefa-c-2027-2",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "OÖFV (Upper Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA C-Diplom 2027, Termin 2",
+   "location": "BSFZ Obertraun",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 780,
+    "currency": "EUR"
+   },
+   "deadline": null,
+   "application_window": "Online registration from 8 Mar 2027, 18:00",
+   "start_date": "2027-07-02",
+   "end_date": "2027-09-10",
+   "status": "upcoming",
+   "status_basis": "Registration opens 8 Mar 2027",
+   "source_url": "https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA C-Diplom Termin 2 Teil I: Kursbeginn: Fr. 02. Juli 2027",
+    "Kursende: Fr. 10. September 2027 16:00 Uhr",
+    "Online-Anmeldung möglich ab 08. März 2027, 18 Uhr Kursbeitrag: € 780,--"
+   ]
+  },
+  {
+   "id": "aut-tfv-uefa-c-2027-jenbach",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "TFV (Tyrol FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C-Diplom 2027, Jenbach",
+   "location": "Jenbach",
+   "language": "German",
+   "format": null,
+   "price": {
+    "amount": 450,
+    "currency": "EUR"
+   },
+   "deadline": "2027-07-12",
+   "application_window": "2 Oct 2026 – 12 Jul 2027, online (Fußball Online)",
+   "start_date": "2027-08-19",
+   "end_date": "2027-09-05",
+   "status": "open",
+   "status_basis": "Today is inside the published registration window (open 2 Oct 2026 – 12 Jul 2027); free places are not shown publicly",
+   "source_url": "https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Jenbach 19.08.27",
+    "02.10.26 - 12.07.27",
+    "€ 450,--"
+   ]
+  },
+  {
+   "id": "aut-noefv-uefa-c-2027-3",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "NÖFV (Lower Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C Diplom 2027, Kurs C/3",
+   "location": "Sportschule Lindabrunn, Enzesfeld-Lindabrunn",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 1200,
+    "currency": "EUR",
+    "note": "members of NÖFV clubs, board and lodging included; external without overnight stay € 770"
+   },
+   "deadline": null,
+   "application_window": "Only via 'Anmeldung Trainerkurse' in Fußball Online (login)",
+   "start_date": "2027-08-23",
+   "end_date": "2027-10-27",
+   "status": "unknown",
+   "status_basis": "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login",
+   "source_url": "https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Kurs C/3: Teil1: 23. bis 27. August 2027 Teil2: 25. bis 27. Oktober 2027 (24 Personen)",
+    "Kostenbeitrag von € 1.200,-"
+   ]
+  },
+  {
+   "id": "aut-ooefv-uefa-c-2027-3",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "OÖFV (Upper Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA C-Diplom 2027, Termin 3",
+   "location": "BSFZ Obertraun",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 780,
+    "currency": "EUR"
+   },
+   "deadline": null,
+   "application_window": "Online registration from 28 Jun 2027, 18:00",
+   "start_date": "2027-08-29",
+   "end_date": "2027-10-10",
+   "status": "upcoming",
+   "status_basis": "Registration opens 28 Jun 2027",
+   "source_url": "https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "UEFA C-Diplom Termin 3 Teil I: Kursbeginn: So. 29. August 2027",
+    "Kursende: So. 10. Oktober 2027 18:00 Uhr",
+    "Online-Anmeldung möglich ab 28. Juni 2027, 18 Uhr Kursbeitrag: € 780,--"
+   ]
+  },
+  {
+   "id": "aut-noefv-uefa-b-2027",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "NÖFV (Lower Austria FA)",
+   "level": "UEFA B",
+   "title": "UEFA-B-Diplom 2027, Kurs B/27",
+   "location": "Sportschule Lindabrunn, Enzesfeld-Lindabrunn",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 1440,
+    "currency": "EUR",
+    "note": "board and lodging included; external without overnight stay € 725"
+   },
+   "deadline": null,
+   "application_window": "Only via 'Anmeldung Trainerkurse' in Fußball Online (login); aptitude test first",
+   "start_date": "2027-09-13",
+   "end_date": "2027-11-10",
+   "status": "unknown",
+   "status_basis": "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login",
+   "source_url": "https://www.noefv.at/noefv/Ausschreibung-UEFA-B-2027.pdf",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Kurs B/27: Teil1: Mo 13. bis Fr 17. September 2027 Teil2: Mo 11. bis Fr 15. Oktober 2027 Teil3: Mo 8. bis Mi 10. November 2027",
+    "Kostenbeitrag von € 1.440,-",
+    "beträgt der Kostenbeitrag € 725,-"
+   ]
+  },
+  {
+   "id": "aut-tfv-uefa-b-2027-28",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "TFV (Tyrol FA)",
+   "level": "UEFA B",
+   "title": "UEFA-B-Diplom 2027/2028",
+   "location": "BSPA Innsbruck",
+   "language": "German",
+   "format": null,
+   "price": {
+    "amount": 700,
+    "currency": "EUR"
+   },
+   "deadline": "2027-05-03",
+   "application_window": "Via Fußball Online until 3 May 2027; aptitude test 3 Jun 2027",
+   "start_date": "2027-09-20",
+   "end_date": "2028-04-07",
+   "status": "open",
+   "status_basis": "Registration is open until 3 May 2027 (Letzter Termin für die Anmeldung); entry depends on the aptitude test",
+   "source_url": "https://www.tfv.at/tfv/News/Ausschreibung-UEFA-B-Diplom-2027-2028/",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Letzter Termin für die Anmeldung ist Montag, 3. Mai 2027",
+    "Kursteil 1: 20.09. bis 24.09.2027",
+    "Kursteil 3: 03.04. bis 07.04.2028",
+    "Kursgebühr in Höhe von € 700,--",
+    "Donnerstag, 03.06.2027 mit Beginn um 17:00 Uhr"
+   ]
+  },
+  {
+   "id": "aut-tfv-uefa-c-2027-landeck",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "TFV (Tyrol FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C-Diplom 2027, Landeck",
+   "location": "Landeck",
+   "language": "German",
+   "format": null,
+   "price": {
+    "amount": 450,
+    "currency": "EUR"
+   },
+   "deadline": "2027-08-30",
+   "application_window": "2 Oct 2026 – 30 Aug 2027, online (Fußball Online)",
+   "start_date": "2027-09-30",
+   "end_date": "2027-10-17",
+   "status": "open",
+   "status_basis": "Today is inside the published registration window (open 2 Oct 2026 – 30 Aug 2027); free places are not shown publicly",
+   "source_url": "https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027",
+   "render": true,
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Landeck 30.09.27",
+    "02.10.26 - 30.08.27",
+    "€ 450,--"
+   ]
+  },
+  {
+   "id": "aut-noefv-uefa-c-2027-4",
+   "sport": "football",
+   "country": "Austria",
+   "provider": "NÖFV (Lower Austria FA)",
+   "level": "UEFA C",
+   "title": "UEFA-C Diplom 2027, Kurs C/4",
+   "location": "Sportschule Lindabrunn, Enzesfeld-Lindabrunn",
+   "language": "German",
+   "format": "residential",
+   "price": {
+    "amount": 1200,
+    "currency": "EUR",
+    "note": "members of NÖFV clubs, board and lodging included; external without overnight stay € 770"
+   },
+   "deadline": null,
+   "application_window": "Only via 'Anmeldung Trainerkurse' in Fußball Online (login)",
+   "start_date": "2027-11-04",
+   "end_date": "2027-11-19",
+   "status": "unknown",
+   "status_basis": "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login",
+   "source_url": "https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf",
+   "fetched_at": "2026-10-24",
+   "evidence": [
+    "Kurs C/4: Teil1: 4. bis 6. November 2027 Teil2: 15. bis 19. November 2027 (24 Personen)",
+    "Kostenbeitrag von € 1.200,-"
+   ]
+  },
   {
    "id": "den-dbu-uefa-elite-youth-a-2026-27",
    "sport": "football",
