@@ -1,0 +1,14 @@
+CoachBadge
+Weekly email · $issue_date
+
+$intro
+
+$sections
+
+See every open course on the board: $site
+Details come from each provider's own page and can change. Always confirm with the provider before you apply.
+
+--
+You get this because you signed up on CoachBadge ($site).
+Unsubscribe in one click: $unsubscribe_url
+$disclaimer

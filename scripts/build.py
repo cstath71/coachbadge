@@ -85,45 +85,55 @@ def counter_js():
             f"if(location.hostname!=={host})return;if(/bot|crawl|spider|headless/i.test(n.userAgent))return;"
             "if(n.sendBeacon)n.sendBeacon(E,location.pathname);})();</script>")
 
-# ---- newsletter signup (24 Oct 2026): posts straight to Supabase REST with the public key; the key can only INSERT ----
+# ---- newsletter (24 Oct 2026): the forms post to the coachbadge-subscribe Edge Function (honeypot, de-duplication,
+# rate limit, welcome email via AgentMail). No key of any kind is in the site. Removal is by the per-subscriber token link only.
 NL_PROMISE = "One free short email a week: newly opened courses and deadlines coming up. Every email has an unsubscribe link."
-NL_ACTION = CFG["supabase_url"].rstrip("/") + "/rest/v1/" + CFG["newsletter_table"]
-UNSUB_ACTION = CFG["supabase_url"].rstrip("/") + "/rest/v1/" + CFG["unsubscribe_table"]
+FUNCTION_URL = CFG["supabase_url"].rstrip("/") + "/functions/v1/" + CFG["subscribe_function"]
+NL_ACTION = FUNCTION_URL
+WELCOME = bool(CFG["email"]["welcome_enabled"])  # copy follows the switch; the function has its own WELCOME_ENABLED setting
+NL_OK = ("Thanks, you are on the list. A short welcome email is on its way; then one email a week." if WELCOME
+         else "Thanks, you are on the list. The first email you get will be a weekly issue.")
 HONEYPOT = ('<input type="text" name="cb_hp_note" value="" tabindex="-1" autocomplete="off" aria-hidden="true" '
             'style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">')  # anti-spam trap: people never see it
-NO_BAR_PAGES = ("newsletter.html", "privacy.html", "404.html")
+NO_BAR_PAGES = ("newsletter.html", "privacy.html", "404.html", "unsubscribe.html")
 
 def signup_js():
-    key = json.dumps(CFG["supabase_publishable_key"])
     return ("<script>/* newsletter form: sends only the email address; no cookies, no storage */"
             "if(!window.cbSub){window.cbSub=function(f){var m=f.parentNode.querySelector('.nl-msg'),b=f.querySelector('button'),"
             "ok=f.getAttribute('data-ok'),em=f.querySelector('input[type=email]');"
             "var hp=f.querySelector('input[name=cb_hp_note]');if(hp&&hp.value){m.textContent=ok;f.reset();return false;}"
             "if(!em.checkValidity()){m.textContent='Please enter a valid email address.';return false;}"
             "b.disabled=true;m.textContent='Sending\u2026';"
-            f"fetch(f.action,{{method:'POST',headers:{{'apikey':{key},'Content-Type':'application/json','Prefer':'return=minimal'}},"
-            "body:JSON.stringify({email:em.value.trim()})}).then(function(r){"
-            "if(r.ok||r.status===409){m.textContent=ok;f.reset();}"
-            "else if(r.status===400||r.status===401||r.status===403){m.textContent='Please enter a valid email address.';}"
+            "fetch(f.action,{method:'POST',headers:{'Content-Type':'application/json'},"
+            "body:JSON.stringify({email:em.value.trim(),cb_hp_note:''})}).then(function(r){"
+            "if(r.ok){m.textContent=ok;f.reset();}"
+            "else if(r.status===400){m.textContent='Please enter a valid email address.';}"
+            "else if(r.status===429){m.textContent='Too many sign-ups from this connection. Please try again in an hour.';}"
             "else{m.textContent='Something went wrong. Please try again.';}})"
             ".catch(function(){m.textContent='Network error. Please try again.';}).then(function(){b.disabled=false;});return false;};}</script>")
 
 def signup_form(fid, heading=True):
     h = '<h2 class="nl-h">Get new courses and deadlines by email</h2>' if heading else ""
     return (f'<div class="nl-box" id="{fid}">{h}<p class="nl-promise">{e(NL_PROMISE)}</p>'
-            f'<form class="nl" action="{e(NL_ACTION)}" method="post" data-table="{e(CFG["newsletter_table"])}" '
-            f'data-ok="Thanks, you are on the list. We will not send a welcome email; the first email you get will be a weekly issue." onsubmit="return cbSub(this)">'
+            f'<form class="nl" action="{e(NL_ACTION)}" method="post" data-ok="{e(NL_OK)}" onsubmit="return cbSub(this)">'
             f'<label class="sr" for="{fid}-email">Email address</label>'
             f'<input type="email" id="{fid}-email" name="email" placeholder="you@example.com" required maxlength="254" autocomplete="email">'
             f'{HONEYPOT}<button type="submit">Subscribe</button></form>'
-            f'<p class="small nl-msg" aria-live="polite">Free. We store only your email and when you signed up. <a href="{{R}}privacy.html">Privacy</a></p></div>')
+            f'<p class="small nl-msg" aria-live="polite">Free. We store your email, when you signed up and an unsubscribe code. <a href="{{R}}privacy.html">Privacy</a></p></div>')
 
-def unsub_form():
-    return (f'<div class="nl-box" id="unsubscribe"><form class="nl" action="{e(UNSUB_ACTION)}" method="post" data-table="{e(CFG["unsubscribe_table"])}" '
-            'data-ok="Done. If that address was on the list, it has been deleted." onsubmit="return cbSub(this)">'
-            '<label class="sr" for="unsub-email">Email address to remove</label>'
-            '<input type="email" id="unsub-email" name="email" placeholder="you@example.com" required maxlength="254" autocomplete="email">'
-            f'{HONEYPOT}<button type="submit">Remove my email</button></form><p class="small nl-msg" aria-live="polite"></p></div>')
+def unsubscribe_body():
+    # The link in every email lands here with ?t=<token>; the page posts the token once on load. One click, no form.
+    return ('<main><div class="wrap prose"><h1>Unsubscribe</h1><p id="unsub-msg" aria-live="polite">Removing your address\u2026</p>'
+            f'<p><a href="{{R}}index.html">Back to the course board</a></p></div></main>'
+            "<script>(function(){var m=document.getElementById('unsub-msg');"
+            "var t=new URLSearchParams(location.search).get('t')||'';"
+            "if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t)){m.textContent='This unsubscribe link is incomplete. Please use the full link from the email.';return;}"
+            f"fetch({json.dumps(FUNCTION_URL)},{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{action:'unsubscribe',token:t}})}})"
+            ".then(function(r){return r.json().then(function(j){return [r.ok,j]})}).then(function(x){"
+            "if(x[0]&&x[1].ok){m.textContent=x[1].removed?'Done. Your address has been deleted from the CoachBadge list. You will get no more emails.':"
+            "'This address is not on the list any more. You will get no more emails.';}"
+            "else{m.textContent='Something went wrong. Please try the link again.';}})"
+            ".catch(function(){m.textContent='Network error. Please try the link again.';});})();</script>")
 
 def sticky_bar(r):
     return (f'<div class="nl-bar" id="nl-bar"><span>{e(NL_PROMISE.split(". Every")[0])}.</span>'
@@ -137,7 +147,7 @@ def sticky_bar(r):
             "if('IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(x){vis+=x.isIntersecting?1:-1;if(vis<0)vis=0});u()})"
             ".observe(f)}}u()})();</script>")
 
-def page(path, title, desc, body, jsonld=None, extra_head=""):
+def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,follow"):
     depth = path.count("/"); r = "../" * depth
     url = BASE + (path[:-10] if path.endswith("index.html") else path)
     full_title = title if title.startswith(BRAND) else f"{title} | {BRAND}"
@@ -147,7 +157,7 @@ def page(path, title, desc, body, jsonld=None, extra_head=""):
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}">
-<link rel="canonical" href="{e(url)}"><meta name="robots" content="index,follow">
+<link rel="canonical" href="{e(url)}"><meta name="robots" content="{robots}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="{e(BRAND)}">
 <meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(url)}">
 <meta name="twitter:card" content="summary"><link rel="icon" href="{r}favicon.svg" type="image/svg+xml">
@@ -246,6 +256,7 @@ def build():
     shutil.copy(os.path.join(ROOT, "site", "style.css"), DIST)
     open(os.path.join(DIST, "favicon.svg"), "w").write(BADGE.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '))
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
+    shutil.copy(os.path.join(ROOT, "site", "email-logo.png"), DIST)  # PNG for emails (Gmail does not show SVG)
     os.makedirs(os.path.join(DIST, "data"))
     pub = {"name": BRAND, "description": CFG["tagline"], "generated": DATA["generated"], "build_date": TODAY.isoformat(),
            "disclaimer": CFG["disclaimer"], "license": "All rights reserved. Linking and short quotes with credit and a link are welcome.",
@@ -333,12 +344,12 @@ Changes are reviewed by a person before they appear here; nothing is published a
     prose("privacy.html", "Privacy", f"{BRAND} privacy notice: what the newsletter stores and how to unsubscribe.", f"""
 <p>{e(BRAND)} does not use cookies, does not store anything in your browser and does not run advertising or analytics trackers.</p>
 <h2>Newsletter</h2>
-<p><strong>What we store:</strong> only your email address and the time you signed up. Nothing else: no name, no IP address, no browser details.</p>
+<p><strong>What we store:</strong> your email address, the time you signed up, a random unsubscribe code and the time the welcome email was sent. Nothing else: no name, no browser details.</p>
+<p><strong>Abuse protection:</strong> to limit sign-ups to five per connection per hour, the sign-up service keeps a one-way hash of your IP address combined with the current hour (not the address itself), and deletes it after two hours.</p>
 <p><strong>Why:</strong> to send you the weekly email you asked for, with newly opened courses and deadlines coming up. We do not sell or share the list, and we do not use it for anything else.</p>
 <p><strong>Where:</strong> the list is kept in a database run by Supabase, in its EU (Frankfurt) region. Only the site team can read it; the sign-up form can add an address but cannot read the list.</p>
-<p><strong>No emails yet:</strong> we have not sent any email so far, and we do not send welcome or confirmation emails.</p>
-<p><strong>How to unsubscribe:</strong> every email will include an unsubscribe link. You can also remove your address at any time with the form below; it deletes the address and the sign-up time straight away and does not keep a record of the request.</p>
-{unsub_form()}
+<p><strong>Sending:</strong> emails are sent through AgentMail, an email service, from {e(CFG['email']['from_address'])}. {"You get one welcome email when you sign up, then the weekly email." if WELCOME else "You get the weekly email; there is no welcome or confirmation email for now."} Your address is passed to AgentMail only to deliver them.</p>
+<p><strong>How to unsubscribe:</strong> every email has a one-click unsubscribe link (and an unsubscribe header your mail app can use). It deletes your address, sign-up time and unsubscribe code straight away and keeps no record of the request.</p>
 <h2>Visits</h2>
 <p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
 <p>The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to run and secure the service; see GitHub's privacy statement.</p>
@@ -354,8 +365,9 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <h2>What you get</h2><ul>
 <li>Courses whose own page has newly opened applications or booking since the last email.</li>
 <li>Deadlines coming up, with the price and a link to the provider's page.</li></ul>
-<p>Each issue follows the weekly review of every source described in the <a href="methodology.html">methodology</a>. We have not sent an issue yet.</p>
+<p>Each issue follows the weekly review of every source described in the <a href="methodology.html">methodology</a>. {"You get a short welcome email when you sign up." if WELCOME else ""}</p>
 <p>See <a href="privacy.html">privacy</a> for what we store and how to unsubscribe.</p>""")
+    page("unsubscribe.html", "Unsubscribe", f"Unsubscribe from the {BRAND} email.", unsubscribe_body(), robots="noindex,nofollow")  # not in the sitemap
     page("404.html", "Page not found", "Page not found.", '<main><div class="wrap"><h1>Page not found</h1><p><a href="https://cstath71.github.io/coachbadge/">Back to the course board</a></p></div></main>')
     # robots, sitemap, llms
     open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {BASE}sitemap.xml\n")

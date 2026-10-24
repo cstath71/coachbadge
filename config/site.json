@@ -9,7 +9,12 @@
   "corrections_url": "https://github.com/cstath71/coachbadge/issues/new?template=correction.md",
   "disclaimer": "Independent; not affiliated with UEFA or any association listed.",
   "supabase_url": "https://uufmlmwgvoqhhtqgrclu.supabase.co",
-  "supabase_publishable_key": "sb_publishable_whYSi6rIlooJfGIOl9_BiQ_JFIx-Wts",
   "newsletter_table": "coachbadge_subscribers",
-  "unsubscribe_table": "coachbadge_unsubscribes"
+  "subscribe_function": "coachbadge-subscribe",
+  "email": {
+    "provider": "agentmail",
+    "from_address": "coachbadge@agentmail.to",
+    "from_name": "CoachBadge",
+    "welcome_enabled": false
+  }
 }

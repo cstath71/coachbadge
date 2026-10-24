@@ -6,3 +6,4 @@ __pycache__/
 data/courses.candidate.json
 data/source_state.json
 reports/
+out/

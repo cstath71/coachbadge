@@ -43,14 +43,22 @@ git commit -am "Weekly refresh" && git push   # GitHub Pages deploys on push
 
 Rules: only data that appears on the provider's own page; no invented dates, prices or statuses; "open" only when the page says so.
 
-## Newsletter sign-up
+## Newsletter
 
 - Forms: near the top of the home page (`#subscribe-top`), on `newsletter.html`, plus a dismissible bar fixed to the bottom of other pages. Promise: one free short email a week with newly opened courses and deadlines coming up, and an unsubscribe link in every email.
-- Storage: table `public.coachbadge_subscribers` in the shared Supabase project (EU region), next to the other sites' tables. Columns kept: email and signup time (`created_at`); `cb_hp_note` is the honeypot and is always empty in stored rows.
-- Access: the site uses only the public (publishable) key, which can only INSERT. RLS is on, with a single anon insert policy; no select, update or delete for the public key. A before-insert trigger lower-cases the email, silently drops honeypot hits and duplicates (so the response never reveals whether an address is on the list), and check constraints validate the email.
-- Removal: the form on `privacy.html` inserts into `public.coachbadge_unsubscribes`; its trigger deletes the matching subscriber and stores nothing.
-- Schema: `supabase/migrations/20261024_coachbadge_subscribers.sql`. Tests: `tests/test_signup.py`.
-- **No emails are sent yet**: no welcome, confirmation or weekly email. Sending needs a domain to send from (coachbadge.com is not bought yet). Before the first send: buy the domain, set up the sending provider with an unsubscribe link in every email, and update `privacy.html` if anything changes.
+- Sign-up: the forms post `{email, cb_hp_note}` to the Supabase Edge Function `coachbadge-subscribe` (`supabase/functions/coachbadge-subscribe/`, deploy with `verify_jwt = false`). It drops honeypot hits, validates the address, rate-limits to 5 attempts per IP per hour (only a hash of IP + hour is kept, for two hours), and inserts with the service role. No key of any kind is in the site.
+- Storage: table `public.coachbadge_subscribers` in the shared Supabase project (EU region): email, `created_at`, a random `token` (unsubscribe) and `welcomed_at`. RLS on; since `20261024b_coachbadge_email.sql` the public key cannot write at all. A before-insert trigger lower-cases the email and silently skips duplicates (the response never reveals whether an address is on the list).
+- Unsubscribe: every email links to `unsubscribe.html?t=TOKEN` (noindex, not in the sitemap), which posts the token once on load, and carries `List-Unsubscribe` + `List-Unsubscribe-Post: List-Unsubscribe=One-Click` pointing at the function (`?unsubscribe=TOKEN`). The row is deleted and nothing is kept. The old open "Remove my email" form is gone (`coachbadge_unsubscribes` is left in place, unused).
+- Welcome email: `supabase/functions/coachbadge-subscribe/email.mjs` (shared by the function and the tests). Sent only when the function setting `WELCOME_ENABLED=true`; it is off. `config/site.json` `email.welcome_enabled` switches the site copy to match.
+- Weekly email: `scripts/send_newsletter.py` builds the issue only from `data/courses.json` and the latest `reports/refresh-*.md` (newly opened, updated open courses, deadlines in the next 30 days; every item links to the provider's page). Templates: `templates/newsletter.html` and `.txt`.
+  - `python3 scripts/send_newsletter.py` dry run: writes `out/newsletter-DATE.html/.txt/.json`, sends nothing.
+  - `--to ADDRESS` one test copy (subject starts with `[Test]`).
+  - `--send-to-subscribers --confirm DATE` everyone; only when run by hand. Nothing schedules it. Refuses an empty issue unless `--allow-empty`.
+- Sender and provider are settings, not code:
+  - site and script: `config/site.json` `email` (`provider`, `from_address`, `from_name`, `welcome_enabled`); env overrides `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_API_BASE`; key in `MAIL_API_KEY` (or `AGENTMAIL_API_KEY`), never in the repo.
+  - function: secrets `WELCOME_ENABLED`, `MAIL_PROVIDER`, `MAIL_FROM`, `MAIL_API_BASE`, `MAIL_API_KEY` (or Vault secret `coachbadge_agentmail_api_key`), `SITE_URL`, `PUBLIC_FUNCTION_URL`.
+  - Now: AgentMail, from coachbadge@agentmail.to. To move to hello@coachbadge.com: add the domain to AgentMail with its DNS records (SPF, DKIM, DMARC), create the `hello@coachbadge.com` inbox, then set `from_address` / `MAIL_FROM` to it; if the site moves to coachbadge.com, also change `base_url`, `SITE_URL` and the function's allowed origins.
+- Tests: `tests/test_signup.py`, `tests/test_email.py`.
 
 ## Licence
 
