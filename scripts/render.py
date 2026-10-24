@@ -7,6 +7,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch import UA, CACHE, robots_ok, to_text, _last
 
 CHALLENGE = ("cf-challenge", "challenge-platform", "Just a moment...", "Attention Required!", "captcha")
+CHALLENGE_TITLES = ("just a moment", "attention required", "access denied", "verify you are human", "security check")
+
+def is_challenge(html):
+    """True for an interstitial bot check. A normal page that merely loads a reCAPTCHA or Cloudflare script for a
+    form is not one: the marker must come with a challenge title or an almost empty page."""
+    import re
+    m = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+    title = (m.group(1) if m else "").strip().lower()
+    if any(t in title for t in CHALLENGE_TITLES): return True
+    if "cf-challenge" in html or "cf_chl_opt" in html: return True
+    text = re.sub(r"\s+", " ", re.sub(r"<(script|style)[^>]*>.*?</\1>|<[^>]+>", " ", html, flags=re.S | re.I)).strip()
+    return any(c in html for c in CHALLENGE) and len(text) < 600
 
 def render(url, refresh=False, wait_ms=2500):
     os.makedirs(CACHE, exist_ok=True)
@@ -40,7 +52,7 @@ def render(url, refresh=False, wait_ms=2500):
                 b.close()
             if meta["status"] and meta["status"] >= 400:
                 meta["error"] = f"HTTP {meta['status']}"
-            elif any(c in html for c in CHALLENGE):
+            elif is_challenge(html):
                 meta["error"] = "bot challenge page; not bypassed"
             else:
                 body = html.encode("utf-8")

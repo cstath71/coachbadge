@@ -308,6 +308,32 @@ def scope_sentence():
     return (f"{BRAND} tracks {counted(len(COURSES), 'course')} at {counted(len(LEVELS), 'level')} from {counted(len(ALL_SOURCES), 'source page')} "
             f"in {counted(len(COUNTRIES), 'country', 'countries')}, re-checked every week.")
 
+def count_badge(live, cs):
+    """Short label for listings. Never shows a bare zero: a country with nothing we could verify says 'Check association'."""
+    if live: return f"{len(live)} open / {len(cs)}"
+    if cs: return f"{len(cs)} tracked, none open"
+    return "Check association"
+
+def plain_reason(srcs):
+    """Why a country has no open course, in plain words, from its sources' reasons and notes."""
+    why = []
+    for x in srcs:
+        t = (x.get("reason") or x.get("note") or "").strip().rstrip(".")
+        if t: t = f"{x['association']}: {t[0].lower() + t[1:] if t[:2] != t[:2].upper() else t}"
+        if t and t not in why: why.append(t)
+    if not why: return "We have not found course dates on the pages we can read."
+    return " ".join(w + "." for w in why)
+
+def empty_state(srcs, r, scope=""):
+    """Shown on a country or level page with no open course: what to do instead, with links to the association's course pages."""
+    links = "".join(f'<li><a href="{e(x["url"])}" rel="nofollow noopener">{e(x["association"])}</a></li>' for x in srcs)
+    return (f'<section class="note empty-state" id="no-open-courses"><h2>No open courses right now</h2>'
+            f'<p>We could not find a course{e(scope)} that is open for applications or booking on the pages we can read. '
+            "That does not mean there are none: associations often publish dates late, or only inside a members' login.</p>"
+            + (f'<p><strong>Why:</strong> {e(plain_reason(srcs))}</p>' if srcs else "")
+            + (f"<p>Check the association's course pages:</p><ul>{links}</ul>" if srcs else f'<p>See the <a href="{r}countries.html">country pages</a> for each association\'s course pages.</p>')
+            + "</section>")
+
 def country_summary(ct, cs, srcs):
     live = [c for c in cs if is_live(c)]
     if not cs:
@@ -425,12 +451,12 @@ def build():
     for ct in COUNTRIES:
         cs = [c for c in COURSES if c["country"] == ct]; live = [c for c in cs if is_live(c)]
         srcs = [x for x in ALL_SOURCES if x["country"] == ct]
-        items.append(f'<li><a href="country/{slug(ct)}.html">{e(ct)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
+        items.append(f'<li><a href="country/{slug(ct)}.html">{e(ct)} <span class="small">({count_badge(live, cs)})</span></a></li>')
         ans = country_summary(ct, cs, srcs); faq = country_faq(ct, cs, srcs, "../")
         path = f"country/{slug(ct)}.html"
         b = (f'<section class="hero"><div class="wrap"><h1>Football coaching courses in {e(ct)}</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">'
-             + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else "")
+             + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else empty_state(srcs, "../", " in " + ct))
              + (f'<h2><span class="bar"></span>All courses in {e(ct)}</h2>{table(cs, "../")}' if cs else "")
              + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "")
              + seo.faq_html(faq) + resources_box("../") + "</div></main>")
@@ -448,10 +474,11 @@ def build():
     for lv in LEVELS:
         cs = [c for c in COURSES if c["level"] == lv]; live = [c for c in cs if is_live(c)]
         path = f"level/{slug(lv)}.html"
-        items.append(f'<li><a href="{path}">{e(lv)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
+        items.append(f'<li><a href="{path}">{e(lv)} <span class="small">({count_badge(live, cs)})</span></a></li>')
         ans = level_summary(lv, cs); faq = level_faq(lv, cs)
         b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} football coaching courses in Europe</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
-             f'<main><div class="wrap">' + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else "")
+             f'<main><div class="wrap">' + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live
+                                             else empty_state([x for x in ALL_SOURCES if lv in x.get("levels", [])], "../", " at " + lv))
              + f'<h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{seo.faq_html(faq)}{resources_box("../")}</div></main>')
         page(path, f"{lv} coaching courses in Europe", f"{ans} Deadlines, dates and prices."[:300], b,
              [item_list(f"{lv} football coaching courses", BASE + path, cs), seo.faq_ld(faq)],
@@ -533,7 +560,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 
 def llms_txt():
     lv_lines = "\n".join(f"- [{lv}]({BASE}level/{slug(lv)}.html): {level_summary(lv, [c for c in COURSES if c['level'] == lv])}" for lv in LEVELS)
-    ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html): {len([c for c in COURSES if c['country'] == ct and is_live(c)])} open of {len([c for c in COURSES if c['country'] == ct])} tracked" for ct in COUNTRIES)
+    ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html): {count_badge([c for c in COURSES if c['country'] == ct and is_live(c)], [c for c in COURSES if c['country'] == ct])}" for ct in COUNTRIES)
     faq = "\n\n".join(f"### {q}\n{seo.text(a)}" for q, a in home_faq())
     return f"""# {BRAND}
 

@@ -19,10 +19,22 @@ Independent; not affiliated with UEFA or any association listed.
 | `data/manual_courses.yaml` | Hand-verified courses with evidence quotes. |
 | `data/courses.json` | Generated course list (`scripts/extract.py`). |
 | `scripts/fetch.py` | Polite fetcher: robots.txt, `CoachBadgeBot` user agent, 3 s per host, local cache in `raw/`. |
+| `scripts/render.py` | Same rules as `fetch.py`, but renders JavaScript-only pages in headless Chrome. Gives up on a 403, a bot check or a login; never clicks through. |
 | `scripts/extract.py` | Parsers for pages with course tables, plus the manual file. |
 | `scripts/refresh.py` | Weekly, restartable re-check. Writes `reports/refresh-DATE.md` with diffs. Never publishes. |
 | `scripts/build.py` | Builds the site into `dist/`. |
 | `tests/` | Data validation, banned words, wordmark position, link checks. |
+
+## JavaScript-only pages
+
+Some association pages (e.g. the Carinthian and Tyrolean FA course lists) build their text with JavaScript. Mark such a course in
+`data/manual_courses.yaml` (or a source in `data/sources.yaml`) with `render: true`; the evidence test and `scripts/refresh.py` then read
+that page through `scripts/render.py`. A page that needs a login or shows a bot check stays `readable: "no"`.
+
+## Countries without courses
+
+A country or level with no open course shows "No open courses right now", the reason from its `sources.yaml` entries in plain words and
+links to the association's course pages. Listings show "Check association" instead of a zero count.
 
 ## Switched-off sources
 
