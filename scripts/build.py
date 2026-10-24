@@ -8,6 +8,8 @@ CFG = json.load(open(os.path.join(ROOT, "config", "site.json")))
 DATA = json.load(open(os.path.join(ROOT, "data", "courses.json")))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sources import enabled as enabled_sources
+import seo
+from seo import and_list
 SOURCES = enabled_sources()  # sources with enabled: false (basketball, for now) are left out of the site
 TODAY = datetime.date.fromisoformat(sys.argv[sys.argv.index("--today") + 1]) if "--today" in sys.argv else datetime.date.today()
 CLOSING_DAYS = 30
@@ -135,7 +137,7 @@ def signup_form(fid, heading=True):
 def unsubscribe_body():
     # The link in every email lands here with ?t=<token>; the page posts the token once on load. One click, no form.
     return ('<main><div class="wrap prose"><h1>Unsubscribe</h1><p id="unsub-msg" aria-live="polite">Removing your address\u2026</p>'
-            f'<p><a href="{{R}}index.html">Back to the course board</a></p></div></main>'
+            f'<p><a href="{{HOME}}">Back to the course board</a></p></div></main>'
             "<script>(function(){var m=document.getElementById('unsub-msg');"
             "var t=new URLSearchParams(location.search).get('t')||'';"
             "if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t)){m.textContent='This unsubscribe link is incomplete. Please use the full link from the email.';return;}"
@@ -158,24 +160,35 @@ def sticky_bar(r):
             "if('IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(x){vis+=x.isIntersecting?1:-1;if(vis<0)vis=0});u()})"
             ".observe(f)}}u()})();</script>")
 
-def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,follow"):
-    depth = path.count("/"); r = "../" * depth
+VERIFY = [("google-site-verification", CFG.get("google_site_verification", "")), ("msvalidate.01", CFG.get("msvalidate", ""))]
+OG_IMAGE = BASE + "og.png"; OG_ALT = f"{BRAND}: {CFG['tagline']}"
+PAGES = []  # (url, title, description, lastmod) of every indexable page, for sitemap.xml and llms.txt
+
+def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,follow", crumbs=None, lastmod=None):
+    """crumbs: [(name, root-relative path)] ending with this page; adds a visible breadcrumb trail and BreadcrumbList."""
+    depth = path.count("/"); r = "../" * depth; home = r or "./"
     url = BASE + (path[:-10] if path.endswith("index.html") else path)
     full_title = title if title.startswith(BRAND) else f"{title} | {BRAND}"
-    ld = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (jsonld or []))
-    nav = [("index.html", "Courses"), ("countries.html", "Countries"), ("levels.html", "Levels"),
+    lds = list(jsonld or []) + ([seo.breadcrumb_ld(BASE, crumbs)] if crumbs else [])
+    ld = "".join(seo.ld_script(x) for x in lds)
+    verify = "".join(f'<meta name="{k}" content="{e(v)}">' for k, v in VERIFY if v)
+    crumb_nav = seo.breadcrumb_html(crumbs, r) if crumbs else ""
+    nav = [("", "Courses"), ("countries.html", "Countries"), ("levels.html", "Levels"),
            ("methodology.html", "Methodology"), ("about.html", "About")]
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}">
-<link rel="canonical" href="{e(url)}"><meta name="robots" content="{robots}">
-<meta property="og:type" content="website"><meta property="og:site_name" content="{e(BRAND)}">
+<link rel="canonical" href="{e(url)}"><meta name="robots" content="{robots}">{verify}
+<meta property="og:type" content="website"><meta property="og:site_name" content="{e(BRAND)}"><meta property="og:locale" content="en_GB">
 <meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(url)}">
-<meta name="twitter:card" content="summary"><link rel="icon" href="{r}favicon.svg" type="image/svg+xml">
+<meta property="og:image" content="{e(OG_IMAGE)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{e(OG_ALT)}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{e(full_title)}"><meta name="twitter:description" content="{e(desc)}">
+<meta name="twitter:image" content="{e(OG_IMAGE)}"><meta name="twitter:image:alt" content="{e(OG_ALT)}">
+<link rel="icon" href="{r}favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="{r}logo-512.png">
 <link rel="stylesheet" href="{r}style.css">{extra_head}{ld}</head>
-<body><header class="top"><div class="wrap"><a class="brand" id="wordmark" href="{r}index.html" aria-label="{e(BRAND)} home">{BADGE}<span>{e(CFG['wordmark'][:5])}<b>{e(CFG['wordmark'][5:])}</b></span></a>
-<nav class="main">{''.join(f'<a href="{r}{h}">{t}</a>' for h, t in nav)}</nav></div></header>
-{body.replace('{R}', r)}
+<body><header class="top"><div class="wrap"><a class="brand" id="wordmark" href="{home}" aria-label="{e(BRAND)} home">{BADGE}<span>{e(CFG['wordmark'][:5])}<b>{e(CFG['wordmark'][5:])}</b></span></a>
+<nav class="main">{''.join(f'<a href="{(r + h) or "./"}">{t}</a>' for h, t in nav)}</nav></div></header>
+{crumb_nav}{body.replace('{HOME}', home).replace('{R}', r)}
 <footer><div class="wrap"><p><strong>{e(BRAND)}</strong> · {e(CFG['tagline'])}.</p>
 <p>{e(CFG['disclaimer'])} Course details come from each provider's own pages and can change at any time; always confirm with the provider before you apply.</p>
 <p><a href="{r}methodology.html">Methodology</a> · <a href="{e(CFG['corrections_url'])}">Report a correction</a> · <a href="{r}newsletter.html">Newsletter</a> · <a href="{r}resources.html">Resources</a> · <a href="{r}privacy.html">Privacy</a> · <a href="{r}terms.html">Terms</a> · <a href="{r}data/courses.json">Data (JSON)</a></p>
@@ -183,6 +196,7 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
 {"" if path in NO_BAR_PAGES else sticky_bar(r)}{signup_js() if 'cbSub(this)' in body else ""}{counter_js()}</body></html>"""
     out = os.path.join(DIST, path); os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w").write(doc)
+    if robots.startswith("index"): PAGES.append((url, full_title, desc, lastmod or DATA["generated"]))
     return url
 
 def tag(st): return f'<span class="tag s-{st}">{STATUS_LABEL[st]}</span>'
@@ -234,16 +248,22 @@ s.forEach(function(x){x.addEventListener('change',go)});})();</script>""" if wit
             + "".join(rows) + "</tbody></table></div>" + js)
 
 def course_ld(c):
-    d = {"@type": "Course", "name": c["title"], "description": f'{c["level"]} coaching course run by {c["provider"]} ({c["country"]}).',
-         "provider": {"@type": "Organization", "name": c["provider"]}, "url": c["source_url"], "inLanguage": c.get("language")}
+    """Course + CourseInstance + Offer, only from fields the provider's page actually gave us."""
+    d = {"@type": "Course", "name": c["title"], "description": f'{c["level"]} football coaching course run by {c["provider"]} ({c["country"]}).',
+         "provider": {"@type": "Organization", "name": c["provider"]}, "url": c["source_url"], "educationalLevel": c["level"]}
+    if c.get("language"): d["inLanguage"] = c["language"]
     inst = {"@type": "CourseInstance"}
     if c.get("format"): inst["courseMode"] = {"residential": "onsite"}.get(c["format"], c["format"])
     if pdate(c.get("start_date")): inst["startDate"] = c["start_date"]
     if pdate(c.get("end_date")): inst["endDate"] = c["end_date"]
-    if c.get("location"): inst["location"] = c["location"]
+    if c.get("location"): inst["location"] = {"@type": "Place", "name": c["location"]}
     if len(inst) > 1: d["hasCourseInstance"] = inst
     if fprice(c.get("price")): d["offers"] = {"@type": "Offer", "price": c["price"]["amount"], "priceCurrency": c["price"]["currency"], "category": "Paid", "url": c["source_url"]}
     return d
+
+def item_list(name, url, cs):
+    return {"@context": "https://schema.org", "@type": "ItemList", "name": name, "url": url, "numberOfItems": len(cs),
+            "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}
 
 def sources_list(srcs):
     li = []
@@ -253,36 +273,136 @@ def sources_list(srcs):
         li.append(f'<li><a href="{e(s["url"])}" rel="nofollow noopener">{e(s["association"])}</a> – {rd}{": " + e(why) if why else ""} <span class="small">(checked {fdate(s["checked"])})</span></li>')
     return "<ul>" + "".join(li) + "</ul>"
 
+def is_live(c): return c["display_status"] in ("open", "closing_soon")
+def next_deadline(cs):
+    n = sorted([c for c in cs if is_live(c) and c.get("deadline")], key=lambda c: (c["deadline"], c["id"]))
+    return n[0] if n else None
+def counted(n, one, many=None): return f"{n} {one if n == 1 else (many or one + 's')}"
+def open_clause(k, n, noun, where=""):
+    """'3 of the 5 UEFA B courses CoachBadge tracks are open', with the right grammar for 0 and 1."""
+    tr = f"{BRAND} tracks{where}"
+    if k == 0 and n == 1: return f"the one {noun} {tr} is not open for applications or booking"
+    if k == 0: return f"none of the {n} {noun}s {tr} is open for applications or booking"
+    return f"{k} of the {counted(n, noun)} {tr} {'is' if k == 1 else 'are'} open for applications or booking"
+def price_range(cs):
+    """'£A–£B' per currency, only from prices the providers list."""
+    by = {}
+    for c in cs:
+        if fprice(c.get("price")): by.setdefault(c["price"]["currency"], []).append(c["price"]["amount"])
+    out = []
+    for cur, xs in sorted(by.items()):
+        lo, hi = fprice({"amount": min(xs), "currency": cur}), fprice({"amount": max(xs), "currency": cur})
+        out.append(lo if lo == hi else f"{lo} to {hi}")
+    return out
+GEN = fdate(DATA["generated"])
+
 def summary_sentence():
     cn = sorted({c["country"] for c in LIVE})
-    nxt = sorted([c for c in LIVE if c.get("deadline")], key=lambda c: c["deadline"])
-    s = (f"As of {fdate(DATA['generated'])}, {len(LIVE)} football coaching courses in Europe are open for applications or booking on the providers' own pages, "
-         f"in {', '.join(cn)}.")
-    if nxt: s += f" The next deadline is {nxt[0]['title']} ({nxt[0]['provider']}) on {fdate(nxt[0]['deadline'])}."
+    nxt = next_deadline(LIVE)
+    s = (f"As of {GEN}, {len(LIVE)} football coaching courses in Europe are open for applications or booking on the providers' own pages, "
+         f"in {and_list(cn)}.")
+    if nxt: s += f" The next deadline is {nxt['title']} ({nxt['provider']}) on {fdate(nxt['deadline'])}."
     return s
+
+def scope_sentence():
+    return (f"{BRAND} tracks {counted(len(COURSES), 'course')} at {counted(len(LEVELS), 'level')} from {counted(len(ALL_SOURCES), 'source page')} "
+            f"in {counted(len(COUNTRIES), 'country', 'countries')}, re-checked every week.")
+
+def country_summary(ct, cs, srcs):
+    live = [c for c in cs if is_live(c)]
+    if not cs:
+        s = f"As of {GEN}, {BRAND} has not found a football coaching course in {ct} with dates it could verify on the provider's pages."
+    else:
+        s = f"As of {GEN}, {open_clause(len(live), len(cs), 'football coaching course', ' in ' + ct)}"
+        lv = sorted({c["level"] for c in live})
+        s += (f" ({and_list(lv)})." if lv else ".")
+        n = next_deadline(cs)
+        if n: s += f" The next deadline is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+    unread = [x for x in srcs if x["readable"] == "no"]
+    if srcs: s += f" We check {counted(len(srcs), 'source page')} for {ct}" + (f"; {len(unread)} could not be read." if unread else ".")
+    return s
+
+def level_summary(lv, cs):
+    live = [c for c in cs if is_live(c)]
+    s = f"As of {GEN}, {open_clause(len(live), len(cs), lv + ' course')}"
+    cn = sorted({c["country"] for c in live})
+    s += (f", in {and_list(cn)}." if cn else ".")
+    n = next_deadline(cs)
+    if n: s += f" The next deadline is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+    pr = [c for c in cs if fprice(c.get("price"))]
+    if cs: s += f" {len(pr)} of {len(cs)} {'lists' if len(pr) == 1 else 'list'} a price." if pr else " None lists a price."
+    return s
+
+def home_faq():
+    lv = {}
+    for c in COURSES: lv[c["level"]] = lv.get(c["level"], 0) + 1
+    by_c = {}
+    for c in LIVE: by_c[c["country"]] = by_c.get(c["country"], 0) + 1
+    unread = [x for x in ALL_SOURCES if x["readable"] == "no"]
+    pr = [c for c in COURSES if fprice(c.get("price"))]
+    nxt = next_deadline(LIVE)
+    return [
+        (f"What is {BRAND}?", f"{e(BRAND)} is an independent board of football coaching courses in Europe. It collects course dates, deadlines and prices from the football associations' own pages and links to the page where you apply. {e(CFG['disclaimer'])} It does not run courses, take applications or sell places."),
+        ("Which football coaching courses are open right now?",
+         f"As of {GEN}, {len(LIVE)} courses are open for applications or booking: " + e(and_list([f"{n} in {k}" for k, n in sorted(by_c.items())])) + "."
+         + (f" The next deadline is {e(nxt['title'])} ({e(nxt['provider'])}) on {fdate(nxt['deadline'])}." if nxt else "") + ' The board at the top of this page lists them.'),
+        (f"Which coaching levels and countries does {BRAND} cover?",
+         "Courses by level: " + e(and_list([f"{k} ({n})" for k, n in sorted(lv.items())])) + f". We check {counted(len(ALL_SOURCES), 'source page')} in {counted(len(COUNTRIES), 'country', 'countries')}"
+         + (f"; {len(unread)} of them could not be read" if unread else "") + '. See <a href="levels.html">levels</a> and <a href="countries.html">countries</a>.'),
+        ("Where does the course information come from?", 'Only from pages published by the football associations, their regional or district associations, and academies those associations run. Each entry keeps the exact sentence from the page that supports its status and dates. <a href="methodology.html">Methodology</a>.'),
+        (f"How often is {BRAND} updated?", f"Every source is re-read once a week, and changes are reviewed by a person before they appear. The data was last checked on {GEN}."),
+        ("Are course prices listed?", f"{len(pr)} of the {len(COURSES)} tracked courses show a price from the provider's page. Where the page states no price, the listing says \u201cNot listed\u201d instead of guessing."),
+        ("How do I apply for a coaching course?", f"Through the provider. Every course links to its source page, where you apply or book. {e(BRAND)} does not take applications; always confirm dates and prices with the provider."),
+        ("Is there a newsletter?", f'{e(NL_PROMISE)} <a href="newsletter.html">Sign up</a>.'),
+    ]
+
+def country_faq(ct, cs, srcs, r):
+    live = [c for c in cs if is_live(c)]; n = next_deadline(cs)
+    if live:
+        a = f"Yes. As of {GEN}, {counted(len(live), 'course')} in {e(ct)} {'is' if len(live) == 1 else 'are'} open: " + e(and_list([f"{c['title']} ({c['provider']})" for c in live[:8]])) + (f", and {len(live) - 8} more" if len(live) > 8 else "") + "."
+        if n: a += f" The next deadline is {fdate(n['deadline'])}."
+    else:
+        a = f"Not on the pages we could read as of {GEN}. Many associations publish dates late or only inside members' portals, so check the sources below."
+    rd = {"yes": "read", "partial": "read, but without course dates", "no": "could not be read"}
+    b = (f"From {counted(len(srcs), 'page')} published by the provider{'s' if len(srcs) != 1 else ''}: " + e(and_list([f"{x['association']} ({rd[x['readable']]})" for x in srcs])) + f". Each is re-checked weekly; last checked {fdate(max(x['checked'] for x in srcs))}."
+         if srcs else f"Only from the providers' own pages; see the <a href=\"{r}methodology.html\">methodology</a>.")
+    return [(f"Are there open football coaching courses in {ct}?", a), (f"Where does {BRAND} get course information for {ct}?", b)]
+
+def level_faq(lv, cs):
+    live = [c for c in cs if is_live(c)]; n = next_deadline(cs)
+    by_c = {}
+    for c in live: by_c[c["country"]] = by_c.get(c["country"], 0) + 1
+    a = (f"As of {GEN}, {lv} courses are open in " + e(and_list([f"{k} ({v})" for k, v in sorted(by_c.items())])) + "." if live else f"None is open on the pages we could read as of {GEN}; the table below shows every {e(lv)} course we track and its status.")
+    b = (f"{e(n['title'])} ({e(n['provider'])}, {e(n['country'])}) on {fdate(n['deadline'])}." if n else f"None of the open {e(lv)} courses states a deadline on its page as of {GEN}; some take applications until places are full." if live else f"No {e(lv)} course is open right now, so there is no upcoming deadline.")
+    pr = [c for c in cs if fprice(c.get("price"))]; rg = price_range(cs)
+    p = (f"{len(pr)} of the {len(cs)} {e(lv)} courses list a price on the provider's page: " + e(" and ".join(rg)) + ". Check each course for what the price includes."
+         if pr else f"None of the {e(lv)} courses we track lists a price on the provider's page.")
+    return [(f"Where can I take a {lv} course right now?", a), (f"When is the next {lv} application deadline?", b), (f"How much does a {lv} course cost?", p)]
 
 def build():
     if os.path.exists(DIST): shutil.rmtree(DIST)
-    os.makedirs(DIST)
+    os.makedirs(DIST); PAGES.clear()
     shutil.copy(os.path.join(ROOT, "site", "style.css"), DIST)
     open(os.path.join(DIST, "favicon.svg"), "w").write(BADGE.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '))
     open(os.path.join(DIST, ".nojekyll"), "w").write("")
     shutil.copy(os.path.join(ROOT, "site", "email-logo.png"), DIST)  # PNG for emails (Gmail does not show SVG)
+    for f in ("og.png", "logo-512.png"): shutil.copy(os.path.join(ROOT, "site", f), DIST)  # share card + structured-data logo (scripts/make_images.py)
     shutil.copy(os.path.join(ROOT, "CNAME"), DIST)  # custom domain for GitHub Pages
+    open(os.path.join(DIST, seo.INDEXNOW_KEY + ".txt"), "w").write(seo.INDEXNOW_KEY)  # IndexNow ownership file
     os.makedirs(os.path.join(DIST, "data"))
     pub = {"name": BRAND, "description": CFG["tagline"], "generated": DATA["generated"], "build_date": TODAY.isoformat(),
            "disclaimer": CFG["disclaimer"], "license": "All rights reserved. Linking and short quotes with credit and a link are welcome.",
            "courses": [{k: v for k, v in c.items()} for c in COURSES]}
     json.dump(pub, open(os.path.join(DIST, "data", "courses.json"), "w"), ensure_ascii=False, indent=1)
-    urls = []
     # home
     board = "".join(card(c, "") for c in LIVE) or '<p class="note">No course is open right now on the pages we could read.</p>'
     soon = [c for c in LIVE if c["display_status"] == "closing_soon"]
     by_level = {}
     for c in LIVE: by_level.setdefault(c["level"], set()).add(c["country"])
     qa = "".join(f"<li><strong>{e(l)}:</strong> open in {e(', '.join(sorted(v)))}.</li>" for l, v in sorted(by_level.items()))
+    faq = home_faq()
     body = f"""<section class="hero"><div class="wrap"><h1>{e(CFG['tagline'])}</h1>
-<p class="answer">{e(summary_sentence())}</p>
+<p class="answer" id="summary">{e(summary_sentence())} {e(scope_sentence())}</p>
 <div class="stats"><div class="stat"><strong>{len(LIVE)}</strong>open now</div><div class="stat"><strong>{len(soon)}</strong>closing in {CLOSING_DAYS} days</div>
 <div class="stat"><strong>{len(COURSES)}</strong>courses tracked</div><div class="stat"><strong>{len(ALL_SOURCES)}</strong>sources checked</div></div></div></section>
 <main><div class="wrap">
@@ -294,43 +414,56 @@ def build():
 <p class="small">Many associations publish dates late or only inside members' portals. Countries with no open course are not necessarily closed: see each <a href="countries.html">country page</a> for what we could and could not read.</p>
 <h2><span class="bar"></span>All tracked courses</h2>
 {table(COURSES, "")}
+{seo.faq_html(faq)}
 {resources_box("")}
 </div></main>"""
-    ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": BASE, "description": CFG["tagline"]},
-          {"@context": "https://schema.org", "@type": "ItemList", "name": "Open coaching courses", "numberOfItems": len(LIVE),
-           "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(LIVE)]}]
-    urls.append(page("index.html", f"{BRAND}: {CFG['tagline']}", summary_sentence()[:300], body, ld))
+    ld = [{"@context": "https://schema.org", "@graph": [seo.website(BASE, BRAND, CFG["tagline"]), seo.org(BASE, BRAND)]},
+          item_list("Open football coaching courses", BASE, LIVE), seo.faq_ld(faq)]
+    page("index.html", f"{BRAND}: {CFG['tagline']}", summary_sentence()[:300], body, ld)
     # countries
     items = []
     for ct in COUNTRIES:
-        cs = [c for c in COURSES if c["country"] == ct]; live = [c for c in cs if c["display_status"] in ("open", "closing_soon")]
-        srcs = [s for s in ALL_SOURCES if s["country"] == ct]
+        cs = [c for c in COURSES if c["country"] == ct]; live = [c for c in cs if is_live(c)]
+        srcs = [x for x in ALL_SOURCES if x["country"] == ct]
         items.append(f'<li><a href="country/{slug(ct)}.html">{e(ct)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
-        ans = (f"{len(live)} of {len(cs)} tracked coaching courses in {ct} are open right now." if cs else
-               f"We have not found a course in {ct} with dates we could verify.")
-        b = (f'<section class="hero"><div class="wrap"><h1>Coaching courses in {e(ct)}</h1><p class="answer">{e(ans)}</p></div></section>'
-             f'<main><div class="wrap">' + (f'<div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All courses</h2>{table(cs, "../")}' if cs else "")
-             + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "") + resources_box("../") + "</div></main>")
-        urls.append(page(f"country/{slug(ct)}.html", f"Coaching courses in {ct}", f"{ans} Football coaching courses with deadlines and prices.", b,
-                         [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
-    urls.append(page("countries.html", "Coaching courses by country", "Football coaching courses by country.",
-                     f'<main><div class="wrap"><h1>Courses by country</h1><ul class="pill-list">{"".join(items)}</ul></div></main>'))
+        ans = country_summary(ct, cs, srcs); faq = country_faq(ct, cs, srcs, "../")
+        path = f"country/{slug(ct)}.html"
+        b = (f'<section class="hero"><div class="wrap"><h1>Football coaching courses in {e(ct)}</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
+             f'<main><div class="wrap">'
+             + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else "")
+             + (f'<h2><span class="bar"></span>All courses in {e(ct)}</h2>{table(cs, "../")}' if cs else "")
+             + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "")
+             + seo.faq_html(faq) + resources_box("../") + "</div></main>")
+        lm = max([c["fetched_at"] for c in cs] + [x["checked"] for x in srcs] or [DATA["generated"]])
+        page(path, f"Football coaching courses in {ct}", f"{ans} Deadlines, dates and prices with links to each provider."[:300], b,
+             ([item_list(f"Football coaching courses in {ct}", BASE + path, cs)] if cs else []) + [seo.faq_ld(faq)],
+             crumbs=[(BRAND, ""), ("Countries", "countries.html"), (ct, path)], lastmod=lm)
+    n_live_ct = len({c["country"] for c in LIVE})
+    cdesc = f"Football coaching courses in {len(COUNTRIES)} European countries; {n_live_ct} have a course open as of {GEN}. Deadlines, dates and prices from each association's pages."
+    page("countries.html", "Football coaching courses by country", cdesc,
+         f'<main><div class="wrap"><h1>Football coaching courses by country</h1><p class="answer-sub">{e(cdesc)}</p><ul class="pill-list">{"".join(items)}</ul></div></main>',
+         crumbs=[(BRAND, ""), ("Countries", "countries.html")])
     # levels
     items = []
     for lv in LEVELS:
-        cs = [c for c in COURSES if c["level"] == lv]; live = [c for c in cs if c["display_status"] in ("open", "closing_soon")]
-        items.append(f'<li><a href="level/{slug(lv)}.html">{e(lv)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
-        ans = f"{len(live)} {lv} courses are open right now" + (f", in {', '.join(sorted({c['country'] for c in live}))}." if live else ".")
-        b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} courses</h1><p class="answer">{e(ans)}</p></div></section>'
-             f'<main><div class="wrap"><div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{resources_box("../")}</div></main>')
-        urls.append(page(f"level/{slug(lv)}.html", f"{lv} coaching courses in Europe", ans + " Deadlines, dates and prices.", b,
-                         [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
-    urls.append(page("levels.html", "Coaching courses by level", "UEFA C, B, A, Pro, Elite Youth and goalkeeper coaching courses.",
-                     f'<main><div class="wrap"><h1>Courses by level</h1><ul class="pill-list">{"".join(items)}</ul></div></main>'))
+        cs = [c for c in COURSES if c["level"] == lv]; live = [c for c in cs if is_live(c)]
+        path = f"level/{slug(lv)}.html"
+        items.append(f'<li><a href="{path}">{e(lv)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
+        ans = level_summary(lv, cs); faq = level_faq(lv, cs)
+        b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} football coaching courses in Europe</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
+             f'<main><div class="wrap">' + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else "")
+             + f'<h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{seo.faq_html(faq)}{resources_box("../")}</div></main>')
+        page(path, f"{lv} coaching courses in Europe", f"{ans} Deadlines, dates and prices."[:300], b,
+             [item_list(f"{lv} football coaching courses", BASE + path, cs), seo.faq_ld(faq)],
+             crumbs=[(BRAND, ""), ("Levels", "levels.html"), (lv, path)], lastmod=max(c["fetched_at"] for c in cs))
+    ldesc = f"Football coaching courses by level: {and_list(LEVELS)}. {len(LIVE)} open as of {GEN}."
+    page("levels.html", "Football coaching courses by level", ldesc,
+         f'<main><div class="wrap"><h1>Football coaching courses by level</h1><p class="answer-sub">{e(ldesc)}</p><ul class="pill-list">{"".join(items)}</ul></div></main>',
+         crumbs=[(BRAND, ""), ("Levels", "levels.html")])
     # methodology
     unread = [s for s in ALL_SOURCES if s["readable"] == "no"]
-    prose = lambda h, t, d, x: urls.append(page(h, t, d, f'<main><div class="wrap prose"><h1>{e(t)}</h1>{x}</div></main>'))
-    prose("methodology.html", "Methodology", "Where CoachBadge data comes from, how often it is checked and how to report a correction.", f"""
+    prose = lambda h, t, d, x: page(h, t, d, f'<main><div class="wrap prose"><h1>{e(t)}</h1>{x}</div></main>', crumbs=[(BRAND, ""), (t, h)])
+    prose("methodology.html", "Methodology", f"Where {BRAND} data comes from, how often it is checked and how to report a correction.", f"""
 <p>{e(BRAND)} lists coaching courses only from pages published by the football associations themselves, their regional or district associations,
 and academies those associations run. We do not use forums, social posts or search-result snippets.</p>
 <h2>What every entry shows</h2><p>Provider, country, level, application window or deadline, start date, price, language, format (in person, online or blended),
@@ -349,7 +482,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 {sources_list(unread)}
 <h2>Corrections</h2><p>Spotted something wrong or missing? <a href="{e(CFG['corrections_url'])}">Open a correction</a> with the course and a link to the provider's page. Corrections are public GitHub issues, so please do not include personal details.</p>
 <h2>All sources</h2>{sources_list(ALL_SOURCES)}""")
-    prose("about.html", "About CoachBadge", f"{BRAND}: {CFG['tagline']}.", f"""
+    prose("about.html", f"About {BRAND}", f"About {BRAND}, an independent board of football coaching courses in Europe, from UEFA C to UEFA Pro, built from the associations' own pages.", f"""
 <p>{e(BRAND)} is an independent board of football coaching courses in Europe, from UEFA C to UEFA Pro, including Elite Youth and goalkeeper courses where they are listed.</p>
 <p>Coaching course dates, deadlines and prices are scattered across dozens of football association websites in many languages. {e(BRAND)} puts them in one place, with the deadline, the price and a link to the page where you actually apply.</p>
 <p>{e(CFG['disclaimer'])} We do not run courses, take applications or sell places. Always confirm details with the provider.</p>
@@ -370,7 +503,7 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
 <p>The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to run and secure the service; see GitHub's privacy statement.</p>
 <p>Corrections are sent as public GitHub issues, so please do not include personal details in them.</p>""")
-    prose("terms.html", "Terms", f"{BRAND} terms of use.", f"""
+    prose("terms.html", "Terms", f"{BRAND} terms of use: linking and short quotes with credit are welcome; course details are provided as is and should be confirmed with the provider.", f"""
 <p>© {TODAY.year} {e(BRAND)}. All rights reserved.</p>
 <p>You are welcome to link to any page and to quote short extracts, as long as you credit {e(BRAND)} and link to the page you quote. Please do not republish the data set in bulk without permission.</p>
 <p>Course information is collected from providers' own pages and can be incomplete or out of date. It is provided as is, without any warranty. Always check with the provider before applying, paying or travelling.</p>
@@ -389,37 +522,69 @@ Changes are reviewed by a person before they appear here; nothing is published a
 {resource_links("")}
 <p class="small">Check prices and terms on each site before you buy.</p>""")
     page("unsubscribe.html", "Unsubscribe", f"Unsubscribe from the {BRAND} email.", unsubscribe_body(), robots="noindex,nofollow")  # not in the sitemap
-    page("404.html", "Page not found", "Page not found.", f'<main><div class="wrap"><h1>Page not found</h1><p><a href="{BASE}">Back to the course board</a></p></div></main>')
-    # robots, sitemap, llms
-    open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {BASE}sitemap.xml\n")
-    open(os.path.join(DIST, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-        "".join(f"<url><loc>{e(u)}</loc><lastmod>{DATA['generated']}</lastmod></url>\n" for u in urls) + "</urlset>\n")
-    lv_lines = "\n".join(f"- [{lv}]({BASE}level/{slug(lv)}.html)" for lv in LEVELS)
-    ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html)" for ct in COUNTRIES)
-    open(os.path.join(DIST, "llms.txt"), "w").write(f"""# {BRAND}
+    page("404.html", "Page not found", "Page not found.", f'<main><div class="wrap"><h1>Page not found</h1><p><a href="{BASE}">Back to the course board</a></p></div></main>', robots="noindex,follow")
+    # robots, sitemap, llms (every indexable page registered itself in PAGES; noindex pages did not)
+    open(os.path.join(DIST, "robots.txt"), "w").write(seo.robots_txt(BASE))
+    open(os.path.join(DIST, "sitemap.xml"), "w").write(seo.sitemap_xml([(u, d) for u, _, _, d in PAGES]))
+    llms = llms_txt()
+    open(os.path.join(DIST, "llms.txt"), "w").write(llms)
+    open(os.path.join(DIST, "llms-full.txt"), "w").write(llms_full(llms))
+    print("built", len(PAGES), "indexable pages;", len(LIVE), "live;", len(COURSES), "courses")
+
+def llms_txt():
+    lv_lines = "\n".join(f"- [{lv}]({BASE}level/{slug(lv)}.html): {level_summary(lv, [c for c in COURSES if c['level'] == lv])}" for lv in LEVELS)
+    ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html): {len([c for c in COURSES if c['country'] == ct and is_live(c)])} open of {len([c for c in COURSES if c['country'] == ct])} tracked" for ct in COUNTRIES)
+    faq = "\n\n".join(f"### {q}\n{seo.text(a)}" for q, a in home_faq())
+    return f"""# {BRAND}
 
 > {CFG['tagline']}.
 
-{summary_sentence()}
+{summary_sentence()} {scope_sentence()}
 
-{BRAND} lists football coaching courses in Europe: UEFA C, B, A, Pro, Elite Youth and goalkeeper courses.
-Each entry has provider, country, level, deadline or application window, start date, price, language, format, status, a source link and the date it was last checked.
-Data comes only from the associations' own pages and is re-checked weekly; changes are reviewed by a person before publishing.
-{CFG['disclaimer']}
-When citing, please credit {BRAND} and link to the page, and tell readers to confirm with the provider.
+{BRAND} lists football coaching courses in Europe from the providers' own pages. Levels in the data: {and_list(LEVELS)}.
+Each entry has provider, country, level, deadline or application window, start date, price, language, format, status, a source link and the date it was last checked, plus the verbatim sentences from the source page that support it.
+
+How the data is gathered: a small script (CoachBadgeBot) re-reads every source page once a week, follows each site's robots.txt and waits between requests. Changes are reviewed by a person before they are published; nothing is published automatically. If a page does not state something, the field is left blank instead of guessed. Sites that block automated reading or need a login are listed as "could not be read".
+Status: "Open" only when the page says applications or booking are open (or its booking calendar shows free places); "Closing soon" means open with a deadline within {CLOSING_DAYS} days.
+Data last checked: {DATA['generated']}. Update cadence: weekly.
+{CFG['disclaimer']} {BRAND} does not run courses, take applications or sell places.
+When citing, please credit {BRAND}, link to the page, and tell readers to confirm with the provider.
 
 ## Main pages
-- [Open courses board]({BASE})
-- [Methodology]({BASE}methodology.html)
-- [Data as JSON]({BASE}data/courses.json)
+- [Open courses board]({BASE}): every course open now, plus all tracked courses
+- [Courses by country]({BASE}countries.html)
+- [Courses by level]({BASE}levels.html)
+- [Methodology]({BASE}methodology.html): sources, status rules, weekly checks, corrections
+- [About]({BASE}about.html)
+- [Newsletter]({BASE}newsletter.html): {NL_PROMISE}
+- [Coaching resources]({BASE}resources.html): tools for coaches (affiliate links, kept apart from the course data)
+- [Data as JSON]({BASE}data/courses.json): every course with its fields and evidence
+- [Full text for AI assistants]({BASE}llms-full.txt): every course in plain text
 
 ## By level
 {lv_lines}
 
 ## By country
 {ct_lines}
-""")
-    print("built", len(urls), "pages;", len(LIVE), "live;", len(COURSES), "courses")
+
+## FAQ
+
+{faq}
+"""
+
+def llms_full(llms):
+    out = [llms, f"\n## All {len(COURSES)} tracked courses (data of {DATA['generated']})\n"]
+    for c in COURSES:
+        bits = [f"status: {STATUS_LABEL[c['display_status']]}", f"provider: {c['provider']}", f"country: {c['country']}", f"level: {c['level']}"]
+        if c.get("location"): bits.append(f"location: {c['location']}")
+        if apply_text(c): bits.append(f"apply: {apply_text(c)}")
+        if when(c): bits.append(f"dates: {when(c)}")
+        bits.append(f"price: {price_text(c)}")
+        if c.get("format"): bits.append(f"format: {FORMAT_LABEL[c['format']]}")
+        if c.get("language"): bits.append(f"language: {c['language']}")
+        bits += [f"source: {c['source_url']}", f"checked: {c['fetched_at']}"]
+        out.append(f"- {c['title']}; " + "; ".join(bits))
+    return "\n".join(out) + "\n"
 
 if __name__ == "__main__":
     build()

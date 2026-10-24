@@ -60,6 +60,20 @@ Rules: only data that appears on the provider's own page; no invented dates, pri
   - Provider: Resend (`MAIL_PROVIDER=resend`), from `CoachBadge <hello@coachbadge.com>`, reply-to hello@coachbadge.com; List-Unsubscribe / List-Unsubscribe-Post go as custom headers. Needs coachbadge.com verified in Resend (DNS on the `send` subdomain + `resend._domainkey`, so Zoho's SPF on `@` is untouched). AgentMail (`MAIL_PROVIDER=agentmail`, earlier test inbox coachbadge@agentmail.to) is kept only as a fallback.
 - Tests: `tests/test_signup.py`, `tests/test_email.py`.
 
+## Search and answer engines
+
+`scripts/build.py` (helpers in `scripts/seo.py`) writes, on every build:
+
+- `robots.txt`: allows every crawler, including AI search and assistant bots (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended and others), plus the Sitemap line.
+- `sitemap.xml`: every indexable page with a real `lastmod` (data date; country and level pages use the latest check of their sources). `unsubscribe.html` and `404.html` are noindex and left out.
+- `llms.txt` and `llms-full.txt`: plain-text summary for language models; every number is computed from `data/courses.json`.
+- JSON-LD: WebSite + Organization on the home page, BreadcrumbList on subpages, ItemList of Course items on the home, country and level pages (Course fields, CourseInstance dates/location and Offer price only when the provider page gave them), FAQPage matching the visible FAQ.
+- Answer-first summary (`#summary`) under the h1 on the home, country and level pages; unique title/description, absolute canonical, Open Graph and Twitter tags (`og.png`, made once with `scripts/make_images.py`).
+- IndexNow key file at the site root. After a deploy is live, run `python3 scripts/indexnow.py` (`--dry` to preview) to submit all sitemap URLs.
+- Search Console / Bing: put a verification token in `config/site.json` (`google_site_verification`, `msvalidate`) and it renders as a meta tag; empty means no tag.
+
+`tests/test_seo.py` checks all of the above.
+
 ## Licence
 
 © CoachBadge. All rights reserved. Linking and short quotes with credit and a link are welcome.

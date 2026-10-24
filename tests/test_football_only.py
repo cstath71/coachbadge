@@ -33,7 +33,7 @@ class TestFootballOnly(unittest.TestCase):
         football = {s["country"] for s in src["football"]} | {c["country"] for c in courses}
         for f in glob.glob(os.path.join(DIST, "country", "*.html")):
             with self.subTest(os.path.basename(f)):
-                h1 = re.search(r"<h1>Coaching courses in ([^<]+)</h1>", open(f).read()).group(1)
+                h1 = re.search(r"<h1>(?:Football c|C)oaching courses in ([^<]+)</h1>", open(f).read()).group(1)
                 self.assertIn(h1.replace("&amp;", "&"), football)
 
     def test_no_sport_filter_with_one_sport(self):
