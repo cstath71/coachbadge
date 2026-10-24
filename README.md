@@ -36,6 +36,15 @@ git commit -am "Weekly refresh" && git push   # GitHub Pages deploys on push
 
 Rules: only data that appears on the provider's own page; no invented dates, prices or statuses; "open" only when the page says so.
 
+## Newsletter sign-up
+
+- Forms: near the top of the home page (`#subscribe-top`), on `newsletter.html`, plus a dismissible bar fixed to the bottom of other pages. Promise: one free short email a week with newly opened courses and deadlines coming up, and an unsubscribe link in every email.
+- Storage: table `public.coachbadge_subscribers` in the shared Supabase project (EU region), next to the other sites' tables. Columns kept: email and signup time (`created_at`); `cb_hp_note` is the honeypot and is always empty in stored rows.
+- Access: the site uses only the public (publishable) key, which can only INSERT. RLS is on, with a single anon insert policy; no select, update or delete for the public key. A before-insert trigger lower-cases the email, silently drops honeypot hits and duplicates (so the response never reveals whether an address is on the list), and check constraints validate the email.
+- Removal: the form on `privacy.html` inserts into `public.coachbadge_unsubscribes`; its trigger deletes the matching subscriber and stores nothing.
+- Schema: `supabase/migrations/20261024_coachbadge_subscribers.sql`. Tests: `tests/test_signup.py`.
+- **No emails are sent yet**: no welcome, confirmation or weekly email. Sending needs a domain to send from (coachbadge.com is not bought yet). Before the first send: buy the domain, set up the sending provider with an unsubscribe link in every email, and update `privacy.html` if anything changes.
+
 ## Licence
 
 © CoachBadge. All rights reserved. Linking and short quotes with credit and a link are welcome.

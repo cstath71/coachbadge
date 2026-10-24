@@ -45,3 +45,15 @@ footer a{color:#fff}
 .prose{max-width:820px}
 .count{font-weight:700}
 @media (max-width:700px){table.courses .hide-sm{display:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.nl-box{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--lime);border-radius:12px;padding:14px 16px;margin:6px 0 10px;position:relative}
+.nl-h{margin:0 0 4px;font-size:1.2rem}.nl-promise{margin:0 0 8px}
+form.nl{display:flex;flex-wrap:wrap;gap:8px}
+form.nl input[type=email]{font:inherit;flex:1 1 240px;padding:9px 12px;border:1px solid var(--line);border-radius:8px}
+form.nl button,.nl-bar-go{font:inherit;font-weight:800;background:var(--pitch);color:#fff;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;text-decoration:none}
+form.nl button:disabled{opacity:.6}
+.nl-msg{margin:8px 0 0}
+.nl-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;background:var(--ink);color:#fff;padding:10px 14px;box-shadow:0 -2px 10px rgba(0,0,0,.2);font-size:.95rem}
+.nl-bar[hidden]{display:none}
+.nl-bar-x{background:none;border:0;color:#c9d5de;font-size:1.4rem;line-height:1;cursor:pointer;padding:0 4px}
+body.has-bar footer{padding-bottom:80px}

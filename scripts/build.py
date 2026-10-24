@@ -81,6 +81,58 @@ def counter_js():
             f"if(location.hostname!=={host})return;if(/bot|crawl|spider|headless/i.test(n.userAgent))return;"
             "if(n.sendBeacon)n.sendBeacon(E,location.pathname);})();</script>")
 
+# ---- newsletter signup (24 Oct 2026): posts straight to Supabase REST with the public key; the key can only INSERT ----
+NL_PROMISE = "One free short email a week: newly opened courses and deadlines coming up. Every email has an unsubscribe link."
+NL_ACTION = CFG["supabase_url"].rstrip("/") + "/rest/v1/" + CFG["newsletter_table"]
+UNSUB_ACTION = CFG["supabase_url"].rstrip("/") + "/rest/v1/" + CFG["unsubscribe_table"]
+HONEYPOT = ('<input type="text" name="cb_hp_note" value="" tabindex="-1" autocomplete="off" aria-hidden="true" '
+            'style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">')  # anti-spam trap: people never see it
+NO_BAR_PAGES = ("newsletter.html", "privacy.html", "404.html")
+
+def signup_js():
+    key = json.dumps(CFG["supabase_publishable_key"])
+    return ("<script>/* newsletter form: sends only the email address; no cookies, no storage */"
+            "if(!window.cbSub){window.cbSub=function(f){var m=f.parentNode.querySelector('.nl-msg'),b=f.querySelector('button'),"
+            "ok=f.getAttribute('data-ok'),em=f.querySelector('input[type=email]');"
+            "var hp=f.querySelector('input[name=cb_hp_note]');if(hp&&hp.value){m.textContent=ok;f.reset();return false;}"
+            "if(!em.checkValidity()){m.textContent='Please enter a valid email address.';return false;}"
+            "b.disabled=true;m.textContent='Sending\u2026';"
+            f"fetch(f.action,{{method:'POST',headers:{{'apikey':{key},'Content-Type':'application/json','Prefer':'return=minimal'}},"
+            "body:JSON.stringify({email:em.value.trim()})}).then(function(r){"
+            "if(r.ok||r.status===409){m.textContent=ok;f.reset();}"
+            "else if(r.status===400||r.status===401||r.status===403){m.textContent='Please enter a valid email address.';}"
+            "else{m.textContent='Something went wrong. Please try again.';}})"
+            ".catch(function(){m.textContent='Network error. Please try again.';}).then(function(){b.disabled=false;});return false;};}</script>")
+
+def signup_form(fid, heading=True):
+    h = '<h2 class="nl-h">Get new courses and deadlines by email</h2>' if heading else ""
+    return (f'<div class="nl-box" id="{fid}">{h}<p class="nl-promise">{e(NL_PROMISE)}</p>'
+            f'<form class="nl" action="{e(NL_ACTION)}" method="post" data-table="{e(CFG["newsletter_table"])}" '
+            f'data-ok="Thanks, you are on the list. We will not send a welcome email; the first email you get will be a weekly issue." onsubmit="return cbSub(this)">'
+            f'<label class="sr" for="{fid}-email">Email address</label>'
+            f'<input type="email" id="{fid}-email" name="email" placeholder="you@example.com" required maxlength="254" autocomplete="email">'
+            f'{HONEYPOT}<button type="submit">Subscribe</button></form>'
+            f'<p class="small nl-msg" aria-live="polite">Free. We store only your email and when you signed up. <a href="{{R}}privacy.html">Privacy</a></p></div>')
+
+def unsub_form():
+    return (f'<div class="nl-box" id="unsubscribe"><form class="nl" action="{e(UNSUB_ACTION)}" method="post" data-table="{e(CFG["unsubscribe_table"])}" '
+            'data-ok="Done. If that address was on the list, it has been deleted." onsubmit="return cbSub(this)">'
+            '<label class="sr" for="unsub-email">Email address to remove</label>'
+            '<input type="email" id="unsub-email" name="email" placeholder="you@example.com" required maxlength="254" autocomplete="email">'
+            f'{HONEYPOT}<button type="submit">Remove my email</button></form><p class="small nl-msg" aria-live="polite"></p></div>')
+
+def sticky_bar(r):
+    return (f'<div class="nl-bar" id="nl-bar"><span>{e(NL_PROMISE.split(". Every")[0])}.</span>'
+            f'<a class="nl-bar-go" href="{r}newsletter.html">Subscribe</a><button type="button" class="nl-bar-x" aria-label="Close">\u00d7</button></div>'
+            "<script>(function(){var b=document.getElementById('nl-bar');if(!b)return;var closed=false,vis=0;"
+            "function u(){var s=!closed&&vis===0;b.hidden=!s;document.body.classList.toggle('has-bar',s)}"
+            "b.querySelector('.nl-bar-x').addEventListener('click',function(){closed=true;u()});"
+            "var f=document.querySelector('.nl-box');var go=b.querySelector('.nl-bar-go');"
+            "if(f){go.addEventListener('click',function(ev){ev.preventDefault();f.scrollIntoView({behavior:'smooth',block:'center'});"
+            "var i=f.querySelector('input[type=email]');if(i)setTimeout(function(){i.focus({preventScroll:true})},400)});"
+            "if('IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(x){vis+=x.isIntersecting?1:-1;if(vis<0)vis=0});u()})"
+            ".observe(f)}}u()})();</script>")
+
 def page(path, title, desc, body, jsonld=None, extra_head=""):
     depth = path.count("/"); r = "../" * depth
     url = BASE + (path[:-10] if path.endswith("index.html") else path)
@@ -98,12 +150,12 @@ def page(path, title, desc, body, jsonld=None, extra_head=""):
 <link rel="stylesheet" href="{r}style.css">{extra_head}{ld}</head>
 <body><header class="top"><div class="wrap"><a class="brand" id="wordmark" href="{r}index.html" aria-label="{e(BRAND)} home">{BADGE}<span>{e(CFG['wordmark'][:5])}<b>{e(CFG['wordmark'][5:])}</b></span></a>
 <nav class="main">{''.join(f'<a href="{r}{h}">{t}</a>' for h, t in nav)}</nav></div></header>
-{body}
+{body.replace('{R}', r)}
 <footer><div class="wrap"><p><strong>{e(BRAND)}</strong> · {e(CFG['tagline'])}.</p>
 <p>{e(CFG['disclaimer'])} Course details come from each provider's own pages and can change at any time; always confirm with the provider before you apply.</p>
 <p><a href="{r}methodology.html">Methodology</a> · <a href="{e(CFG['corrections_url'])}">Report a correction</a> · <a href="{r}newsletter.html">Newsletter</a> · <a href="{r}privacy.html">Privacy</a> · <a href="{r}terms.html">Terms</a> · <a href="{r}data/courses.json">Data (JSON)</a></p>
 <p class="small" style="color:#9fb0bd">Data last checked {fdate(DATA['generated'])}. © {TODAY.year} {e(BRAND)}. All rights reserved.</p></div></footer>
-{counter_js()}</body></html>"""
+{"" if path in NO_BAR_PAGES else sticky_bar(r)}{signup_js() if 'cbSub(this)' in body else ""}{counter_js()}</body></html>"""
     out = os.path.join(DIST, path); os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w").write(doc)
     return url
@@ -209,6 +261,7 @@ def build():
 <div class="stats"><div class="stat"><strong>{len(LIVE)}</strong>open now</div><div class="stat"><strong>{len(soon)}</strong>closing in {CLOSING_DAYS} days</div>
 <div class="stat"><strong>{len(COURSES)}</strong>courses tracked</div><div class="stat"><strong>{len(ALL_SOURCES)}</strong>sources checked</div></div></div></section>
 <main><div class="wrap">
+{signup_form("subscribe-top")}
 <h2><span class="bar"></span>Open now / closing in the next {CLOSING_DAYS} days</h2>
 <p class="small">Only courses whose own page says applications or booking are open, or whose booking calendar shows free places. Sorted by deadline, then start date.</p>
 <div class="board">{board}</div>
@@ -275,19 +328,32 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p>Coaching course dates, deadlines and prices are scattered across dozens of association websites in many languages. {e(BRAND)} puts them in one place, with the deadline, the price and a link to the page where you actually apply.</p>
 <p>{e(CFG['disclaimer'])} We do not run courses, take applications or sell places. Always confirm details with the provider.</p>
 <p>See the <a href="methodology.html">methodology</a> for how the data is collected.</p>""")
-    prose("privacy.html", "Privacy", f"{BRAND} privacy notice.", f"""
+    prose("privacy.html", "Privacy", f"{BRAND} privacy notice: what the newsletter stores and how to unsubscribe.", f"""
 <p>{e(BRAND)} does not use cookies, does not store anything in your browser and does not run advertising or analytics trackers.</p>
+<h2>Newsletter</h2>
+<p><strong>What we store:</strong> only your email address and the time you signed up. Nothing else: no name, no IP address, no browser details.</p>
+<p><strong>Why:</strong> to send you the weekly email you asked for, with newly opened courses and deadlines coming up. We do not sell or share the list, and we do not use it for anything else.</p>
+<p><strong>Where:</strong> the list is kept in a database run by Supabase, in its EU (Frankfurt) region. Only the site team can read it; the sign-up form can add an address but cannot read the list.</p>
+<p><strong>No emails yet:</strong> we have not sent any email so far, and we do not send welcome or confirmation emails.</p>
+<p><strong>How to unsubscribe:</strong> every email will include an unsubscribe link. You can also remove your address at any time with the form below; it deletes the address and the sign-up time straight away and does not keep a record of the request.</p>
+{unsub_form()}
+<h2>Visits</h2>
 <p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
 <p>The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to run and secure the service; see GitHub's privacy statement.</p>
-<p>There is no newsletter sign-up yet, so we hold no email addresses. Corrections are sent as public GitHub issues.</p>""")
+<p>Corrections are sent as public GitHub issues, so please do not include personal details in them.</p>""")
     prose("terms.html", "Terms", f"{BRAND} terms of use.", f"""
 <p>© {TODAY.year} {e(BRAND)}. All rights reserved.</p>
 <p>You are welcome to link to any page and to quote short extracts, as long as you credit {e(BRAND)} and link to the page you quote. Please do not republish the data set in bulk without permission.</p>
 <p>Course information is collected from providers' own pages and can be incomplete or out of date. It is provided as is, without any warranty. Always check with the provider before applying, paying or travelling.</p>
 <p>{e(CFG['disclaimer'])} Association and competition names are used only to describe their courses.</p>""")
-    prose("newsletter.html", "Newsletter", f"{BRAND} deadline alerts: coming soon.", """
-<p>A weekly email with new courses and upcoming deadlines is planned. Sign-up is not open yet, and we are not collecting any email addresses.</p>
-<p>Until then, check the <a href="index.html">open courses board</a>; it is updated after each weekly review.</p>""")
+    prose("newsletter.html", "Newsletter", f"{BRAND} weekly email: newly opened coaching courses and deadlines coming up. Free, with an unsubscribe link in every email.", f"""
+<p>{e(NL_PROMISE)}</p>
+{signup_form("subscribe", heading=False)}
+<h2>What you get</h2><ul>
+<li>Courses whose own page has newly opened applications or booking since the last email.</li>
+<li>Deadlines coming up, with the price and a link to the provider's page.</li></ul>
+<p>Each issue follows the weekly review of every source described in the <a href="methodology.html">methodology</a>. We have not sent an issue yet.</p>
+<p>See <a href="privacy.html">privacy</a> for what we store and how to unsubscribe.</p>""")
     page("404.html", "Page not found", "Page not found.", '<main><div class="wrap"><h1>Page not found</h1><p><a href="https://cstath71.github.io/coachbadge/">Back to the course board</a></p></div></main>')
     # robots, sitemap, llms
     open(os.path.join(DIST, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {BASE}sitemap.xml\n")

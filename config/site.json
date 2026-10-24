@@ -6,7 +6,10 @@
   "wordmark": "CoachBadge",
   "repo": "cstath71/coachbadge",
   "counter_endpoint": "",
-  "newsletter_endpoint": "",
   "corrections_url": "https://github.com/cstath71/coachbadge/issues/new?template=correction.md",
-  "disclaimer": "Independent; not affiliated with UEFA, FIBA or any association listed."
+  "disclaimer": "Independent; not affiliated with UEFA, FIBA or any association listed.",
+  "supabase_url": "https://uufmlmwgvoqhhtqgrclu.supabase.co",
+  "supabase_publishable_key": "sb_publishable_whYSi6rIlooJfGIOl9_BiQ_JFIx-Wts",
+  "newsletter_table": "coachbadge_subscribers",
+  "unsubscribe_table": "coachbadge_unsubscribes"
 }
