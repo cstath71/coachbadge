@@ -6,7 +6,8 @@ import { FROM_ADDRESS, FROM_NAME, FUNCTION_URL, REPLY_TO, SITE, welcomeEmail } f
 //   POST {action: "unsubscribe", token}          from unsubscribe.html (the link in every email)
 //   POST ?unsubscribe=<token>                    RFC 8058 one-click (List-Unsubscribe-Post) from mailbox providers
 // Settings (Supabase function secrets; nothing secret is in this file or in the site):
-//   WELCOME_ENABLED   "true" to send the welcome email. Anything else (or unset): sign-ups are stored, no email is sent.
+//   WELCOME_ENABLED   "true" / "false" forces the welcome email on / off. Unset: the Vault switch coachbadge_welcome_enabled
+//                     (read through public.coachbadge_mail_config()) decides; if that cannot be read, no email is sent.
 //   MAIL_PROVIDER     "resend" (default) or "agentmail"
 //   MAIL_FROM         sender, "CoachBadge <hello@coachbadge.com>" (default) or a bare address
 //   MAIL_REPLY_TO     reply-to address (default hello@coachbadge.com)
@@ -14,7 +15,7 @@ import { FROM_ADDRESS, FROM_NAME, FUNCTION_URL, REPLY_TO, SITE, welcomeEmail } f
 //   MAIL_API_KEY      provider API key; if unset, RESEND_API_KEY / AGENTMAIL_API_KEY, then the Vault secret read by public.coachbadge_mail_config()
 //   SITE_URL / PUBLIC_FUNCTION_URL   links in the email (defaults: the GitHub Pages site and this function)
 const env = (k: string) => (Deno.env.get(k) || "").trim();
-const WELCOME_ENABLED = env("WELCOME_ENABLED") === "true";
+const WELCOME_ENV = env("WELCOME_ENABLED");  // "true" | "false" | "" (unset: use the Vault switch)
 const MAIL_PROVIDER = env("MAIL_PROVIDER") || "resend";
 const MAIL_FROM = env("MAIL_FROM") || `${FROM_NAME} <${FROM_ADDRESS}>`;
 const MAIL_FROM_ADDRESS = (MAIL_FROM.match(/<([^>]+)>/) || [, MAIL_FROM])[1].trim();  // bare address (AgentMail inbox id)
@@ -22,6 +23,8 @@ const MAIL_REPLY_TO = env("MAIL_REPLY_TO") || REPLY_TO;
 const DEFAULT_API_BASE: Record<string, string> = { resend: "https://api.resend.com", agentmail: "https://api.agentmail.to/v0" };
 const MAIL_API_BASE = (env("MAIL_API_BASE") || DEFAULT_API_BASE[MAIL_PROVIDER] || "").replace(/\/+$/, "");
 const LINKS = { site: env("SITE_URL") || SITE, functionUrl: env("PUBLIC_FUNCTION_URL") || FUNCTION_URL };
+
+const envKey = () => env("MAIL_API_KEY") || (MAIL_PROVIDER === "resend" ? env("RESEND_API_KEY") : env("AGENTMAIL_API_KEY"));
 
 type Msg = { subject: string; text: string; html: string; headers: Record<string, string> };
 // One function per provider, same shape. Resend carries the List-Unsubscribe headers as custom headers.
@@ -107,11 +110,14 @@ Deno.serve(async (req) => {
   if (error) return json({ ok: false, error: "store_failed" }, 500, h);
   const created = rows && rows.length ? rows[0] : null;
 
+  // Mail settings from Vault (API key, welcome switch), read per request so the switch works without a redeploy.
+  let cfg: { api_key?: string; welcome_enabled?: boolean } = {};
+  if (created && (WELCOME_ENV === "" || !envKey())) {
+    try { const { data } = await sb.rpc("coachbadge_mail_config"); cfg = (Array.isArray(data) ? data[0] : data) || {}; } catch { /* unreadable: no welcome */ }
+  }
+  const WELCOME_ENABLED = WELCOME_ENV === "true" || (WELCOME_ENV === "" && cfg.welcome_enabled === true);
   if (created && WELCOME_ENABLED && SENDERS[MAIL_PROVIDER] && !TEST_DOMAIN_RE.test(email)) {
-    let key = env("MAIL_API_KEY") || (MAIL_PROVIDER === "resend" ? env("RESEND_API_KEY") : env("AGENTMAIL_API_KEY"));
-    if (!key) {
-      try { const { data } = await sb.rpc("coachbadge_mail_config"); key = (Array.isArray(data) ? data[0]?.api_key : data?.api_key) || undefined; } catch { /* no key: row kept, no welcome */ }
-    }
+    const key = envKey() || cfg.api_key || undefined;
     const since = new Date(Date.now() - 3600_000).toISOString();
     const { count: sentLastHour } = await sb.from("coachbadge_subscribers").select("id", { count: "exact", head: true }).gte("welcomed_at", since);
     if (key && (sentLastHour ?? 0) < MAX_WELCOMES_PER_HOUR) {

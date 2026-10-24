@@ -115,6 +115,18 @@ def _item_text(c):
 
 SECTIONS = [("newly_opened", "Newly opened"), ("updated_open", "Updated open courses"), ("deadlines", f"Deadlines in the next {WINDOW_DAYS} days")]
 
+def resources_parts():
+    """Optional 'Resources' line (config newsletter_resources): affiliate links with the same disclosure as the site."""
+    res = CFG.get("resources", []) if CFG.get("newsletter_resources") else []
+    if not res: return "", ""
+    h = ('<p style="margin:16px 0 0;font-size:14px"><strong>Resources:</strong> '
+         + " · ".join(f'<a href="{e(x["url"])}" rel="sponsored noopener" style="color:#0b5cad">{e(x["name"])}</a>' for x in res)
+         + f' (<a href="{SITE}resources.html" style="color:#0b5cad">what they are</a>)</p>'
+         + f'<p style="margin:4px 0 0;font-size:12px;color:#5b6b78">{e(CFG["affiliate_disclosure"])}</p>')
+    t = ("Resources: " + " · ".join(f'{x["name"]} {x["url"]}' for x in res) + f"\nWhat they are: {SITE}resources.html\n"
+         + CFG["affiliate_disclosure"] + "\n")
+    return h, t
+
 def render(issue, unsubscribe_url):
     today = datetime.date.fromisoformat(issue["issue_date"])
     intro_bits = []
@@ -129,8 +141,8 @@ def render(issue, unsubscribe_url):
                   + "".join(_item_html(c) for c in items) + "</table>")
         st.append(f"{label.upper()}\n\n" + "\n\n".join(_item_text(c) for c in items))
     vals = {"subject": e(subject_for(issue)), "site": SITE, "issue_date": fdate(today.isoformat()), "intro": e(intro),
-            "sections": "\n".join(sh), "unsubscribe_url": e(unsubscribe_url), "disclaimer": e(CFG["disclaimer"])}
-    tvals = dict(vals, subject=subject_for(issue), intro=intro, sections="\n\n".join(st), unsubscribe_url=unsubscribe_url, disclaimer=CFG["disclaimer"])
+            "sections": "\n".join(sh), "unsubscribe_url": e(unsubscribe_url), "disclaimer": e(CFG["disclaimer"]), "resources": resources_parts()[0]}
+    tvals = dict(vals, subject=subject_for(issue), intro=intro, sections="\n\n".join(st), unsubscribe_url=unsubscribe_url, disclaimer=CFG["disclaimer"], resources=resources_parts()[1])
     h = string.Template(open(os.path.join(ROOT, "templates", "newsletter.html"), encoding="utf-8").read()).substitute(vals)
     t = string.Template(open(os.path.join(ROOT, "templates", "newsletter.txt"), encoding="utf-8").read()).substitute(tvals)
     return h, t

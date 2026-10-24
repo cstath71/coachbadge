@@ -21,7 +21,7 @@ class TestSignupForm(unittest.TestCase):
         self.assertEqual(CFG["email"]["from_address"], "hello@coachbadge.com")
         self.assertEqual(CFG["email"]["from_name"], "CoachBadge")
         self.assertEqual(CFG["email"]["reply_to"], "hello@coachbadge.com")
-        self.assertIs(CFG["email"]["welcome_enabled"], False, "welcome email stays off until the domain is set up")
+        self.assertIs(CFG["email"]["welcome_enabled"], True, "welcome email is on since the coachbadge.com domain was verified in Resend")
         blob = json.dumps(CFG)
         for bad in ("service_role", "sb_secret_", "sb_publishable_", "am_", "api_key"): self.assertNotIn(bad, blob)
 

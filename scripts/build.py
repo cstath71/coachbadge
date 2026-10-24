@@ -95,6 +95,17 @@ NL_OK = ("Thanks, you are on the list. A short welcome email is on its way; then
          else "Thanks, you are on the list. The first email you get will be a weekly issue.")
 HONEYPOT = ('<input type="text" name="cb_hp_note" value="" tabindex="-1" autocomplete="off" aria-hidden="true" '
             'style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">')  # anti-spam trap: people never see it
+RESOURCES = CFG.get("resources", [])
+DISCLOSURE = CFG["affiliate_disclosure"]
+REL_AFF = "sponsored noopener"
+def resource_links(r, cls="res-list"):
+    return (f'<ul class="{cls}">' + "".join(f'<li><a href="{e(x["url"])}" rel="{REL_AFF}" target="_blank">{e(x["name"])}</a>: {e(x["desc"])}</li>' for x in RESOURCES) + "</ul>")
+def resources_box(r):
+    """Small labelled block for course pages: affiliate links plus the disclosure, kept apart from the course data."""
+    if not RESOURCES: return ""
+    return (f'<aside class="resources" aria-labelledby="res-h"><h2 id="res-h"><span class="bar"></span>Coaching resources</h2>'
+            f'<p class="small">Tools and learning material for coaches, separate from the course listings above. <a href="{r}resources.html">All resources</a></p>'
+            f'{resource_links(r)}<p class="small disclosure">{e(DISCLOSURE)}</p></aside>')
 NO_BAR_PAGES = ("newsletter.html", "privacy.html", "404.html", "unsubscribe.html")
 
 def signup_js():
@@ -167,7 +178,7 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
 {body.replace('{R}', r)}
 <footer><div class="wrap"><p><strong>{e(BRAND)}</strong> · {e(CFG['tagline'])}.</p>
 <p>{e(CFG['disclaimer'])} Course details come from each provider's own pages and can change at any time; always confirm with the provider before you apply.</p>
-<p><a href="{r}methodology.html">Methodology</a> · <a href="{e(CFG['corrections_url'])}">Report a correction</a> · <a href="{r}newsletter.html">Newsletter</a> · <a href="{r}privacy.html">Privacy</a> · <a href="{r}terms.html">Terms</a> · <a href="{r}data/courses.json">Data (JSON)</a></p>
+<p><a href="{r}methodology.html">Methodology</a> · <a href="{e(CFG['corrections_url'])}">Report a correction</a> · <a href="{r}newsletter.html">Newsletter</a> · <a href="{r}resources.html">Resources</a> · <a href="{r}privacy.html">Privacy</a> · <a href="{r}terms.html">Terms</a> · <a href="{r}data/courses.json">Data (JSON)</a></p>
 <p class="small" style="color:#9fb0bd">Data last checked {fdate(DATA['generated'])}. © {TODAY.year} {e(BRAND)}. All rights reserved.</p></div></footer>
 {"" if path in NO_BAR_PAGES else sticky_bar(r)}{signup_js() if 'cbSub(this)' in body else ""}{counter_js()}</body></html>"""
     out = os.path.join(DIST, path); os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -283,6 +294,7 @@ def build():
 <p class="small">Many associations publish dates late or only inside members' portals. Countries with no open course are not necessarily closed: see each <a href="countries.html">country page</a> for what we could and could not read.</p>
 <h2><span class="bar"></span>All tracked courses</h2>
 {table(COURSES, "")}
+{resources_box("")}
 </div></main>"""
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": BRAND, "url": BASE, "description": CFG["tagline"]},
           {"@context": "https://schema.org", "@type": "ItemList", "name": "Open coaching courses", "numberOfItems": len(LIVE),
@@ -298,7 +310,7 @@ def build():
                f"We have not found a course in {ct} with dates we could verify.")
         b = (f'<section class="hero"><div class="wrap"><h1>Coaching courses in {e(ct)}</h1><p class="answer">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">' + (f'<div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All courses</h2>{table(cs, "../")}' if cs else "")
-             + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "") + "</div></main>")
+             + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "") + resources_box("../") + "</div></main>")
         urls.append(page(f"country/{slug(ct)}.html", f"Coaching courses in {ct}", f"{ans} Football coaching courses with deadlines and prices.", b,
                          [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
     urls.append(page("countries.html", "Coaching courses by country", "Football coaching courses by country.",
@@ -310,7 +322,7 @@ def build():
         items.append(f'<li><a href="level/{slug(lv)}.html">{e(lv)} <span class="small">({len(live)} open / {len(cs)})</span></a></li>')
         ans = f"{len(live)} {lv} courses are open right now" + (f", in {', '.join(sorted({c['country'] for c in live}))}." if live else ".")
         b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} courses</h1><p class="answer">{e(ans)}</p></div></section>'
-             f'<main><div class="wrap"><div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}</div></main>')
+             f'<main><div class="wrap"><div class="board">{"".join(card(c, "../") for c in live)}</div><h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{resources_box("../")}</div></main>')
         urls.append(page(f"level/{slug(lv)}.html", f"{lv} coaching courses in Europe", ans + " Deadlines, dates and prices.", b,
                          [{"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": course_ld(c)} for i, c in enumerate(cs)]}]))
     urls.append(page("levels.html", "Coaching courses by level", "UEFA C, B, A, Pro, Elite Youth and goalkeeper coaching courses.",
@@ -341,7 +353,8 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p>{e(BRAND)} is an independent board of football coaching courses in Europe, from UEFA C to UEFA Pro, including Elite Youth and goalkeeper courses where they are listed.</p>
 <p>Coaching course dates, deadlines and prices are scattered across dozens of football association websites in many languages. {e(BRAND)} puts them in one place, with the deadline, the price and a link to the page where you actually apply.</p>
 <p>{e(CFG['disclaimer'])} We do not run courses, take applications or sell places. Always confirm details with the provider.</p>
-<p>See the <a href="methodology.html">methodology</a> for how the data is collected.</p>""")
+<p>See the <a href="methodology.html">methodology</a> for how the data is collected.</p>
+<h2>Affiliate links</h2><p class="disclosure">{e(DISCLOSURE)} They appear only in the clearly labelled <a href="resources.html">coaching resources</a> sections and never affect which courses are listed or how they are sorted.</p>""")
     prose("privacy.html", "Privacy", f"{BRAND} privacy notice: what the newsletter stores and how to unsubscribe.", f"""
 <p>{e(BRAND)} does not use cookies, does not store anything in your browser and does not run advertising or analytics trackers.</p>
 <h2>Newsletter</h2>
@@ -351,6 +364,8 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <p><strong>Where:</strong> the list is kept in a database run by Supabase, in its EU (Frankfurt) region. Only the site team can read it; the sign-up form can add an address but cannot read the list.</p>
 <p><strong>Sending:</strong> emails are sent through Resend, an email service, from {e(CFG['email']['from_address'])}. {"You get one welcome email when you sign up, then the weekly email." if WELCOME else "You get the weekly email; there is no welcome or confirmation email for now."} Your address is passed to Resend only to deliver them.</p>
 <p><strong>How to unsubscribe:</strong> every email has a one-click unsubscribe link (and an unsubscribe header your mail app can use). It deletes your address, sign-up time and unsubscribe code straight away and keeps no record of the request.</p>
+<h2>Affiliate links</h2>
+<p class="disclosure">{e(DISCLOSURE)} These links carry a referral code in the address so the other site can credit {e(BRAND)}. {e(BRAND)} sets no cookies; the site you visit may set its own, under its own privacy policy.</p>
 <h2>Visits</h2>
 <p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
 <p>The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to run and secure the service; see GitHub's privacy statement.</p>
@@ -368,6 +383,11 @@ Changes are reviewed by a person before they appear here; nothing is published a
 <li>Deadlines coming up, with the price and a link to the provider's page.</li></ul>
 <p>Each issue follows the weekly review of every source described in the <a href="methodology.html">methodology</a>. {"You get a short welcome email when you sign up." if WELCOME else ""}</p>
 <p>See <a href="privacy.html">privacy</a> for what we store and how to unsubscribe.</p>""")
+    prose("resources.html", "Coaching resources", f"Coaching tools, books and online courses for football coaches. Includes affiliate links.", f"""
+<p class="disclosure"><strong>{e(DISCLOSURE)}</strong></p>
+<p>Tools and learning material for football coaches. These are separate from the course board: {e(BRAND)} lists courses only from the providers' own pages, and these links never affect which courses are listed or how they are sorted.</p>
+{resource_links("")}
+<p class="small">Check prices and terms on each site before you buy.</p>""")
     page("unsubscribe.html", "Unsubscribe", f"Unsubscribe from the {BRAND} email.", unsubscribe_body(), robots="noindex,nofollow")  # not in the sitemap
     page("404.html", "Page not found", "Page not found.", f'<main><div class="wrap"><h1>Page not found</h1><p><a href="{BASE}">Back to the course board</a></p></div></main>')
     # robots, sitemap, llms

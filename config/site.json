@@ -17,6 +17,30 @@
     "from_name": "CoachBadge",
     "reply_to": "hello@coachbadge.com",
     "api_base": "https://api.resend.com",
-    "welcome_enabled": false
-  }
+    "welcome_enabled": true
+  },
+  "affiliate_disclosure": "Some links are affiliate links: if you buy through them, CoachBadge may earn a commission at no extra cost to you.",
+  "resources": [
+    {
+      "name": "FootballGPT",
+      "url": "https://footballgpt.co?ref=coach-6174eb",
+      "desc": "AI football coaching assistant and session planner."
+    },
+    {
+      "name": "SoccerTutor.com",
+      "url": "https://soccertutor.com/coach",
+      "desc": "Football coaching books, software and session plans."
+    },
+    {
+      "name": "CoachThem",
+      "url": "https://coachthem.com/?via=coach-badge",
+      "desc": "Coaching platform for planning sessions and managing a team."
+    },
+    {
+      "name": "CoachTube",
+      "url": "https://coachtube.com?a=48474dde3a2f471aa7990004b",
+      "desc": "Online coaching courses and instructional videos."
+    }
+  ],
+  "newsletter_resources": true
 }

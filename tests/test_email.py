@@ -90,11 +90,18 @@ class TestEdgeFunctionSource(unittest.TestCase):
             self.assertIn(line, mjs)
         self.assertNotIn("agentmail.to", mjs)
 
-    def test_sender_and_provider_are_settings_and_welcome_off_by_default(self):
+    def test_sender_and_provider_are_settings_and_welcome_switch_in_vault(self):
         for k in ("MAIL_PROVIDER", "MAIL_FROM", "MAIL_API_BASE", "MAIL_API_KEY", "SITE_URL", "PUBLIC_FUNCTION_URL"):
             self.assertIn(f'env("{k}")', self.src)
-        self.assertIn('const WELCOME_ENABLED = env("WELCOME_ENABLED") === "true"', self.src)
+        self.assertIn('const WELCOME_ENV = env("WELCOME_ENABLED")', self.src)
+        self.assertIn('const WELCOME_ENABLED = WELCOME_ENV === "true" || (WELCOME_ENV === "" && cfg.welcome_enabled === true)', self.src)
         self.assertIn("if (created && WELCOME_ENABLED", self.src)
+        self.assertIn("MAX_WELCOMES_PER_HOUR = 30", self.src)
+        sql = open(os.path.join(ROOT, "supabase", "migrations", "20261024c_coachbadge_welcome.sql")).read()
+        self.assertIn("'coachbadge_welcome_enabled'", sql)
+        self.assertIn("returns table (api_key text, welcome_enabled boolean)", sql)
+        self.assertIn("grant execute on function public.coachbadge_mail_config() to service_role", sql)
+        self.assertIn("revoke all on function public.coachbadge_mail_config() from public, anon, authenticated", sql)
         self.assertIn('env("MAIL_REPLY_TO")', self.src)
         check_copy(self, self.src)
 

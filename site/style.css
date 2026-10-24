@@ -56,3 +56,7 @@ form.nl button:disabled{opacity:.6}
 .nl-bar[hidden]{display:none}
 .nl-bar-x{background:none;border:0;color:#c9d5de;font-size:1.4rem;line-height:1;cursor:pointer;padding:0 4px}
 body.has-bar footer{padding-bottom:80px}
+.resources{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 16px 10px}
+.res-list{padding-left:18px;margin:6px 0}
+.res-list li{margin:4px 0}
+.disclosure{color:#5b6b78}
