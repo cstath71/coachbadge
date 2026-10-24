@@ -6,7 +6,7 @@ a{color:#0a6b37}
 header.top{background:var(--ink);color:#fff;border-bottom:4px solid var(--lime)}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:900;font-size:1.45rem;letter-spacing:-.02em;text-transform:none;order:0}
-.brand svg{width:34px;height:34px;flex:none}
+.brand svg{width:40px;height:40px;flex:none}
 .brand b{color:var(--lime)}
 nav.main{display:flex;gap:14px;flex-wrap:wrap;order:1}
 nav.main a{color:#dfe8ee;text-decoration:none;font-weight:600;font-size:.95rem}
