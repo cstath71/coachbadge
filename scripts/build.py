@@ -177,7 +177,7 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
     verify = "".join(f'<meta name="{k}" content="{e(v)}">' for k, v in VERIFY if v)
     crumb_nav = seo.breadcrumb_html(crumbs, r) if crumbs else ""
     nav = [("", "Courses"), ("countries.html", "Countries"), ("levels.html", "Levels"),
-           ("methodology.html", "Methodology"), ("about.html", "About")]
+           ("guides.html", "Guides"), ("methodology.html", "Methodology"), ("about.html", "About")]
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}">
@@ -432,6 +432,138 @@ def level_faq(lv, cs):
          if pr else f"None of the {e(lv)} courses we track lists a price on the provider's page.")
     return [(f"Where can I take a {lv} course right now?", a), (f"When is the next {lv} application deadline?", b), (f"How much does a {lv} course cost?", p)]
 
+# --- Guides: licence and course comparisons (growth plan, Days 31-60). Every number is computed from data/courses.json
+# or data/diplomas.yaml at build time and shown with its source link; nothing here is typed in by hand.
+GUIDES = [("guides/uefa-c-vs-uefa-b.html", "UEFA C vs UEFA B: what changes"),
+          ("guides/uefa-licence-pathway-by-country.html", "UEFA licence pathway by country"),
+          ("guides/uefa-c-licence-cost-by-country.html", "Cost of a UEFA C licence by country")]
+G_ORDER = ["UEFA C", "UEFA B", "UEFA A", "UEFA Elite Youth A", "UEFA Pro"]  # display order only
+def g_src(c): return f'<a href="{e(c["source_url"])}" rel="nofollow noopener">{e(c["provider"])}</a>'
+def g_weeks(cs):
+    """Length from start date to end date, only where the provider lists both."""
+    ds = []
+    for c in cs:
+        a, b = pdate(c.get("start_date")), pdate(c.get("end_date"))
+        if a and b and b >= a: ds.append((b - a).days)
+    if not ds: return "Not listed", 0
+    lo, hi = min(ds), max(ds)
+    f = lambda d: counted(round(d / 7), "week") if d >= 14 else counted(d + 1, "day")
+    return (f(lo) if f(lo) == f(hi) else f"{f(lo)} to {f(hi)}"), len(ds)
+def g_formats(cs):
+    by = {}
+    for c in cs: by[FORMAT_LABEL.get(c.get("format"), "Not stated")] = by.get(FORMAT_LABEL.get(c.get("format"), "Not stated"), 0) + 1
+    return ", ".join(f"{k}: {v}" for k, v in sorted(by.items(), key=lambda x: (-x[1], x[0])))
+def g_price_groups(cs):
+    """One row per provider + listed price (same price, same note), with how many tracked courses carry it."""
+    rows = {}
+    for c in cs:
+        p = c.get("price")
+        if not fprice(p): continue
+        k = (c["country"], c["provider"], p["amount"], p["currency"], p.get("note") or "")
+        r = rows.setdefault(k, {"c": c, "n": 0, "checked": c["fetched_at"][:10]}); r["n"] += 1
+        r["checked"] = max(r["checked"], c["fetched_at"][:10])
+    return sorted(rows.items(), key=lambda x: (x[0][0], x[0][1], x[0][2]))
+def g_page(path, title, desc, body, faq):
+    crumbs = [(BRAND, ""), ("Guides", "guides.html"), (title, path)]
+    ld = [{"@context": "https://schema.org", "@type": "Article", "headline": title, "description": desc, "url": BASE + path,
+           "dateModified": DATA["generated"][:10], "inLanguage": "en", "author": {"@type": "Organization", "name": BRAND, "url": BASE},
+           "publisher": {"@type": "Organization", "name": BRAND, "url": BASE}, "isBasedOn": BASE + "data/courses.json"}]
+    if faq: ld.append(seo.faq_ld(faq))
+    page(path, title, desc, f"""<main><div class="wrap"><h1>{e(title)}</h1>{body}
+{seo.faq_html(faq) if faq else ""}
+<p class="small">Data last checked {e(GEN)}. Course details come from each provider's own pages and can change at any time; always confirm with the provider before you apply. <a href="{{R}}methodology.html">How we gather the data</a>.</p>
+{signup_form("subscribe-mid")}
+{resources_box("../")}
+</div></main>""", ld, crumbs=crumbs)
+
+def guide_c_vs_b():
+    C = [c for c in COURSES if c["level"] == "UEFA C"]; B = [c for c in COURSES if c["level"] == "UEFA B"]
+    rows = []
+    def row(name, f): rows.append(f"<tr><th scope=\"row\">{e(name)}</th><td>{f(C)}</td><td>{f(B)}</td></tr>")
+    row("Courses tracked", lambda cs: e(len(cs)))
+    row("Open for applications or booking now", lambda cs: e(len([c for c in cs if is_live(c)])))
+    row("Countries", lambda cs: e(and_list(sorted({c["country"] for c in cs}))))
+    row("Providers", lambda cs: e(len({c["provider"] for c in cs})))
+    row("Listed prices", lambda cs: e("; ".join(price_range(cs)) or "Not listed") + f' <span class="small">({len([c for c in cs if fprice(c.get("price"))])} of {len(cs)} courses list a price)</span>')
+    row("Format", lambda cs: e(g_formats(cs)))
+    row("Length, start to end date", lambda cs: (lambda w: e(w[0]) + (f' <span class="small">({w[1]} of {len(cs)} courses list both dates)</span>' if w[1] else ""))(g_weeks(cs)))
+    both = sorted({c["country"] for c in C} & {c["country"] for c in B})
+    side = []
+    for ct in both:
+        cc = [c for c in C if c["country"] == ct]; bb = [c for c in B if c["country"] == ct]
+        srcs = {}
+        for c in cc + bb: srcs.setdefault(c["provider"], c)  # one source link per provider
+        side.append(f'<tr><td><a href="{{R}}country/{slug(ct)}.html">{e(ct)}</a></td><td>{e("; ".join(price_range(cc)) or "Not listed")}</td>'
+                    f'<td>{e("; ".join(price_range(bb)) or "Not listed")}</td><td>{" · ".join(g_src(c) for c in srcs.values())}</td></tr>')
+    fr = [d for d in (DIPLOMAS.get("France") or {}).get("diplomas", []) if d["uefa"] in ("UEFA C", "UEFA B")]
+    dip = "".join(f'<li><strong>{e(d["short"])}</strong> ({e(d["name"])}) is stated as {e(d["uefa"])}; cost as stated: {e(diploma_cost(d))}. <a href="{e(d["url"])}" rel="nofollow noopener">Source</a></li>' for d in fr)
+    lead = (f"As of {GEN}, {BRAND} tracks {counted(len(C), 'UEFA C course')} and {counted(len(B), 'UEFA B course')}. "
+            f"{len([c for c in C if is_live(c)])} UEFA C and {len([c for c in B if is_live(c)])} UEFA B courses are open for applications or booking. "
+            "This page compares the two levels using only what the providers' own pages list.")
+    faq = [("How many UEFA B courses are open right now?",
+            f"{e(open_clause(len([c for c in B if is_live(c)]), len(B), 'UEFA B course'))}, as of {e(GEN)}. See the <a href=\"{{R}}level/{slug('UEFA B')}.html\">UEFA B page</a>."),
+           ("Where do providers list a price for both UEFA C and UEFA B?",
+            e(and_list([ct for ct in both if price_range([c for c in C if c["country"] == ct]) and price_range([c for c in B if c["country"] == ct])]) or "None of the countries we track") + ", in the courses we track. Prices are as listed, in the provider's currency.")]
+    body = f"""<p class="answer" id="summary">{e(lead)}</p>
+<h2><span class="bar"></span>Side by side</h2>
+<div style="overflow-x:auto"><table class="info"><thead><tr><th></th><th>UEFA C</th><th>UEFA B</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
+<p class="small">Prices are as the provider lists them, in its own currency, and are not converted. Notes such as funding or accommodation are on each country page.</p>
+<h2><span class="bar"></span>Countries with both levels in our data</h2>
+<div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>UEFA C price listed</th><th>UEFA B price listed</th><th>Source pages</th></tr></thead><tbody>{"".join(side)}</tbody></table></div>
+{f'<h2><span class="bar"></span>National diplomas: France</h2><p>France runs its own diplomas; its federation states which UEFA level each one counts as.</p><ul>{dip}</ul>' if dip else ""}
+<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}level/{slug('UEFA B')}.html">UEFA B courses</a> · <a href="{{R}}guides/uefa-c-licence-cost-by-country.html">UEFA C cost by country</a></p>"""
+    g_page(GUIDES[0][0], GUIDES[0][1], lead[:300], body, faq)
+
+def guide_pathway():
+    rows = []; empty = []
+    for ct in COUNTRIES:
+        cs = [c for c in COURSES if c["country"] == ct]; dips = (DIPLOMAS.get(ct) or {}).get("diplomas", [])
+        if not cs and not dips: empty.append(ct); continue
+        lv = []
+        for l in sorted(LEVELS, key=lambda l: (G_ORDER.index(l) if l in G_ORDER else len(G_ORDER), l)):
+            x = [c for c in cs if c["level"] == l]
+            if x: lv.append(f"{e(l)}: {len(x)} tracked, {len([c for c in x if is_live(c)])} open")
+        dp = "<br>".join(f'{e(d["short"])} = {e(d["uefa"])} (<a href="{e(d["url"])}" rel="nofollow noopener">source</a>)' for d in dips)
+        provs = sorted({c["provider"] for c in cs})
+        rows.append(f'<tr><td><a href="{{R}}country/{slug(ct)}.html">{e(ct)}</a></td><td>{"<br>".join(lv) or "None in our data"}</td>'
+                    f'<td>{dp or "Not in our data"}</td><td>{e("; ".join(provs)) or "Not in our data"}</td></tr>')
+    withc = [ct for ct in COUNTRIES if any(c["country"] == ct for c in COURSES)]
+    lead = (f"As of {GEN}, {BRAND} has coaching courses in {counted(len(withc), 'country', 'countries')}"
+            + (f" and national diploma details for {and_list(sorted(k for k, v in DIPLOMAS.items() if v.get('diplomas')))}" if DIPLOMAS else "")
+            + ". This table shows which licence levels each country's providers list, built only from our course data and diploma notes.")
+    body = f"""<p class="answer" id="summary">{e(lead)}</p>
+<div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>Levels in our data</th><th>National diplomas (UEFA level as stated)</th><th>Providers</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
+<p class="small">"Tracked" counts every course we found on the provider's pages, including closed and upcoming ones. A level missing here may still be offered: associations often publish dates late or only inside a members' login.</p>
+{f'<p>We also check {e(and_list(empty))}, but found no course on the pages we can read. See each <a href="{{R}}countries.html">country page</a> for why.</p>' if empty else ""}
+<p>Compare levels: <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}levels.html">all levels</a></p>"""
+    g_page(GUIDES[1][0], GUIDES[1][1], lead[:300], body, [])
+
+def guide_c_cost():
+    C = [c for c in COURSES if c["level"] == "UEFA C"]
+    groups = g_price_groups(C)
+    rows = "".join(f'<tr><td><a href="{{R}}country/{slug(k[0])}.html">{e(k[0])}</a></td><td>{e(k[1])}</td><td><strong>{e(fprice({"amount": k[2], "currency": k[3]}))}</strong></td>'
+                   f'<td>{e(k[4]) or "–"}</td><td>{v["n"]}</td><td><a href="{e(v["c"]["source_url"])}" rel="nofollow noopener">Source</a>, checked {e(fdate(v["checked"]))}</td></tr>' for k, v in groups)
+    priced = sorted({k[0] for k, _ in groups})
+    unpriced = sorted({f'{c["provider"]} ({c["country"]})' for c in C if not fprice(c.get("price"))})
+    lead = (f"As of {GEN}, providers in {counted(len(priced), 'country', 'countries')} list a price for the UEFA C courses {BRAND} tracks: {and_list(priced)}. "
+            "Each price below is exactly as the provider lists it, in its own currency, with a link to the page it comes from.")
+    body = f"""<p class="answer" id="summary">{e(lead)}</p>
+<div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>Provider</th><th>Price listed</th><th>Provider's note</th><th>Courses</th><th>Source</th></tr></thead><tbody>{rows}</tbody></table></div>
+<p class="small">Prices are not converted between currencies. Funding, member rates and what is included (for example board and lodging) differ by provider; the note column repeats what the page says.</p>
+{f'<p>We also track UEFA C courses from {e(and_list(unpriced))}, but their pages do not list a price, so they are not in this table.</p>' if unpriced else ""}
+<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a></p>"""
+    g_page(GUIDES[2][0], GUIDES[2][1], lead[:300], body, [])
+
+def build_guides():
+    guide_c_vs_b(); guide_pathway(); guide_c_cost()
+    lst = "".join(f'<li><a href="{{R}}{p}">{e(t)}</a></li>' for p, t in GUIDES)
+    page("guides.html", "Guides: UEFA licences compared", f"Comparisons of football coaching licences built from the courses {BRAND} tracks: UEFA C vs UEFA B, the licence pathway by country and UEFA C cost by country.",
+         f"""<main><div class="wrap"><h1>Guides</h1><p>Comparisons built only from the courses {e(BRAND)} tracks and the providers' own pages. Every number links to its source.</p><ul>{lst}</ul>
+{resources_box("")}</div></main>""", [item_guides()], crumbs=[(BRAND, ""), ("Guides", "guides.html")])
+def item_guides():
+    return {"@context": "https://schema.org", "@type": "ItemList", "name": "Guides", "itemListElement":
+            [{"@type": "ListItem", "position": i + 1, "url": BASE + p, "name": t} for i, (p, t) in enumerate(GUIDES)]}
+
 def build():
     if os.path.exists(DIST): shutil.rmtree(DIST)
     os.makedirs(DIST); PAGES.clear()
@@ -519,6 +651,7 @@ def build():
     # methodology
     unread = [s for s in ALL_SOURCES if s["readable"] == "no"]
     prose = lambda h, t, d, x: page(h, t, d, f'<main><div class="wrap prose"><h1>{e(t)}</h1>{x}</div></main>', crumbs=[(BRAND, ""), (t, h)])
+    build_guides()  # licence and course comparisons (growth plan, Days 31-60)
     prose("methodology.html", "Methodology", f"Where {BRAND} data comes from, how often it is checked and how to report a correction.", f"""
 <p>{e(BRAND)} lists coaching courses only from pages published by the football associations themselves, their regional or district associations,
 and academies those associations run. We do not use forums, social posts or search-result snippets.</p>
@@ -591,6 +724,7 @@ A few sites refuse automated visitors but show their course pages to people. Tho
 def llms_txt():
     lv_lines = "\n".join(f"- [{lv}]({BASE}level/{slug(lv)}.html): {level_summary(lv, [c for c in COURSES if c['level'] == lv])}" for lv in LEVELS)
     ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html): {count_badge([c for c in COURSES if c['country'] == ct and is_live(c)], [c for c in COURSES if c['country'] == ct])}" for ct in COUNTRIES)
+    guide_lines = "\n".join(f"- [{t}]({BASE}{p})" for p, t in GUIDES)
     faq = "\n\n".join(f"### {q}\n{seo.text(a)}" for q, a in home_faq())
     return f"""# {BRAND}
 
@@ -617,6 +751,9 @@ When citing, please credit {BRAND}, link to the page, and tell readers to confir
 - [Coaching resources]({BASE}resources.html): tools for coaches (affiliate links, kept apart from the course data)
 - [Data as JSON]({BASE}data/courses.json): every course with its fields and evidence
 - [Full text for AI assistants]({BASE}llms-full.txt): every course in plain text
+
+## Guides (comparisons built from the course data)
+{guide_lines}
 
 ## By level
 {lv_lines}
