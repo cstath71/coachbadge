@@ -1,0 +1,73 @@
+name: Weekly refresh
+# Monday re-check of every course source (scripts/refresh.py --force). Review-only by design: refresh.py never edits
+# data/courses.json, so this workflow commits nothing. It uploads reports/refresh-DATE.md, data/courses.candidate.json
+# and the fetch state as artifacts for review; course changes are published only after a person reviews the report.
+# No newsletter (scripts/send_newsletter.py), no IndexNow, no posts, no email. GitHub emails the repo owner when a run fails.
+on:
+  # schedule: added after the workflow_dispatch test run is compared with the box refresh
+  workflow_dispatch:   # no dry_run input: this workflow never commits or pushes
+permissions:
+  contents: read
+  actions: read     # download the previous run's fetch state (page hashes + text snapshots) for the "Pages that changed" diffs
+concurrency:
+  group: weekly-refresh
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60   # real run a few minutes (3 s per host pacing)
+    env:
+      TZ: Europe/Zurich
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install (pyyaml, bs4, playwright + Chromium for render:true pages, pdftotext)
+        run: |
+          pip install -q pyyaml beautifulsoup4 playwright
+          python -m playwright install --with-deps chromium
+          sudo apt-get install -y -qq poppler-utils
+      - name: Restore the previous fetch state
+        run: |
+          id=$(gh run list -R "$GITHUB_REPOSITORY" -w weekly-refresh.yml -s success -L 1 --json databaseId -q '.[0].databaseId')
+          if [ -n "$id" ] && gh run download "$id" -R "$GITHUB_REPOSITORY" -n refresh-state -D .; then echo "Restored state from run $id"; else echo "No earlier state: first run, no page diffs this time"; fi
+      - name: Refresh (review-only)
+        run: python3 scripts/refresh.py --force 2>&1 | tee refresh.log
+      - name: Site and data tests (offline)
+        run: |
+          python3 scripts/build.py --today "$(date +%F)"
+          mv raw/cache raw/cache.off
+          python3 -m unittest discover -s tests 2>&1 | tee tests.log; rc=${PIPESTATUS[0]}
+          mv raw/cache.off raw/cache
+          exit $rc
+      - name: Live source tests (evidence still on each page; reported, not blocking)
+        continue-on-error: true
+        run: python3 -m unittest discover -s tests 2>&1 | tee tests-live.log
+      - name: Summary
+        if: always()
+        run: |
+          { echo "### Weekly refresh $(date +%F)"; echo; sed -n '/## Pages that changed/,$p' reports/refresh-*.md 2>/dev/null || true
+            echo; echo "#### Live source tests"; echo '```'; tail -n 3 tests-live.log 2>/dev/null || true; grep -E '^(FAIL|ERROR):' tests-live.log 2>/dev/null || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-report-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            refresh.log
+            tests.log
+            tests-live.log
+            reports/
+            data/courses.candidate.json
+      - name: Upload fetch state for next week
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-state
+          retention-days: 35
+          include-hidden-files: false
+          path: |
+            data/source_state.json
+            raw/snapshots/
