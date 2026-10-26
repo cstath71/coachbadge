@@ -4,7 +4,8 @@ name: Weekly refresh
 # and the fetch state as artifacts for review; course changes are published only after a person reviews the report.
 # No newsletter, no IndexNow, no posts, no email. GitHub emails the repo owner when a run fails.
 on:
-  # schedule: added after the workflow_dispatch test run is compared with the box refresh
+  schedule:
+    - cron: '15 6 * * 1'   # Monday 06:15 UTC = 07:15 Zurich in winter (CET), 08:15 in summer (CEST); before the old 09:00 box run
   workflow_dispatch:   # no dry_run input: this workflow never commits or pushes
 permissions:
   contents: read
