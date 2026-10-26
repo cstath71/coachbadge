@@ -147,11 +147,16 @@ class TestSite(unittest.TestCase):
             for s in BeautifulSoup(open(f).read(), "html.parser").select('script[type="application/ld+json"]'):
                 json.loads(s.string)
 
-    def test_counter_inert(self):
+    def test_counter_anonymous(self):
         h = open(os.path.join(DIST, "index.html")).read()
-        self.assertIn('var E="";if(!E)return;', h) if not CFG["counter_endpoint"] else None
-        for k in ("doNotTrack", "globalPrivacyControl", "webdriver", "location.hostname"): self.assertIn(k, h)
-        self.assertNotRegex(h, r"document\.cookie|localStorage|sessionStorage")
+        ep = CFG["counter_endpoint"]
+        self.assertTrue(ep.startswith(CFG["supabase_url"] + "/functions/v1/"), ep)
+        self.assertIn(f'var E="{ep}";', h)
+        for k in ("doNotTrack", "globalPrivacyControl", "webdriver", "location.hostname", "sendBeacon"): self.assertIn(k, h)
+        self.assertNotRegex(h, r"document\.cookie|localStorage|sessionStorage|apikey|eyJ")
+        priv = open(os.path.join(DIST, "privacy.html")).read()
+        self.assertIn("only anonymous page counts", priv)
+        self.assertNotIn("currently switched off", priv)
 
     def test_open_board_only_open(self):
         soup = BeautifulSoup(open(os.path.join(DIST, "index.html")).read(), "html.parser")

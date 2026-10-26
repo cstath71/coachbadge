@@ -79,13 +79,16 @@ SPORTS = sorted({c["sport"] for c in COURSES})
 def badge(r): return f'<img class="logo" src="{r}logo.png" width="40" height="40" alt="{e(BRAND)} logo">'
 
 def counter_js():
+    # Anonymous page counter (26 Oct 2026; supabase/functions/coachbadge-hit): sends the page path, the referrer (the function keeps
+    # only its domain) and any utm_ tags. No cookies, no storage, no ids. Skipped with Do Not Track / GPC, automated browsers and off-site hosts.
     ep = json.dumps(CFG.get("counter_endpoint", ""))
     host = json.dumps(BASE.split("/")[2])
-    return ("<script>/* page counter: inert unless an endpoint is configured; no cookies, no storage, no ids */"
-            f"(function(){{var E={ep};if(!E)return;var n=navigator;if(n.webdriver)return;"
+    return ("<script>/* page counter: anonymous daily totals only; no cookies, no storage, no ids */"
+            f"(function(){{try{{var E={ep};if(!E)return;var n=navigator;if(n.webdriver)return;"
             "if(n.doNotTrack=='1'||window.doNotTrack=='1'||n.globalPrivacyControl)return;"
             f"if(location.hostname!=={host})return;if(/bot|crawl|spider|headless/i.test(n.userAgent))return;"
-            "if(n.sendBeacon)n.sendBeacon(E,location.pathname);})();</script>")
+            "var q=new URLSearchParams(location.search),d=JSON.stringify({p:location.pathname,r:document.referrer,us:q.get('utm_source'),um:q.get('utm_medium'),uc:q.get('utm_campaign')});"
+            "if(n.sendBeacon)n.sendBeacon(E,new Blob([d],{type:'text/plain'}));else fetch(E,{method:'POST',body:d,keepalive:true,mode:'no-cors'});}catch(x){}})();</script>")
 
 # ---- newsletter (24 Oct 2026): the forms post to the coachbadge-subscribe Edge Function (honeypot, de-duplication,
 # rate limit, welcome email via Resend). No key of any kind is in the site. Removal is by the per-subscriber token link only.
@@ -541,7 +544,7 @@ A few sites refuse automated visitors but show their course pages to people. Tho
 <p>See the <a href="methodology.html">methodology</a> for how the data is collected.</p>
 <h2>Affiliate links</h2><p class="disclosure">{e(DISCLOSURE)} They appear only in the clearly labelled <a href="resources.html">coaching resources</a> sections and never affect which courses are listed or how they are sorted.</p>""")
     prose("privacy.html", "Privacy", f"{BRAND} privacy notice: what the newsletter stores and how to unsubscribe.", f"""
-<p>{e(BRAND)} does not use cookies, does not store anything in your browser and does not run advertising or analytics trackers.</p>
+<p>{e(BRAND)} does not use cookies, does not store anything in your browser and does not run advertising trackers. The only analytics is an anonymous page count (see Visits below).</p>
 <h2>Newsletter</h2>
 <p><strong>What we store:</strong> your email address, the time you signed up, a random unsubscribe code and the time the welcome email was sent. Nothing else: no name, no browser details.</p>
 <p><strong>Abuse protection:</strong> to limit sign-ups to five per connection per hour, the sign-up service keeps a one-way hash of your IP address combined with the current hour (not the address itself), and deletes it after two hours.</p>
@@ -552,7 +555,7 @@ A few sites refuse automated visitors but show their course pages to people. Tho
 <h2>Affiliate links</h2>
 <p class="disclosure">{e(DISCLOSURE)} These links carry a referral code in the address so the other site can credit {e(BRAND)}. {e(BRAND)} sets no cookies; the site you visit may set its own, under its own privacy policy.</p>
 <h2>Visits</h2>
-<p>The pages include a tiny visit counter that is currently switched off. If it is ever switched on, it would only send the page address, with no cookies or identifiers, and it stays off when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser.</p>
+<p>We record only anonymous page counts, without cookies. For each day we keep a total per page, together with the domain of the site that linked to it (for example google.com) and any utm_ tags in the link. No IP address, browser details or identifier is stored, so a visit cannot be traced back to you. Nothing is counted when your browser sends Do Not Track or Global Privacy Control, or when the page is loaded by an automated browser. The counts are kept with Supabase, in its EU (Frankfurt) region.</p>
 <p>The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to run and secure the service; see GitHub's privacy statement.</p>
 <p>Corrections are sent as public GitHub issues, so please do not include personal details in them.</p>""")
     prose("terms.html", "Terms", f"{BRAND} terms of use: linking and short quotes with credit are welcome; course details are provided as is and should be confirmed with the provider.", f"""

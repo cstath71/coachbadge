@@ -5,7 +5,7 @@
   "tagline": "Every open football coaching course in Europe, with deadlines and prices",
   "wordmark": "CoachBadge",
   "repo": "cstath71/coachbadge",
-  "counter_endpoint": "",
+  "counter_endpoint": "https://uufmlmwgvoqhhtqgrclu.supabase.co/functions/v1/coachbadge-hit",
   "corrections_url": "https://github.com/cstath71/coachbadge/issues/new?template=correction.md",
   "disclaimer": "Independent; not affiliated with UEFA or any association listed.",
   "supabase_url": "https://uufmlmwgvoqhhtqgrclu.supabase.co",
