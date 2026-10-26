@@ -2,7 +2,7 @@ name: Weekly refresh
 # Monday re-check of every course source (scripts/refresh.py --force). Review-only by design: refresh.py never edits
 # data/courses.json, so this workflow commits nothing. It uploads reports/refresh-DATE.md, data/courses.candidate.json
 # and the fetch state as artifacts for review; course changes are published only after a person reviews the report.
-# No newsletter (scripts/send_newsletter.py), no IndexNow, no posts, no email. GitHub emails the repo owner when a run fails.
+# No newsletter, no IndexNow, no posts, no email. GitHub emails the repo owner when a run fails.
 on:
   # schedule: added after the workflow_dispatch test run is compared with the box refresh
   workflow_dispatch:   # no dry_run input: this workflow never commits or pushes
