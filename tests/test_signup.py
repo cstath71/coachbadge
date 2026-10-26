@@ -36,6 +36,17 @@ class TestSignupForm(unittest.TestCase):
                 em = f.select_one('input[type=email][name=email]')
                 self.assertIsNotNone(em); self.assertTrue(em.has_attr("required")); self.assertEqual(em["maxlength"], "254")
 
+    def test_level_and_country_pages_have_inline_form(self):
+        import glob
+        pages = [os.path.relpath(f, DIST) for f in glob.glob(os.path.join(DIST, "level", "*.html")) + glob.glob(os.path.join(DIST, "country", "*.html"))]
+        self.assertTrue(pages)
+        for p in pages:
+            with self.subTest(p):
+                self.assertEqual(len(self.forms(p)), 1)
+                h = open(os.path.join(DIST, p)).read()
+                if "<table" in h:
+                    self.assertLess(h.index('id="subscribe-mid"'), h.index("<table"), "form comes before the full course table")
+                self.assertIn('href="../privacy.html"', soup(p).select_one("#subscribe-mid").decode())
     def test_home_form_near_top(self):
         html = open(os.path.join(DIST, "index.html")).read()
         self.assertLess(html.index('id="subscribe-top"'), html.index('class="board"'), "form must come before the course board")

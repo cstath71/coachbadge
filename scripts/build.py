@@ -483,7 +483,8 @@ def build():
         b = (f'<section class="hero"><div class="wrap"><h1>Football coaching courses in {e(ct)}</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">'
              + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else empty_state(srcs, "../", " in " + ct))
-             + diplomas_box(ct)
+             + signup_form("subscribe-mid")  # inline signup under the open courses (growth plan, 26 Oct 2026)
+            + diplomas_box(ct)
              + (f'<h2><span class="bar"></span>All courses in {e(ct)}</h2>{table(cs, "../")}' if cs else "")
              + (f'<h2><span class="bar"></span>Sources for {e(ct)}</h2>{sources_list(srcs)}' if srcs else "")
              + seo.faq_html(faq) + resources_box("../") + "</div></main>")
@@ -506,6 +507,7 @@ def build():
         b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} football coaching courses in Europe</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">' + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live
                                              else empty_state([x for x in ALL_SOURCES if lv in x.get("levels", [])], "../", " at " + lv))
+             + signup_form("subscribe-mid")  # inline signup under the open courses (growth plan, 26 Oct 2026)
              + f'<h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{seo.faq_html(faq)}{resources_box("../")}</div></main>')
         page(path, f"{lv} coaching courses in Europe", f"{ans} Deadlines, dates and prices."[:300], b,
              [item_list(f"{lv} football coaching courses", BASE + path, cs), seo.faq_ld(faq)],
