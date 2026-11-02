@@ -3,7 +3,7 @@
 # Read by a person in a normal browser (the site refuses automated visitors). Never invent a field; leave unknown ones null.
 France:
   title: French diplomas and UEFA level
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   note: >-
     The FFF publishes no session dates on these pages. Registration for the selection tests opened in March/April 2026,
     and the dates are set by each regional league (Ligue / IR2F).
@@ -25,7 +25,7 @@ France:
       currency: EUR
       registration_fee: 50
       registration_included: true
-      evidence: ["Equivalence UEFA : licence UEFA A", "Coût pédagogique de la formation : 3 054€", "50€ de frais d’inscription", "les inscriptions aux tests de sélection ouvrent à partir de mars/avril 2026"]
+      evidence: ["Equivalence UEFA : licence UEFA A", "Coût pédagogique de la formation : 3 054€", "13€ par heure de formation (218h)", "170€ de frais de certification", "50€ de frais d’inscription", "les inscriptions aux tests de sélection ouvrent à partir de mars/avril 2026"]
       where: null
       url: https://maformation.fff.fr/formation/8-brevet-d-entraineur-de-football.html
     - short: BEFF

@@ -1,5 +1,5 @@
-"""Courses read by a person in a normal browser on 24 Oct 2026 (sites that refuse automated visitors), France's diploma
-block, and the updated reasons for Belgium, Scotland and Ireland."""
+"""Courses read by a person in a normal browser (first 24 Oct 2026; re-checked 2 Nov 2026) on sites that refuse
+automated visitors, France's diploma block, and the updated reasons for Belgium, Scotland and Ireland."""
 import datetime, json, os, re, shutil, subprocess, sys, tempfile, unittest
 import yaml
 from bs4 import BeautifulSoup
@@ -25,7 +25,7 @@ class TestBrowserCourses(unittest.TestCase):
             with self.subTest(i):
                 self.assertIn(i, ids); self.assertIn(i, BY_ID)
                 c = BY_ID[i]
-                self.assertEqual(c["read_with"], "browser"); self.assertEqual(c["fetched_at"], "2026-10-24")
+                self.assertEqual(c["read_with"], "browser"); self.assertEqual(c["fetched_at"], "2026-11-02")
                 self.assertTrue(c["source_url"].startswith("https://"))
 
     def test_switzerland_fields(self):
@@ -123,6 +123,24 @@ class TestBrowserCourses(unittest.TestCase):
         fr = {s["association"]: s for s in by("France")}
         self.assertEqual(fr["FFF (France)"]["readable"], "browser"); self.assertIn("no session dates", fr["FFF (France)"]["note"])
         self.assertEqual(fr["IR2F (France)"]["readable"], "no")
+        self.assertIn("connection closed", fr["IR2F (France)"]["reason"])
+        es = {s["url"]: s for s in by("Spain")}
+        self.assertEqual(es["https://academia.rfef.es/escuela-entrenadores"]["readable"], "browser")
+        self.assertIn("no open/apply cue", es["https://academia.rfef.es/escuela-entrenadores"]["note"])
+
+    def test_spain_academia_listed_as_unknown(self):
+        """Academia cards have no open cue: status unknown (Check provider), not open."""
+        ac = [c for c in DATA["courses"] if c.get("source_url", "").startswith("https://academia.rfef.es/")]
+        self.assertEqual(len(ac), 9)
+        for c in ac:
+            with self.subTest(c["id"]):
+                self.assertEqual(c["status"], "unknown")
+                self.assertEqual(c["read_with"], "browser")
+                self.assertEqual(c["fetched_at"], "2026-11-02")
+                self.assertIsNone(c.get("price"))
+        pro = BY_ID["esp-rfef-uefa-pro-2026-27"]
+        self.assertEqual(pro["status"], "closed")
+        self.assertEqual(pro["fetched_at"], "2026-11-02")
 
 class TestFranceDiplomas(unittest.TestCase):
     def test_block_is_information_not_courses(self):

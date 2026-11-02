@@ -80,7 +80,7 @@ class TestSourcesFile(unittest.TestCase):
         for ct in EMPTY:
             for x in [s for s in SOURCES if s["country"] == ct]:
                 with self.subTest(ct=ct, url=x["url"]):
-                    self.assertEqual(x["checked"], "2026-10-24")
+                    self.assertIn(x["checked"], {"2026-10-24", "2026-11-02"})
                     self.assertTrue(x.get("reason") or x.get("note"))
                     self.assertNotRegex((x.get("reason") or x.get("note")).lower(), r"official|linkedin")
 

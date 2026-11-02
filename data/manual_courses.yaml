@@ -12,7 +12,7 @@
   format: blended
   price: {amount: 1250, currency: GBP}
   deadline: null
-  application_window: "Register-your-interest form; no booking dates published"
+  application_window: Register-your-interest form; no booking dates published
   start_date: null
   end_date: null
   status: unknown
@@ -32,7 +32,7 @@
   format_note: "Page lists delivery as 'Face-to-face'"
   price: {amount: 4150, currency: GBP}
   deadline: null
-  application_window: "Register-your-interest form"
+  application_window: Register-your-interest form
   start_date: "2027-01"
   end_date: null
   status: unknown
@@ -51,11 +51,11 @@
   format: null
   price: {amount: 19000, currency: EUR, note: "plus accommodation and meals"}
   deadline: "2026-07-29"
-  application_window: "15–29 July 2026"
+  application_window: 15–29 July 2026
   start_date: null
   end_date: null
   status: closed
-  status_basis: "deadline passed"
+  status_basis: deadline passed
   source_url: https://www.dfb-akademie.de/pro-lizenz/-/id-11009551
   fetched_at: "2026-10-24"
   evidence: ["Die nächste Bewerbungsphase für das Assessment des Pro Lizenz-Lehrgangs 2027 findet vom 15.-29.07.2026 statt.", "Die Lehrgangsgebühr beträgt für die Pro Lizenz 19.000 €."]
@@ -64,21 +64,202 @@
   country: Spain
   provider: RFEF Escuela Nacional de Entrenadores
   level: UEFA Pro
-  title: Curso de Entrenador de Fútbol Diploma & Licencia UEFA PRO
+  title: "Curso de Entrenador de Fútbol Diploma & Licencia UEFA PRO"
   location: null
   language: Spanish
   format: null
-  format_note: "Dual training system, minimum 12 months"
+  format_note: Dual training system, minimum 12 months
   price: null
   deadline: "2026-06-07"
-  application_window: "Pre-registration until 7 June 2026"
+  application_window: Pre-registration until 7 June 2026
   start_date: "2026-06-29"
   end_date: "2027-06-25"
   status: closed
-  status_basis: "deadline passed"
+  status_basis: Pre-registration window was 7 May–7 Jun 2026; closed (re-checked 2 Nov 2026)
   source_url: https://rfef.es/es/noticias/abierto-el-plazo-de-preinscripcion-para-el-curso-de-entrenador-de-futbol-diploma-4
-  fetched_at: "2026-10-24"
+  read_with: browser
+  fetched_at: "2026-11-02"
   evidence: ["El plazo de preinscripción estará abierto hasta el próximo 7 de junio", "Del 29 de junio de 2026 al 25 de junio de 2027."]
+- id: esp-rfef-academia-uefa-b-universidad-europea-2026-27
+  sport: football
+  country: Spain
+  provider: RFF Madrid (via RFEF Academia)
+  level: UEFA B
+  title: UEFA B Universidad Europea
+  location: Universidad Europea (RFF Madrid)
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-03"
+  end_date: "2027-11-03"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA B", "Universidad Europea", "03-11-2026", "03-11-2027", "RFF Madrid"]
+- id: esp-rfef-academia-uefa-a-alcala-2026-27
+  sport: football
+  country: Spain
+  provider: RFF Madrid (via RFEF Academia)
+  level: UEFA A
+  title: UEFA A Alcalá de Henares
+  location: Alcalá de Henares
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-04"
+  end_date: "2027-06-30"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA A", "Alcalá de Henares", "04-11-2026", "30-06-2027", "RFF Madrid"]
+- id: esp-rfef-academia-uefa-a-boadilla-2026-27
+  sport: football
+  country: Spain
+  provider: RFF Madrid (via RFEF Academia)
+  level: UEFA A
+  title: UEFA A Boadilla del Monte
+  location: Boadilla del Monte
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-04"
+  end_date: "2027-06-30"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA A", "Boadilla del Monte", "04-11-2026", "30-06-2027", "RFF Madrid"]
+- id: esp-rfef-academia-uefa-c-noviembre-grupo3-2026-27
+  sport: football
+  country: Spain
+  provider: FFCV Valencia (via RFEF Academia)
+  level: UEFA C
+  title: UEFA C Noviembre (Grupo 3)
+  location: Valencia (FFCV)
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-10-13"
+  end_date: "2027-06-30"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "Noviembre (Grupo 3)", "13-10-2026", "30-06-2027", "FFCV"]
+- id: esp-rfef-academia-uefa-c-etef-orotava-adeje-2026-27
+  sport: football
+  country: Spain
+  provider: ETEF Tenerife (via RFEF Academia)
+  level: UEFA C
+  title: UEFA C ETEF La Orotava and Adeje
+  location: La Orotava / Adeje, Tenerife
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-04"
+  end_date: "2027-07-01"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "ETEF", "La Orotava", "Adeje", "04-11-2026", "01-07-2027", "Tenerife"]
+- id: esp-rfef-academia-uefa-c-16-11-2026-rff-madrid
+  sport: football
+  country: Spain
+  provider: RFF Madrid (via RFEF Academia)
+  level: UEFA C
+  title: UEFA C 16-11-2026
+  location: Madrid (RFF Madrid)
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-09"
+  end_date: "2027-06-30"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "16-11-2026", "09-11-2026", "30-06-2027", "RFF Madrid"]
+- id: esp-rfef-academia-uefa-c-ed44-murcia-2026-27
+  sport: football
+  country: Spain
+  provider: FF Región de Murcia (via RFEF Academia)
+  level: UEFA C
+  title: Entrenador UEFA C Ed. 44
+  location: Región de Murcia
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-16"
+  end_date: "2027-05-31"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "Ed. 44", "16-11-2026", "31-05-2027", "Murcia"]
+- id: esp-rfef-academia-uefa-c-2627-1-catalunya
+  sport: football
+  country: Spain
+  provider: Federació Catalana (via RFEF Academia)
+  level: UEFA C
+  title: UEFA C 26/27 (1) Novembre
+  location: Catalunya
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-10-29"
+  end_date: "2028-11-17"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "26/27", "Novembre", "29-10-2026", "17-11-2028", "Catalana"]
+- id: esp-rfef-academia-uefa-c-etef-candelaria-matanza-2026-27
+  sport: football
+  country: Spain
+  provider: ETEF Tenerife (via RFEF Academia)
+  level: UEFA C
+  title: UEFA C ETEF Candelaria/Centenero and Matanza/Tacoronte
+  location: Candelaria / La Matanza / Tacoronte, Tenerife
+  language: Spanish
+  format: null
+  price: null
+  deadline: null
+  application_window: null
+  start_date: "2026-11-11"
+  end_date: "2027-07-01"
+  status: unknown
+  status_basis: Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places
+  source_url: https://academia.rfef.es/escuela-entrenadores
+  read_with: browser
+  fetched_at: "2026-11-02"
+  evidence: ["UEFA C", "ETEF", "Candelaria", "Matanza", "Tacoronte", "11-11-2026", "01-07-2027", "Tenerife"]
 - id: por-afalgarve-uefa-c-2026
   sport: football
   country: Portugal
@@ -91,11 +272,11 @@
   price: null
   price_note: "Application fees on page: €15 registration + €30 general-training component (€45 total); full course fee not stated"
   deadline: "2026-09-16"
-  application_window: "3–16 September 2026"
+  application_window: 3–16 September 2026
   start_date: null
   end_date: null
   status: closed
-  status_basis: "deadline passed"
+  status_basis: deadline passed
   source_url: https://afalgarve.pt/curso-de-treinadores-de-futebol-grau-i-uefa-c-inscricoes-abertas-ate-16-de-setembro-de-2026/
   fetched_at: "2026-10-24"
   evidence: ["O período de inscrições decorre até ao dia 16 de setembro de 2026.", "Valor total: 45 euros;"]
@@ -108,10 +289,10 @@
   location: Halmstad
   language: Swedish
   format: blended
-  format_note: "Physical modules in Halmstad plus digital evenings"
+  format_note: Physical modules in Halmstad plus digital evenings
   price: {amount: 24000, currency: SEK, note: "approx.; includes lodging, materials and meals"}
   deadline: "2026-11-16"
-  application_window: "Open until 16 November 2026"
+  application_window: Open until 16 November 2026
   start_date: "2027-01-23"
   end_date: "2027-12-02"
   status: open
@@ -119,7 +300,6 @@
   source_url: https://halland.svenskfotboll.se/nyheter/2026/09/tranarutb-2027/
   fetched_at: "2026-10-24"
   evidence: ["Anmälan är nu öppen för Hallands Fotbollförbund", "OBS! Senaste anmälan är 16 november 2026.", "24 000:-/deltagare"]
-  extra_sources: ["https://fogis.svenskfotboll.se/fogisklient/kurs/kurstillfalleanmalan.aspx?kid=102945"]
 - id: swe-smaland-uefa-b-2027-vimmerby
   sport: football
   country: Sweden
@@ -129,10 +309,10 @@
   location: Vimmerby, Ronneby, Växjö
   language: Swedish
   format: blended
-  format_note: "Physical modules plus Zoom sessions"
+  format_note: Physical modules plus Zoom sessions
   price: {amount: 24000, currency: SEK, note: "includes double-room lodging"}
   deadline: "2026-11-30"
-  application_window: "Open until 30 November 2026"
+  application_window: Open until 30 November 2026
   start_date: "2027-01-23"
   end_date: "2027-11-17"
   status: open
@@ -151,7 +331,7 @@
   format: blended
   price: {amount: 24000, currency: SEK, note: "includes double-room lodging"}
   deadline: "2026-11-30"
-  application_window: "Open until 30 November 2026"
+  application_window: Open until 30 November 2026
   start_date: "2027-02-13"
   end_date: null
   status: open
@@ -168,10 +348,10 @@
   location: Västmanland / Södermanland
   language: Swedish
   format: blended
-  format_note: "Physical days plus digital modules"
+  format_note: Physical days plus digital modules
   price: {amount: 20000, currency: SEK}
   deadline: "2026-12-06"
-  application_window: "Apply via form by 6 December 2026"
+  application_window: Apply via form by 6 December 2026
   start_date: "2027-02-06"
   end_date: "2027-11-14"
   status: open
@@ -190,7 +370,7 @@
   format: blended
   price: {amount: 20000, currency: SEK}
   deadline: "2026-12-06"
-  application_window: "Apply via form by 6 December 2026"
+  application_window: Apply via form by 6 December 2026
   start_date: "2027-02-13"
   end_date: null
   status: open
@@ -207,14 +387,14 @@
   location: null
   language: Norwegian
   format: residential
-  format_note: "5 physical gatherings (board and lodging included) with work in own club between them"
+  format_note: 5 physical gatherings (board and lodging included) with work in own club between them
   price: {amount: 90000, currency: NOK, note: "covers mentor fee, board and lodging at the 5 gatherings"}
   deadline: "2026-09-30"
-  application_window: "September 2026"
+  application_window: September 2026
   start_date: "2026-12"
   end_date: "2027-11"
   status: closed
-  status_basis: "deadline passed"
+  status_basis: deadline passed
   source_url: https://tiim.no/artikkel/sok-na-uefa-a-2027
   fetched_at: "2026-10-24"
   evidence: ["Søknadsfrist er 30. september 2026.", "Utdanningsavgift: 90.000, -", "Utdanningen foregår fra desember 2026 og er ferdig november 2027."]
@@ -229,11 +409,11 @@
   format: null
   price: null
   deadline: "2026-09-30"
-  application_window: "September (programmes starting 2027)"
+  application_window: September (programmes starting 2027)
   start_date: "2027"
   end_date: null
   status: closed
-  status_basis: "deadline passed (30 September, programmes starting 2027)"
+  status_basis: deadline passed (30 September, programmes starting 2027)
   source_url: https://tiim.no/artikkel/utlysning-av-alle-uefa-utdanninger-med-oppstart-2027
   fetched_at: "2026-10-24"
   evidence: ["Endelig søknadsfrist for alle utdanninger er 30. september.", "Søk nå: UEFA PRO 2027-2028"]
@@ -248,11 +428,11 @@
   format: null
   price: null
   deadline: "2026-09-30"
-  application_window: "September (programmes starting 2027)"
+  application_window: September (programmes starting 2027)
   start_date: "2027"
   end_date: null
   status: closed
-  status_basis: "deadline passed (30 September, programmes starting 2027)"
+  status_basis: deadline passed (30 September, programmes starting 2027)
   source_url: https://tiim.no/artikkel/utlysning-av-alle-uefa-utdanninger-med-oppstart-2027
   fetched_at: "2026-10-24"
   evidence: ["Endelig søknadsfrist for alle utdanninger er 30. september.", "UEFA Spillerutvikler A"]
@@ -267,7 +447,7 @@
   format: null
   price: null
   deadline: null
-  application_window: "Applications open in summer 2027"
+  application_window: Applications open in summer 2027
   start_date: null
   end_date: null
   status: upcoming
@@ -286,7 +466,7 @@
   format: null
   price: {amount: 80000, currency: DKK, note: "plus UEFA A exam DKK 7,000"}
   deadline: null
-  application_window: "Application form on page; no deadline shown"
+  application_window: Application form on page; no deadline shown
   start_date: null
   end_date: null
   status: unknown
@@ -305,11 +485,11 @@
   format: null
   price: null
   deadline: "2026-07-31"
-  application_window: "Closed 31 July 2026"
+  application_window: Closed 31 July 2026
   start_date: "2026-09-08"
   end_date: "2027-05-12"
   status: closed
-  status_basis: "deadline passed"
+  status_basis: deadline passed
   source_url: https://dbu.dk/uddannelse/traeneruddannelse/uefa-traeneruddannelser/?cat=60357&edu=60375
   fetched_at: "2026-10-24"
   evidence: ["Deadline for ansøgning til UEFA Elite Youth A 2026-27 var d. 31. juli 2026", "8.-10. sept. 2026", "11.-12. maj 2027"]
@@ -324,15 +504,14 @@
   format: null
   price: null
   deadline: null
-  application_window: "Register-your-interest link for 2027"
+  application_window: Register-your-interest link for 2027
   start_date: "2027"
   end_date: null
   status: unknown
-  status_basis: "2026 window closed; page invites interest registrations for 2027"
+  status_basis: 2026 window closed; page invites interest registrations for 2027
   source_url: https://www.irishfa.com/irish-football-association/coach-education
   fetched_at: "2026-10-24"
   evidence: ["The application window for our UEFA Diploma courses have now closed.", "To register your interest in applying for courses in 2027"]
-# ---------------- Basketball ----------------
 - id: eur-fiba-fecc-next
   sport: basketball
   country: Europe (FIBA Europe)
@@ -344,7 +523,7 @@
   format: null
   price: null
   deadline: null
-  application_window: "Nomination by national federations; deadline announced at the start of the programme year"
+  application_window: Nomination by national federations; deadline announced at the start of the programme year
   start_date: null
   end_date: null
   status: unknown
@@ -367,7 +546,7 @@
   start_date: null
   end_date: null
   status: closed
-  status_basis: "Page reports the 2026 edition already took place (232 enrolled)"
+  status_basis: Page reports the 2026 edition already took place (232 enrolled)
   source_url: https://www.feb.es/entrenadores.aspx
   fetched_at: "2026-10-24"
   evidence: ["El Curso de Entrenador Superior Madrid 2026 ha roto registros"]
@@ -380,14 +559,14 @@
   location: Castilla-La Mancha
   language: Spanish
   format: null
-  format_note: "In-person teaching block in June 2027"
+  format_note: In-person teaching block in June 2027
   price: {amount: 625, currency: EUR, note: "€550 with eligible reduction"}
   deadline: "2026-08-30"
-  application_window: "1 July – 30 August 2026"
+  application_window: 1 July – 30 August 2026
   start_date: null
   end_date: null
   status: closed
-  status_basis: "deadline passed"
+  status_basis: deadline passed
   source_url: https://fbclm.net/formacion-fbclm-convocados-los-cursos-oficiales-de-entrenador-de-baloncesto-ciclo-final-de-grado-medio-nivel-ii-federativo/
   fetched_at: "2026-10-24"
   evidence: ["inscripción del 1 julio al 30 de agosto de 2026.", "(o nivel 2 federativo): 625 €.", "La carga lectiva presencial se realizará durante el mes de junio de 2027"]
@@ -400,14 +579,14 @@
   location: Comunitat Valenciana
   language: Spanish
   format: online
-  format_note: "Online content and live video classes; exams in person"
+  format_note: Online content and live video classes; exams in person
   price: null
   deadline: null
-  application_window: "No deadline shown"
+  application_window: No deadline shown
   start_date: null
   end_date: null
   status: unknown
-  status_basis: "Page dated 29 June 2026 said enrolment was still open; no deadline shown, so current status is not confirmed"
+  status_basis: Page dated 29 June 2026 said enrolment was still open; no deadline shown, so current status is not confirmed
   source_url: https://www.fbcv.es/noticias/continuan-las-inscripciones-a-los-cursos-nivel-1-y-nivel-2/
   fetched_at: "2026-10-24"
   evidence: ["Sigue abierto el plazo de inscripción para los", "contenidos 100% online", "29/06/2026"]
@@ -421,19 +600,16 @@
   language: Italian
   format: null
   price: null
-  price_note: "Required intermediate lessons are free (pre-registration via form)"
+  price_note: Required intermediate lessons are free (pre-registration via form)
   deadline: null
-  application_window: "Pre-registration for the required intermediate lessons"
+  application_window: Pre-registration for the required intermediate lessons
   start_date: "2027-05"
   end_date: "2027-06"
   status: upcoming
-  status_basis: "Course planned May–June 2027, dates and format still to be defined"
+  status_basis: Course planned May–June 2027, dates and format still to be defined
   source_url: https://toscana.fip.it/lezioni-intermedie-per-accesso-al-corso-allenatore-regionale-2027/
   fetched_at: "2026-10-24"
   evidence: ["Corso Allenatore Regionale 2027 programmato in Toscana nel periodo Maggio-Giugno 2027", "Per la partecipazione a tali lezioni non sono previsti costi"]
-# --- Austria (24 Oct 2026). ÖFB delegates UEFA C/B courses to the nine regional associations (Landesverbände).
-# Registration for all of them runs through the "Fußball Online" login, so free places are not visible publicly.
-# render: true = the page fills its content with JavaScript; scripts/render.py (headless Chrome, robots.txt checked) reads it.
 - id: aut-noefv-uefa-c-2027-1
   sport: football
   country: Austria
@@ -449,7 +625,7 @@
   start_date: "2027-02-15"
   end_date: "2027-03-05"
   status: unknown
-  status_basis: "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login"
+  status_basis: The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login
   source_url: https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf
   fetched_at: "2026-10-24"
   evidence: ["Kurs C/1: Teil1: 15. bis 19. Februar 2027 Teil2: 3. bis 5. März 2027 (24 Personen)", "Sportschule Lindabrunn - Talleitengasse 15, 2551 Enzesfeld-Lindabrunn", "Kostenbeitrag von € 1.200,-"]
@@ -468,7 +644,7 @@
   start_date: "2027-05-24"
   end_date: "2027-06-11"
   status: unknown
-  status_basis: "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login"
+  status_basis: The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login
   source_url: https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf
   fetched_at: "2026-10-24"
   evidence: ["Kurs C/2: Teil1: 24. bis 26. Mai 2027 Teil2: 7. bis 11. Juni 2027 (24 Personen)", "Kostenbeitrag von € 1.200,-"]
@@ -487,7 +663,7 @@
   start_date: "2027-08-23"
   end_date: "2027-10-27"
   status: unknown
-  status_basis: "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login"
+  status_basis: The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login
   source_url: https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf
   fetched_at: "2026-10-24"
   evidence: ["Kurs C/3: Teil1: 23. bis 27. August 2027 Teil2: 25. bis 27. Oktober 2027 (24 Personen)", "Kostenbeitrag von € 1.200,-"]
@@ -506,7 +682,7 @@
   start_date: "2027-11-04"
   end_date: "2027-11-19"
   status: unknown
-  status_basis: "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login"
+  status_basis: The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login
   source_url: https://www.noefv.at/noefv/Ausschreibung-UEFA-C-2027.pdf
   fetched_at: "2026-10-24"
   evidence: ["Kurs C/4: Teil1: 4. bis 6. November 2027 Teil2: 15. bis 19. November 2027 (24 Personen)", "Kostenbeitrag von € 1.200,-"]
@@ -525,7 +701,7 @@
   start_date: "2027-09-13"
   end_date: "2027-11-10"
   status: unknown
-  status_basis: "The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login"
+  status_basis: The call for applications gives dates but not whether places are left; registration is behind the Fußball Online login
   source_url: https://www.noefv.at/noefv/Ausschreibung-UEFA-B-2027.pdf
   fetched_at: "2026-10-24"
   evidence: ["Kurs B/27: Teil1: Mo 13. bis Fr 17. September 2027 Teil2: Mo 11. bis Fr 15. Oktober 2027 Teil3: Mo 8. bis Mi 10. November 2027", "Kostenbeitrag von € 1.440,-", "beträgt der Kostenbeitrag € 725,-"]
@@ -544,7 +720,7 @@
   start_date: "2027-02-12"
   end_date: "2027-04-30"
   status: open
-  status_basis: "Online registration open since 19 Oct 2026 per the course list; the number of free places is not shown publicly"
+  status_basis: Online registration open since 19 Oct 2026 per the course list; the number of free places is not shown publicly
   source_url: https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd
   fetched_at: "2026-10-24"
   evidence: ["UEFA C-Diplom Termin 1 Teil I: Kursbeginn: Fr. 12. Februar 2027", "Kursende: Fr. 30. April 2027 16:00 Uhr Teilnehmerzahl: 36 Teilnehmer", "Online-Anmeldung möglich ab 19. Oktober 2026, 18 Uhr Kursbeitrag: € 780,--"]
@@ -563,7 +739,7 @@
   start_date: "2027-07-02"
   end_date: "2027-09-10"
   status: upcoming
-  status_basis: "Registration opens 8 Mar 2027"
+  status_basis: Registration opens 8 Mar 2027
   source_url: https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd
   fetched_at: "2026-10-24"
   evidence: ["UEFA C-Diplom Termin 2 Teil I: Kursbeginn: Fr. 02. Juli 2027", "Kursende: Fr. 10. September 2027 16:00 Uhr", "Online-Anmeldung möglich ab 08. März 2027, 18 Uhr Kursbeitrag: € 780,--"]
@@ -582,7 +758,7 @@
   start_date: "2027-08-29"
   end_date: "2027-10-10"
   status: upcoming
-  status_basis: "Registration opens 28 Jun 2027"
+  status_basis: Registration opens 28 Jun 2027
   source_url: https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd
   fetched_at: "2026-10-24"
   evidence: ["UEFA C-Diplom Termin 3 Teil I: Kursbeginn: So. 29. August 2027", "Kursende: So. 10. Oktober 2027 18:00 Uhr", "Online-Anmeldung möglich ab 28. Juni 2027, 18 Uhr Kursbeitrag: € 780,--"]
@@ -601,7 +777,7 @@
   start_date: "2027-05-02"
   end_date: "2027-07-11"
   status: upcoming
-  status_basis: "Registration opens 4 Jan 2027"
+  status_basis: Registration opens 4 Jan 2027
   source_url: https://www.ofv.at/ofv/OO%CC%88FV-Trainerlehrga%CC%88nge-2027.pdf?ch=idQpixDd
   fetched_at: "2026-10-24"
   evidence: ["UEFA B-Diplom Teil I: Kursbeginn: So. 02. Mai 2027", "Kursende: So. 11. Juli 2027 13:00 Uhr", "Eignungstest: Sa. 17. April 2027 Online-Anmeldung möglich ab 04. Jänner 2027, 18 Uhr Kursbeitrag: € 480,-- exkl. Nächtigungs- und Verpflegungskosten im BSFZ Obertraun"]
@@ -616,11 +792,11 @@
   format: residential
   price: null
   deadline: null
-  application_window: "Only via Fußball Online (login)"
+  application_window: Only via Fußball Online (login)
   start_date: "2026-11-22"
   end_date: "2026-12-13"
   status: unknown
-  status_basis: "The page lists the dates only; places and registration status are behind the Fußball Online login"
+  status_basis: The page lists the dates only; places and registration status are behind the Fußball Online login
   source_url: https://kfv-fussball.at/kfv/Trainerwesen/Trainerausbildung/Aktuelle-Trainerkurse
   render: true
   fetched_at: "2026-10-24"
@@ -636,11 +812,11 @@
   format: residential
   price: null
   deadline: null
-  application_window: "Only via Fußball Online (login); aptitude test was 15 Sep 2026"
+  application_window: Only via Fußball Online (login); aptitude test was 15 Sep 2026
   start_date: "2026-11-15"
   end_date: "2027-01-31"
   status: unknown
-  status_basis: "The aptitude test (15 Sep 2026) has passed and the page does not say whether places are left"
+  status_basis: The aptitude test (15 Sep 2026) has passed and the page does not say whether places are left
   source_url: https://kfv-fussball.at/kfv/Trainerwesen/Trainerausbildung/Aktuelle-Trainerkurse
   render: true
   fetched_at: "2026-10-24"
@@ -656,11 +832,11 @@
   format: null
   price: {amount: 450, currency: EUR}
   deadline: "2027-02-01"
-  application_window: "2 Oct 2026 – 1 Feb 2027, online (Fußball Online)"
+  application_window: 2 Oct 2026 – 1 Feb 2027, online (Fußball Online)
   start_date: "2027-03-04"
   end_date: "2027-03-21"
   status: open
-  status_basis: "Today is inside the published registration window (open 2 Oct 2026 – 1 Feb 2027); free places are not shown publicly"
+  status_basis: Today is inside the published registration window (open 2 Oct 2026 – 1 Feb 2027); free places are not shown publicly
   source_url: https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027
   render: true
   fetched_at: "2026-10-24"
@@ -676,11 +852,11 @@
   format: null
   price: {amount: 450, currency: EUR}
   deadline: "2027-07-12"
-  application_window: "2 Oct 2026 – 12 Jul 2027, online (Fußball Online)"
+  application_window: 2 Oct 2026 – 12 Jul 2027, online (Fußball Online)
   start_date: "2027-08-19"
   end_date: "2027-09-05"
   status: open
-  status_basis: "Today is inside the published registration window (open 2 Oct 2026 – 12 Jul 2027); free places are not shown publicly"
+  status_basis: Today is inside the published registration window (open 2 Oct 2026 – 12 Jul 2027); free places are not shown publicly
   source_url: https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027
   render: true
   fetched_at: "2026-10-24"
@@ -696,11 +872,11 @@
   format: null
   price: {amount: 450, currency: EUR}
   deadline: "2027-08-30"
-  application_window: "2 Oct 2026 – 30 Aug 2027, online (Fußball Online)"
+  application_window: 2 Oct 2026 – 30 Aug 2027, online (Fußball Online)
   start_date: "2027-09-30"
   end_date: "2027-10-17"
   status: open
-  status_basis: "Today is inside the published registration window (open 2 Oct 2026 – 30 Aug 2027); free places are not shown publicly"
+  status_basis: Today is inside the published registration window (open 2 Oct 2026 – 30 Aug 2027); free places are not shown publicly
   source_url: https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027
   render: true
   fetched_at: "2026-10-24"
@@ -716,18 +892,20 @@
   format: null
   price: {amount: 700, currency: EUR}
   deadline: "2027-05-03"
-  application_window: "Via Fußball Online until 3 May 2027; aptitude test 3 Jun 2027"
+  application_window: Via Fußball Online until 3 May 2027; aptitude test 3 Jun 2027
   start_date: "2027-09-20"
   end_date: "2028-04-07"
   status: open
-  status_basis: "Registration is open until 3 May 2027 (Letzter Termin für die Anmeldung); entry depends on the aptitude test"
+  status_basis: Registration is open until 3 May 2027 (Letzter Termin für die Anmeldung); entry depends on the aptitude test
   source_url: https://www.tfv.at/tfv/News/Ausschreibung-UEFA-B-Diplom-2027-2028/
   render: true
   fetched_at: "2026-10-24"
   evidence: ["Letzter Termin für die Anmeldung ist Montag, 3. Mai 2027", "Kursteil 1: 20.09. bis 24.09.2027", "Kursteil 3: 03.04. bis 07.04.2028", "Kursgebühr in Höhe von € 700,--", "Donnerstag, 03.06.2027 mit Beginn um 17:00 Uhr"]
-# --- Read in a normal browser on 24 Oct 2026 (read_with: browser). These sites refuse CoachBadgeBot (HTTP 403 or a
-# robots.txt that refuses it), so the weekly script does not fetch them; refresh.py lists them for a person to re-check
-# by hand. They are manual entries, so a refresh never drops them. Evidence is the page text as shown in the browser.
+# --- Read in a normal browser (read_with: browser). First read 24 Oct 2026; re-checked 2 Nov 2026. These sites refuse
+# CoachBadgeBot (HTTP 403 or a robots.txt that refuses it), so the weekly script does not fetch them; refresh.py lists
+# them for a person to re-check by hand. They are manual entries, so a refresh never drops them. Evidence is the page
+# text as shown in the browser. Screenshots from the 2 Nov pass live in the agent store (not committed); text snapshots
+# are in raw/browser/ (also not committed).
 - id: che-fvrz-uefa-c-1-27
   sport: football
   country: Switzerland
@@ -746,7 +924,7 @@
   status_basis: "The course list marks it 'ausgebucht/Warteliste!' (fully booked, waiting list)"
   source_url: https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["Kurse 2027", "SFV FVRZ UEFA C 1-27", "ausgebucht/Warteliste!", "2 Module à 3 Tage", "Fr. 350.00 (Tarif A)", "Fr. 700.00 (Tarif P)", "Gültiges SFV C Basic-Diplom"]
 - id: che-fvrz-uefa-c-2-27
   sport: football
@@ -763,10 +941,10 @@
   start_date: "2027-04-22"
   end_date: "2027-05-22"
   status: open
-  status_basis: "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full"
+  status_basis: Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full
   source_url: https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["Kurse 2027", "SFV FVRZ UEFA C 2-27", "Anmeldeschluss: 2 Monate vor Kursbeginn oder sobald der Kurs ausgebucht ist", "2 Module à 3 Tage", "Fr. 350.00 (Tarif A)", "Fr. 700.00 (Tarif P)", "Gültiges SFV C Basic-Diplom"]
 - id: che-fvrz-uefa-c-3-27
   sport: football
@@ -783,10 +961,10 @@
   start_date: "2027-06-07"
   end_date: "2027-06-30"
   status: open
-  status_basis: "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full"
+  status_basis: Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full
   source_url: https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["Kurse 2027", "SFV FVRZ UEFA C 3-27", "Anmeldeschluss: 2 Monate vor Kursbeginn oder sobald der Kurs ausgebucht ist", "2 Module à 3 Tage", "Fr. 350.00 (Tarif A)", "Fr. 700.00 (Tarif P)", "Gültiges SFV C Basic-Diplom"]
 - id: che-fvrz-uefa-c-4-27
   sport: football
@@ -803,10 +981,10 @@
   start_date: "2027-08-27"
   end_date: "2027-09-19"
   status: open
-  status_basis: "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full"
+  status_basis: Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full
   source_url: https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["Kurse 2027", "SFV FVRZ UEFA C 4-27", "separate Frauenklasse in Praxis!", "Anmeldeschluss: 2 Monate vor Kursbeginn oder sobald der Kurs ausgebucht ist", "2 Module à 3 Tage", "Fr. 350.00 (Tarif A)", "Fr. 700.00 (Tarif P)", "Gültiges SFV C Basic-Diplom"]
 - id: che-fvrz-uefa-b-2027-28
   sport: football
@@ -820,14 +998,14 @@
   price: null
   price_note: "total not stated; per module: Modul 1 Fr. 100 + Fr. 50 enrolment, Modules 2–5 Fr. 350 each, Modul 6 Fr. 250 (Profil P: Fr. 500 / Fr. 350)"
   deadline: "2027-03-20"
-  application_window: "Registration 1–20 Mar 2027, for the entrance exam only; later modules follow automatically after passing. Entrance exam 18 Jun 2027; modules 20–22 Sep 2027, 2–4 Nov 2027, April 2028, May 2028; final exams 9–10 Jun 2028"
+  application_window: Registration 1–20 Mar 2027, for the entrance exam only; later modules follow automatically after passing. Entrance exam 18 Jun 2027; modules 20–22 Sep 2027, 2–4 Nov 2027, April 2028, May 2028; final exams 9–10 Jun 2028
   start_date: "2027-06-18"
   end_date: "2028-06-10"
   status: upcoming
-  status_basis: "The page says registrations for the 2027/2028 course are possible from 1 to 20 March 2027"
+  status_basis: The page says registrations for the 2027/2028 course are possible from 1 to 20 March 2027
   source_url: https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-B-Einfuehrung-Leistungssport.aspx
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["Kurs 2027/2028 -> Anmeldungen vom 1. bis 20. März 2027 möglich!", "Anmeldung Aufnahmeprüfung 2027: 01.-20.03.2027", "SFV FVRZ B 1.1-27", "Fr, 18. Juni 2027", "SFV FVRZ B 1.6-28", "Fr, 09. - Sa, 10. Juni 2028", "Modul 1: Fr. 100.00 (plus Einschreibegebühr: Fr. 50.00)", "Modul 6: Fr. 250.00 (Profil P: 350.00)"]
 - id: nld-knvb-vc4-senioren-2027-28
   sport: football
@@ -842,13 +1020,13 @@
   deadline: "2026-10-25"
   application_window: "Open from 2 Oct 2026, 12:00 until 25 Oct 2026; admission interviews in weeks 49 and 50"
   start_date: "2027-05"
-  start_note: "May/June 2027"
+  start_note: May/June 2027
   end_date: null
   status: open
-  status_basis: "The page says registration for 2027/'28 is open until Sunday 25 October 2026"
+  status_basis: "Page states registration for 2027/'28 was open 2 Oct–25 Oct 2026; as of the 2 Nov 2026 re-check that window has ended"
   source_url: https://www.knvb.nl/assist-trainers/opleidingen-bijscholingen-trainers/trainer-coach-veldvoetbal-opleidingen/voetbalcoach-4-senioren
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["De inschrijving voor VC4 Senioren voor seizoen 2027/’28 staat open vanaf vrijdag 2 oktober om 12.00 uur tot en met zondag 25 oktober ’26.", "De 7 centrale bijeenkomsten vinden plaats bij de KNVB Campus te Zeist.", "De opleiding gaat van start in mei/juni 2027.", "Het opleidingsgeld voor deze opleiding bedraagt €11.585,-."]
 - id: nld-knvb-vc4-jeugd-2027-28
   sport: football
@@ -863,11 +1041,11 @@
   deadline: "2026-10-25"
   application_window: "Open from 2 Oct 2026, 12:00 until 25 Oct 2026; admission interviews in weeks 2–4 of 2027"
   start_date: "2027-05"
-  start_note: "May/June 2027"
+  start_note: May/June 2027
   end_date: null
   status: open
-  status_basis: "The page says registration for 2027/'28 is open until Sunday 25 October 2026"
+  status_basis: "Page states registration for 2027/'28 was open 2 Oct–25 Oct 2026; as of the 2 Nov 2026 re-check that window has ended"
   source_url: https://www.knvb.nl/assist-trainers/opleidingen-bijscholingen-trainers/trainer-coach-veldvoetbal-opleidingen/voetbalcoach-4-jeugd
   read_with: browser
-  fetched_at: "2026-10-24"
+  fetched_at: "2026-11-02"
   evidence: ["De inschrijving voor VC4 Jeugd voor seizoen 2027/’28 staat open vanaf vrijdag 2 oktober om 12.00 uur tot en met zondag 25 oktober ’26.", "Deze bijeenkomsten vinden in principe plaats op dinsdag", "De opleiding gaat van start in mei/juni 2027.", "Het opleidingsgeld voor deze opleiding bedraagt €11.585,-."]

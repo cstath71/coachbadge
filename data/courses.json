@@ -1,9 +1,9 @@
 {
  "generated": "2026-11-02",
- "count": 82,
+ "count": 92,
  "parsers": {
   "fa_uefa_c": {
-   "rows": 31,
+   "rows": 32,
    "error": null
   },
   "epo": {
@@ -547,7 +547,7 @@
    "status": "closed",
    "status_basis": "online start (broadcast) date has passed",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "The Oxford Academy, Sandy Lane, Littlemore, OX4 6JZ",
@@ -585,11 +585,49 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Heybridge Swifts FC, Scraley Road, Heybridge, Maldon, Essex, CM9 8JA",
     "19:00 Wednesday 18 November 2026",
+    "£650",
+    "Face-to-face & Online"
+   ]
+  },
+  {
+   "id": "eng-fa-uefa-c-uefacd7048",
+   "sport": "football",
+   "country": "England",
+   "provider": "The Football Association (England)",
+   "level": "UEFA C",
+   "title": "UEFA C Diploma – SGP Thorncliffe",
+   "location": "SGP Thorncliffe, Pack Horse Lane, High Green, Sheffield, S35 3HY",
+   "region": "North East",
+   "language": "English",
+   "format": "blended",
+   "format_note": "Online broadcast session plus three face-to-face modules",
+   "price": {
+    "amount": 650,
+    "currency": "GBP",
+    "note": "£95 or £500 with FA funding for eligible coaches"
+   },
+   "deadline": null,
+   "application_window": "First-come, first-served booking",
+   "start_date": "2026-11-19",
+   "end_date": "2027-04-02",
+   "module_dates": {
+    "Module One Dates": "Thursday 3 December 2026 - Friday 4 December 2026",
+    "Module Two Dates": "Thursday 11 February 2027 - Friday 12 February 2027",
+    "Module Three Dates": "Thursday 1 April 2027 - Friday 2 April 2027"
+   },
+   "status": "open",
+   "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
+   "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
+   "fetched_at": "2026-10-26",
+   "evidence": [
+    "UEFA C Diploma 2026/27 season courses now available",
+    "SGP Thorncliffe, Pack Horse Lane, High Green, Sheffield, S35 3HY",
+    "19:00 Thursday 19 November 2026",
     "£650",
     "Face-to-face & Online"
    ]
@@ -623,7 +661,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "East Riding CFA, Roy West Centre, 220 Inglemire Lane, Hull, HU6 7TS",
@@ -690,7 +728,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Liverpool Simpson Ground, Hillfoot Rd, Hunt's Cross, Liverpool, L25 7UJ",
@@ -728,7 +766,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Shrub End Community Sport Centre, Boadicea Way, Colchester, CO2 9BG",
@@ -766,7 +804,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Silver Jubilee Park, Townsend Ln, London, NW9 7NE",
@@ -804,7 +842,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "The Nest Norwich City FC, Holt Road, Horsford, Norwich, NR10 3AQ",
@@ -842,7 +880,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Douglas Eyre Sports Centre 148 Coppermill Lane, Walthamstow, E17 7HE",
@@ -880,7 +918,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Douglas Eyre Sports Centre 148 Coppermill Lane, Walthamstow, E17 7HE",
@@ -918,7 +956,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Cambourne Sports Centre, Back Ln, Great Cambourne, Cambourne, Cambridge, CB23 6FY",
@@ -956,7 +994,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Gloucestershire FA, Gloucester Road, Almondsbury, Bristol, BS32 4AG",
@@ -994,7 +1032,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Surrey Sports Park, Richard Meyjes Road, Guildford, Surrey,GU2 7AD",
@@ -1032,7 +1070,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Bradfield College, Bradfield, Berkshire, RG7 6AU",
@@ -1070,7 +1108,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Judgemeadow Community College, Marydene Drive, Leicester, LE5 6HP",
@@ -1108,7 +1146,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "HMS Temeraire Victory, Burnaby Road, Portsmouth, PO21 2HB",
@@ -1146,7 +1184,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Priory School, Fawcett Road, Southsea, Hants, PO4 0DL",
@@ -1184,7 +1222,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Marine Academy, Trevithick Road, St Budeaux, Plymouth, PL5 2AF",
@@ -1222,7 +1260,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Moulton College, West Street, Moulton, Northamptonshire, NN3 7RR",
@@ -1260,7 +1298,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "The Oxford Academy, Sandy Lane, Littlemore, OX4 6JZ",
@@ -1298,7 +1336,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Racecourse Playing Fields, St Mark's Road, Derby, DE21 6AL",
@@ -1336,7 +1374,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Aveley FC, Parkside, Park Lane, South Ockendon, RM15 4PX",
@@ -1374,7 +1412,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Silver Jubilee Park, Townsend Ln, London, NW9 7NE",
@@ -1412,7 +1450,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Bedfordshire FA, Cranfield Pavilion, Lower Breaches Gardens, Cranfield, MK43 1AH",
@@ -1450,7 +1488,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Worcestershire County Sports Ground, Claines Ln, Worcester, WR3 7SS",
@@ -1488,7 +1526,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Ringwood Community Hub, Long Lane, Ringwood, Hampshire, BH24 3AW",
@@ -1526,7 +1564,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Wolverhampton College, Wellington Road Campus, Bilston, Wolverhampton, WV14 6BT",
@@ -1564,7 +1602,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Hough End Football Hub, 480 Princess Road, Manchester, M20 1HD",
@@ -1602,7 +1640,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Redcar & Cleveland College, Corporation Rd, Redcar, TS10 1EZ",
@@ -1640,7 +1678,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Strode College, Church Road, Street, Somerset, BA16 0AB",
@@ -1678,7 +1716,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "HMS Culdrose, Culdrose, Helston, Cornwall, TR12 7RH",
@@ -1733,7 +1771,7 @@
    "status": "open",
    "status_basis": "Online registration calendar shows 'noch 17 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00325",
     "C-Lizenz Jugend/Erwachsene 2027",
@@ -1759,7 +1797,7 @@
    "status": "open",
    "status_basis": "Online registration calendar shows 'noch 11 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00324",
     "Eignungsprüfung B-Lizenz Leistungsweg 2027 (gültiger DFB-Basis-Coach)",
@@ -1783,13 +1821,13 @@
    "start_date": "2027-02-28",
    "end_date": null,
    "status": "open",
-   "status_basis": "Online registration calendar shows 'noch 30 freie Plätze'",
+   "status_basis": "Online registration calendar shows 'noch 32 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00340",
     "B-Lizenz Bewerbung 2027 (gültige C-Lizenz und Profis)",
-    "noch 30 freie Plätze"
+    "noch 32 freie Plätze"
    ],
    "course_number": "27-Z-00340"
   },
@@ -1811,7 +1849,7 @@
    "status": "open",
    "status_basis": "Online registration calendar shows 'noch 30 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00341",
     "B-Lizenz Profil Leistung 1/2027",
@@ -1837,7 +1875,7 @@
    "status": "open",
    "status_basis": "Online registration calendar shows 'noch 29 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00584",
     "C-Lizenz Kinder 2027",
@@ -1863,7 +1901,7 @@
    "status": "open",
    "status_basis": "Online registration calendar shows 'noch 28 freie Plätze'",
    "source_url": "https://www.dfbnet.org/vkal/mod_vkal/webflow.do?dmg_company=SFV&event=PLAN_NEW",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "27-Z-00756",
     "B-Lizenz Profil Leistung 2/2027",
@@ -1922,7 +1960,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Χανίων/Ρεθύμνου",
     "03-08.11.2026",
@@ -1952,7 +1990,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Δωδεκανήσου",
     "16-21.11.2026",
@@ -1982,7 +2020,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Τρικάλων/Καρδίτσας",
     "08-13.12.2026",
@@ -2012,7 +2050,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Πέλλας",
     "08-13.12.2026",
@@ -2042,7 +2080,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Ηπείρου",
     "11-16.01.2027",
@@ -2072,7 +2110,7 @@
    "status": "unknown",
    "status_basis": "Schedule lists the school; the page does not state whether applications are open",
    "source_url": "https://www.epo.gr/el/uefa-c",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "Φωκίδας/Ευρυτανίας",
     "08-13.02.2027",
@@ -2108,7 +2146,7 @@
    "status": "open",
    "status_basis": "Page: 'UEFA C Diploma 2026/27 season courses now available', course listed with 'Book now'",
    "source_url": "https://learn.englandfootball.com/courses/football/uefa-c-licence",
-   "fetched_at": "2026-11-02",
+   "fetched_at": "2026-10-26",
    "evidence": [
     "UEFA C Diploma 2026/27 season courses now available",
     "Haute Vallee, La Grande Route du Mont a L'Abbe, St Helier, Jersey, JE2 3HA",
@@ -2138,10 +2176,10 @@
    "start_note": "May/June 2027",
    "end_date": null,
    "status": "open",
-   "status_basis": "The page says registration for 2027/'28 is open until Sunday 25 October 2026",
+   "status_basis": "Page states registration for 2027/'28 was open 2 Oct–25 Oct 2026; as of the 2 Nov 2026 re-check that window has ended",
    "source_url": "https://www.knvb.nl/assist-trainers/opleidingen-bijscholingen-trainers/trainer-coach-veldvoetbal-opleidingen/voetbalcoach-4-jeugd",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "De inschrijving voor VC4 Jeugd voor seizoen 2027/’28 staat open vanaf vrijdag 2 oktober om 12.00 uur tot en met zondag 25 oktober ’26.",
     "Deze bijeenkomsten vinden in principe plaats op dinsdag",
@@ -2170,10 +2208,10 @@
    "start_note": "May/June 2027",
    "end_date": null,
    "status": "open",
-   "status_basis": "The page says registration for 2027/'28 is open until Sunday 25 October 2026",
+   "status_basis": "Page states registration for 2027/'28 was open 2 Oct–25 Oct 2026; as of the 2 Nov 2026 re-check that window has ended",
    "source_url": "https://www.knvb.nl/assist-trainers/opleidingen-bijscholingen-trainers/trainer-coach-veldvoetbal-opleidingen/voetbalcoach-4-senioren",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "De inschrijving voor VC4 Senioren voor seizoen 2027/’28 staat open vanaf vrijdag 2 oktober om 12.00 uur tot en met zondag 25 oktober ’26.",
     "De 7 centrale bijeenkomsten vinden plaats bij de KNVB Campus te Zeist.",
@@ -2325,12 +2363,271 @@
    "start_date": "2026-06-29",
    "end_date": "2027-06-25",
    "status": "closed",
-   "status_basis": "deadline passed",
+   "status_basis": "Pre-registration window was 7 May–7 Jun 2026; closed (re-checked 2 Nov 2026)",
    "source_url": "https://rfef.es/es/noticias/abierto-el-plazo-de-preinscripcion-para-el-curso-de-entrenador-de-futbol-diploma-4",
-   "fetched_at": "2026-10-24",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "El plazo de preinscripción estará abierto hasta el próximo 7 de junio",
     "Del 29 de junio de 2026 al 25 de junio de 2027."
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-noviembre-grupo3-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "FFCV Valencia (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "UEFA C Noviembre (Grupo 3)",
+   "location": "Valencia (FFCV)",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-10-13",
+   "end_date": "2027-06-30",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "Noviembre (Grupo 3)",
+    "13-10-2026",
+    "30-06-2027",
+    "FFCV"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-2627-1-catalunya",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "Federació Catalana (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "UEFA C 26/27 (1) Novembre",
+   "location": "Catalunya",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-10-29",
+   "end_date": "2028-11-17",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "26/27",
+    "Novembre",
+    "29-10-2026",
+    "17-11-2028",
+    "Catalana"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-b-universidad-europea-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "RFF Madrid (via RFEF Academia)",
+   "level": "UEFA B",
+   "title": "UEFA B Universidad Europea",
+   "location": "Universidad Europea (RFF Madrid)",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-03",
+   "end_date": "2027-11-03",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA B",
+    "Universidad Europea",
+    "03-11-2026",
+    "03-11-2027",
+    "RFF Madrid"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-a-alcala-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "RFF Madrid (via RFEF Academia)",
+   "level": "UEFA A",
+   "title": "UEFA A Alcalá de Henares",
+   "location": "Alcalá de Henares",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-04",
+   "end_date": "2027-06-30",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA A",
+    "Alcalá de Henares",
+    "04-11-2026",
+    "30-06-2027",
+    "RFF Madrid"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-a-boadilla-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "RFF Madrid (via RFEF Academia)",
+   "level": "UEFA A",
+   "title": "UEFA A Boadilla del Monte",
+   "location": "Boadilla del Monte",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-04",
+   "end_date": "2027-06-30",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA A",
+    "Boadilla del Monte",
+    "04-11-2026",
+    "30-06-2027",
+    "RFF Madrid"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-etef-orotava-adeje-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "ETEF Tenerife (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "UEFA C ETEF La Orotava and Adeje",
+   "location": "La Orotava / Adeje, Tenerife",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-04",
+   "end_date": "2027-07-01",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "ETEF",
+    "La Orotava",
+    "Adeje",
+    "04-11-2026",
+    "01-07-2027",
+    "Tenerife"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-16-11-2026-rff-madrid",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "RFF Madrid (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "UEFA C 16-11-2026",
+   "location": "Madrid (RFF Madrid)",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-09",
+   "end_date": "2027-06-30",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "16-11-2026",
+    "09-11-2026",
+    "30-06-2027",
+    "RFF Madrid"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-etef-candelaria-matanza-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "ETEF Tenerife (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "UEFA C ETEF Candelaria/Centenero and Matanza/Tacoronte",
+   "location": "Candelaria / La Matanza / Tacoronte, Tenerife",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-11",
+   "end_date": "2027-07-01",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "ETEF",
+    "Candelaria",
+    "Matanza",
+    "Tacoronte",
+    "11-11-2026",
+    "01-07-2027",
+    "Tenerife"
+   ]
+  },
+  {
+   "id": "esp-rfef-academia-uefa-c-ed44-murcia-2026-27",
+   "sport": "football",
+   "country": "Spain",
+   "provider": "FF Región de Murcia (via RFEF Academia)",
+   "level": "UEFA C",
+   "title": "Entrenador UEFA C Ed. 44",
+   "location": "Región de Murcia",
+   "language": "Spanish",
+   "format": null,
+   "price": null,
+   "deadline": null,
+   "application_window": null,
+   "start_date": "2026-11-16",
+   "end_date": "2027-05-31",
+   "status": "unknown",
+   "status_basis": "Academia card lists type, Fechas, name and organiser only; no open/apply cue, price or places",
+   "source_url": "https://academia.rfef.es/escuela-entrenadores",
+   "read_with": "browser",
+   "fetched_at": "2026-11-02",
+   "evidence": [
+    "UEFA C",
+    "Ed. 44",
+    "16-11-2026",
+    "31-05-2027",
+    "Murcia"
    ]
   },
   {
@@ -2361,9 +2658,6 @@
     "Anmälan är nu öppen för Hallands Fotbollförbund",
     "OBS! Senaste anmälan är 16 november 2026.",
     "24 000:-/deltagare"
-   ],
-   "extra_sources": [
-    "https://fogis.svenskfotboll.se/fogisklient/kurs/kurstillfalleanmalan.aspx?kid=102945"
    ]
   },
   {
@@ -2514,7 +2808,7 @@
    "status_basis": "The course list marks it 'ausgebucht/Warteliste!' (fully booked, waiting list)",
    "source_url": "https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "Kurse 2027",
     "SFV FVRZ UEFA C 1-27",
@@ -2548,7 +2842,7 @@
    "status_basis": "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full",
    "source_url": "https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "Kurse 2027",
     "SFV FVRZ UEFA C 2-27",
@@ -2582,7 +2876,7 @@
    "status_basis": "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full",
    "source_url": "https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "Kurse 2027",
     "SFV FVRZ UEFA C 3-27",
@@ -2613,7 +2907,7 @@
    "status_basis": "The page says registrations for the 2027/2028 course are possible from 1 to 20 March 2027",
    "source_url": "https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-B-Einfuehrung-Leistungssport.aspx",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "Kurs 2027/2028 -> Anmeldungen vom 1. bis 20. März 2027 möglich!",
     "Anmeldung Aufnahmeprüfung 2027: 01.-20.03.2027",
@@ -2648,7 +2942,7 @@
    "status_basis": "Listed for 2027 without a fully-booked remark; registration open until 2 months before the start or until full",
    "source_url": "https://www.fvrz.ch/fussballverband-region-zuerich/trainer-innen/UEFA-C.aspx",
    "read_with": "browser",
-   "fetched_at": "2026-10-24",
+   "fetched_at": "2026-11-02",
    "evidence": [
     "Kurse 2027",
     "SFV FVRZ UEFA C 4-27",
