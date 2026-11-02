@@ -175,10 +175,10 @@
   start_date: "2027-02-06"
   end_date: "2027-11-14"
   status: open
-  status_basis: "Page has application form ('Nedan ansöker du om plats') showing '(48 lediga)'; deadline 6 December 2026"
+  status_basis: "Page has application form ('Nedan ansöker du om plats') with 'Anmäl dig' and free places (48 places, 34 free on 2 Nov 2026); deadline 6 December 2026"
   source_url: https://sodermanland.svenskfotboll.se/nyheter/2026/10/inbjudan-uefa-b-2027/
   fetched_at: "2026-10-24"
-  evidence: ["Nedan ansöker du om plats på utbildningen.", "(48 lediga)", "senast 6 december 2026", "20 000 kr per deltagare", "ALTERNATIV 1 Västmanland/Södermanland", "Kursmodul 1: 2 dagar (08.00-18.00) 6-7 februari", "Kursmodul 4+5: 2 dagar (08.00-21.00) 13-14 november"]
+  evidence: ["Nedan ansöker du om plats på utbildningen.", "Anmäl dig", "senast 6 december 2026", "20 000 kr per deltagare", "ALTERNATIV 1 Västmanland/Södermanland", "Kursmodul 1: 2 dagar (08.00-18.00) 6-7 februari", "Kursmodul 4+5: 2 dagar (08.00-21.00) 13-14 november"]
 - id: swe-nafu-uefa-b-2027-alt2
   sport: football
   country: Sweden
@@ -194,10 +194,10 @@
   start_date: "2027-02-13"
   end_date: null
   status: open
-  status_basis: "Page has application form showing '(48 lediga)'; deadline 6 December 2026"
+  status_basis: "Page has application form with 'Anmäl dig' and free places (48 places, 34 free on 2 Nov 2026); deadline 6 December 2026"
   source_url: https://sodermanland.svenskfotboll.se/nyheter/2026/10/inbjudan-uefa-b-2027/
   fetched_at: "2026-10-24"
-  evidence: ["Nedan ansöker du om plats på utbildningen.", "(48 lediga)", "senast 6 december 2026", "ALTERNATIV 2 Värmland/Örebro", "Kursmodul 1: 2 dagar (08.00-18.00) 13-14 februari"]
+  evidence: ["Nedan ansöker du om plats på utbildningen.", "Anmäl dig", "senast 6 december 2026", "ALTERNATIV 2 Värmland/Örebro", "Kursmodul 1: 2 dagar (08.00-18.00) 13-14 februari"]
 - id: nor-nff-uefa-a-2027
   sport: football
   country: Norway
