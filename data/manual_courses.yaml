@@ -40,6 +40,57 @@
   source_url: https://learn.englandfootball.com/courses/football/uefa-a-licence
   fetched_at: "2026-10-24"
   evidence: ["£4,150", "Register your interest", "prior to the course starting in January 2027"]
+# Re-checked 9 Nov 2026: no longer on the FA UEFA C list. Kept with status closed.
+- id: eng-fa-uefa-c-liverpool-simpson-ground-2027-01-07-m2027-01-14
+  sport: football
+  country: England
+  provider: The Football Association (England)
+  level: UEFA C
+  title: UEFA C Diploma – Liverpool Simpson Ground
+  location: "Liverpool Simpson Ground, Hillfoot Rd, Hunt's Cross, Liverpool, L25 7UJ"
+  region: North West
+  language: English
+  format: blended
+  format_note: Online broadcast session plus three face-to-face modules
+  price: {amount: 650, currency: GBP, note: "£95 or £500 with FA funding for eligible coaches"}
+  deadline: null
+  application_window: First-come, first-served booking
+  start_date: "2027-01-07"
+  end_date: "2027-04-16"
+  module_dates:
+    Module One Dates: Thursday 14 January 2027 - Friday 15 January 2027
+    Module Two Dates: Thursday 11 March 2027 - Friday 12 March 2027
+    Module Three Dates: Thursday 15 April 2027 - Friday 16 April 2027
+  status: closed
+  status_basis: "Liverpool Simpson Ground (broadcast 7 Jan 2027) is no longer listed on the FA UEFA C course page (re-checked 9 Nov 2026). The page says all currently available courses are listed below."
+  source_url: https://learn.englandfootball.com/courses/football/uefa-c-licence
+  fetched_at: "2026-11-09"
+  evidence: ["UEFA C Diploma 2026/27 season courses now available", "All currently available courses are listed below.", "£650", "Face-to-face & Online"]
+- id: eng-fa-uefa-c-uefacd7048
+  sport: football
+  country: England
+  provider: The Football Association (England)
+  level: UEFA C
+  title: UEFA C Diploma – SGP Thorncliffe
+  location: "SGP Thorncliffe, Pack Horse Lane, High Green, Sheffield, S35 3HY"
+  region: North East
+  language: English
+  format: blended
+  format_note: Online broadcast session plus three face-to-face modules
+  price: {amount: 650, currency: GBP, note: "£95 or £500 with FA funding for eligible coaches"}
+  deadline: null
+  application_window: First-come, first-served booking
+  start_date: "2026-11-19"
+  end_date: "2027-04-02"
+  module_dates:
+    Module One Dates: Thursday 3 December 2026 - Friday 4 December 2026
+    Module Two Dates: Thursday 11 February 2027 - Friday 12 February 2027
+    Module Three Dates: Thursday 1 April 2027 - Friday 2 April 2027
+  status: closed
+  status_basis: "UEFACD7048 (SGP Thorncliffe, Sheffield, broadcast 19 Nov 2026) is no longer listed on the FA UEFA C course page (re-checked 9 Nov 2026). The page says all currently available courses are listed below."
+  source_url: https://learn.englandfootball.com/courses/football/uefa-c-licence
+  fetched_at: "2026-11-09"
+  evidence: ["UEFA C Diploma 2026/27 season courses now available", "All currently available courses are listed below.", "£650", "Face-to-face & Online"]
 - id: ger-dfb-uefa-pro-2027
   sport: football
   country: Germany
@@ -881,6 +932,26 @@
   render: true
   fetched_at: "2026-10-24"
   evidence: ["Landeck 30.09.27", "02.10.26 - 30.08.27", "€ 450,--"]
+- id: aut-tfv-ofb-e-coach-2027-pians
+  sport: football
+  country: Austria
+  provider: TFV (Tyrol FA)
+  level: ÖFB-E-COACH
+  title: "ÖFB-E-COACH, Pians (09:00–16:00)"
+  location: Pians
+  language: German
+  format: null
+  price: {amount: 50, currency: EUR}
+  deadline: "2027-03-18"
+  application_window: 2 Oct 2026 – 18 Mar 2027, online (Fußball Online)
+  start_date: "2027-04-18"
+  end_date: null
+  status: open
+  status_basis: Today is inside the published registration window (open 2 Oct 2026 – 18 Mar 2027); free places are not shown publicly
+  source_url: https://www.tfv.at/tfv/Trainer/Terminuebersicht-2027
+  render: true
+  fetched_at: "2026-11-09"
+  evidence: ["ÖFB-E-COACH", "Pians", "18.04.27", "09:00 Uhr - 16:00 Uhr", "02.10.26 - 18.03.27", "€ 50,--", "Die Anmeldung ist ab dem ersten Tag des Anmeldezeitraums ausschließlich \"online\" möglich."]
 - id: aut-tfv-uefa-b-2027-28
   sport: football
   country: Austria
@@ -901,6 +972,29 @@
   render: true
   fetched_at: "2026-10-24"
   evidence: ["Letzter Termin für die Anmeldung ist Montag, 3. Mai 2027", "Kursteil 1: 20.09. bis 24.09.2027", "Kursteil 3: 03.04. bis 07.04.2028", "Kursgebühr in Höhe von € 700,--", "Donnerstag, 03.06.2027 mit Beginn um 17:00 Uhr"]
+# Re-checked 9 Nov 2026: phase 1 dates have passed. The schedule row is still on epo.gr/el/uefa-c;
+# the announcement is the source linked from the entry. Kept with status closed (the extractor drops past start dates).
+- id: gre-epo-uefa-c-2026-10-29-610
+  sport: football
+  country: Greece
+  provider: Hellenic Football Federation (EPO) with ΕΠΣ Κυκλάδων
+  level: UEFA C
+  title: UEFA C school – ΕΠΣ Κυκλάδων (phase 1)
+  location: null
+  language: Greek
+  format: null
+  format_note: Three phases; this row is phase 1 (1η φάση)
+  price: {amount: 900, currency: EUR, note: "total; €360 phase 1, €270 phase 2, €270 phase 3"}
+  deadline: null
+  application_window: Announced by EPO for each new school
+  start_date: "2026-10-29"
+  end_date: "2026-11-03"
+  status: closed
+  status_basis: Phase 1 dates (29 Oct–3 Nov 2026) have passed (re-checked 9 Nov 2026)
+  source_url: https://www.epo.gr/el/arthra/leitoyrgia-sholis-uefa-c-1i-fasi-stin-eps-kykladon
+  extra_sources: ["https://www.epo.gr/el/uefa-c"]
+  fetched_at: "2026-11-09"
+  evidence: ["Λειτουργία σχολής UEFA C (1η φάση) στην ΕΠΣ Κυκλάδων", "(29/10-3/11/2026)", "μέχρι τις 25/9/2026", "29.10-03.11.2026", "€900"]
 # --- Read in a normal browser (read_with: browser). First read 24 Oct 2026; re-checked 2 Nov 2026. These sites refuse
 # CoachBadgeBot (HTTP 403 or a robots.txt that refuses it), so the weekly script does not fetch them; refresh.py lists
 # them for a person to re-check by hand. They are manual entries, so a refresh never drops them. Evidence is the page
