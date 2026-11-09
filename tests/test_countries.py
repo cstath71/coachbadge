@@ -64,8 +64,8 @@ class TestEmptyCountries(unittest.TestCase):
 class TestAustria(unittest.TestCase):
     def test_austria_courses(self):
         at = [c for c in DATA["courses"] if c["country"] == "Austria"]
-        self.assertEqual(len(at), 15)
-        self.assertEqual({c["level"] for c in at}, {"UEFA C", "UEFA B"})
+        self.assertEqual(len(at), 16)
+        self.assertEqual({c["level"] for c in at}, {"UEFA C", "UEFA B", "ÖFB-E-COACH"})
         for c in at:
             self.assertTrue(c["source_url"].startswith("https://"))
             self.assertTrue(c.get("evidence"), c["id"])
