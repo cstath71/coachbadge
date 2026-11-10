@@ -69,5 +69,8 @@ nav.crumbs li+li:before{content:"›";margin-right:6px;color:var(--mut)}
 nav.crumbs a{color:#0a6b37;text-decoration:none}nav.crumbs li[aria-current]{color:var(--mut)}
 .faq{margin-top:12px}.faq h3{font-size:1.05rem;margin:16px 0 4px}.faq p{margin:0 0 8px;max-width:860px}
 p.answer-sub{max-width:860px;color:var(--mut)}
+main p.answer{font-size:1.15rem;line-height:1.45;max-width:860px;margin:8px 0 0}
+ul.answers{padding-left:18px}
+ul.answers li{margin:6px 0}
 p.updated{margin:8px 0 0;font-size:.9rem;color:var(--mut)}
 .hero p.updated{color:#d5e6dc}
