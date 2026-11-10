@@ -24,6 +24,13 @@ if __name__ == "__main__":
     req = urllib.request.Request("https://api.indexnow.org/indexnow", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json; charset=utf-8"})
     try:
-        r = urllib.request.urlopen(req, timeout=60); print("IndexNow", r.status, len(urls), "urls")
+        r = urllib.request.urlopen(req, timeout=60)
+        raw = r.read()
+        print(f"IndexNow HTTP {r.status} {r.reason}")
+        print(f"urls {len(urls)}")
+        print(raw.decode("utf-8", "replace") if raw else "(empty body)")
     except urllib.error.HTTPError as x:
-        print("IndexNow HTTP", x.code, x.read()[:300]); sys.exit(1)
+        raw = x.read()
+        print(f"IndexNow HTTP {x.code} {x.reason}")
+        print(raw[:1000].decode("utf-8", "replace") if raw else "(empty body)")
+        sys.exit(1)

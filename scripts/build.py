@@ -311,6 +311,19 @@ def summary_sentence():
     if nxt: s += f" The next deadline is {nxt['title']} ({nxt['provider']}) on {fdate(nxt['deadline'])}."
     return s
 
+def home_title():
+    """Document title. Bing flags a title of 60 characters or more. The visible h1 stays the full tagline."""
+    t = f"{BRAND}: football coaching courses in Europe"
+    if len(t) >= 60: raise SystemExit(f"homepage title length {len(t)}: {t}")
+    return t
+
+def home_description():
+    """Meta description in Bing's 120 to 155 character range. The count is the live courses in this data."""
+    s = (f"As of {GEN}, {len(LIVE)} football coaching courses in Europe are open on {BRAND}, "
+         "with application deadlines and the prices providers list.")
+    if not 120 <= len(s) <= 155: raise SystemExit(f"homepage description length {len(s)}: {s}")
+    return s
+
 def scope_sentence():
     return (f"{BRAND} tracks {counted(len(COURSES), 'course')} at {counted(len(LEVELS), 'level')} from {counted(len(ALL_SOURCES), 'source page')} "
             f"in {counted(len(COUNTRIES), 'country', 'countries')}, re-checked every week.")
@@ -798,7 +811,7 @@ def build():
 </div></main>"""
     ld = [{"@context": "https://schema.org", "@graph": [seo.website(BASE, BRAND, CFG["tagline"]), seo.org(BASE, BRAND)]},
           item_list("Open football coaching courses", BASE, LIVE), seo.faq_ld(faq)]
-    page("index.html", f"{BRAND}: {CFG['tagline']}", summary_sentence()[:300], body, ld)
+    page("index.html", home_title(), home_description(), body, ld)
     # countries
     items = []
     for ct in COUNTRIES:

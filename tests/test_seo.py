@@ -190,6 +190,25 @@ class TestAnswerFirst(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(DIST, "level", "uefa-b.html")))
         self.assertTrue(os.path.exists(os.path.join(DIST, "level", "uefa-a.html")))
 
+    def test_homepage_title_and_description_length(self):
+        """Bing Webmaster: title under 60 characters, meta description 120 to 155. The h1 stays the tagline."""
+        s = S("index.html")
+        title = s.title.get_text(strip=True)
+        desc = s.select_one('meta[name="description"]')["content"]
+        months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
+        y, m, d = PUB["generated"][:10].split("-")
+        gen = f"{int(d)} {months[int(m) - 1]} {y}"
+        expected = (f"As of {gen}, {len(LIVE)} football coaching courses in Europe are open on {CFG['brand']}, "
+                    "with application deadlines and the prices providers list.")
+        self.assertLess(len(title), 60, title)
+        self.assertIn(CFG["brand"], title)
+        self.assertTrue(120 <= len(desc) <= 155, (len(desc), desc))
+        self.assertEqual(desc, expected)
+        self.assertEqual(s.h1.get_text(strip=True), CFG["tagline"])
+        self.assertEqual(s.select_one('meta[property="og:title"]')["content"], title)
+        self.assertEqual(s.select_one('meta[property="og:description"]')["content"], desc)
+        self.assertEqual(s.select_one('meta[name="twitter:description"]')["content"], desc)
+
     def test_home_faq_numbers(self):
         faq = {q["name"]: q["acceptedAnswer"]["text"] for q in of_type("index.html", "FAQPage")[0]["mainEntity"]}
         priced = [c for c in COURSES if c.get("price") and c["price"].get("amount") is not None]
