@@ -253,7 +253,9 @@ s.forEach(function(x){x.addEventListener('change',go)});})();</script>""" if wit
 
 def course_ld(c):
     """Course + CourseInstance + Offer, only from fields the provider's page actually gave us."""
-    d = {"@type": "Course", "name": c["title"], "description": f'{c["level"]} football coaching course run by {c["provider"]} ({c["country"]}).',
+    desc = f'{c["level"]} football coaching course run by {c["provider"]} ({c["country"]}).'
+    if c.get("deadline"): desc += f' Application deadline {fdate(c["deadline"])}.'
+    d = {"@type": "Course", "name": c["title"], "description": desc,
          "provider": {"@type": "Organization", "name": c["provider"]}, "url": c["source_url"], "educationalLevel": c["level"]}
     if c.get("language"): d["inLanguage"] = c["language"]
     inst = {"@type": "CourseInstance"}
@@ -361,6 +363,52 @@ def diplomas_box(ct):
             '<div style="overflow-x:auto"><table class="info"><thead><tr><th>Diploma</th><th>UEFA level (as stated)</th><th>Cost (as stated)</th><th>Where</th><th>Source</th></tr></thead>'
             f'<tbody>{rows}</tbody></table></div><p class="small">Checked {e(fdate(info["fetched_at"]))}. These are not dated courses, so they are not counted as courses on this site.</p></section>')
 
+def association_sentence(cs):
+    """Providers of these courses, named as the associations in the data. No invented bodies."""
+    names = sorted({c["provider"] for c in cs})
+    if not names: return ""
+    if len(names) == 1: return f" The association is {names[0]}."
+    return f" The associations are {and_list(names)}."
+
+def earliest_sentence(cs):
+    """Earliest deadline among courses that are open for applications or booking."""
+    n = next_deadline(cs)
+    if n: return f" The earliest deadline is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+    if any(is_live(c) for c in cs): return " None of the open courses states a deadline."
+    return ""
+
+def year_hits(c, year):
+    """True when a deadline, start date, end date or the title contains that year. Nothing else counts."""
+    y = str(year)
+    if any((c.get(k) or "").startswith(y) for k in ("deadline", "start_date", "end_date")): return True
+    return y in (c.get("title") or "")
+
+def year_deadline_sentence(cs, year):
+    y = str(year)
+    iny = sorted([c for c in cs if (c.get("deadline") or "").startswith(y)], key=lambda c: (c["deadline"], c["id"]))
+    if iny:
+        d = iny[0]
+        verb = "lists" if len(iny) == 1 else "list"
+        return (f" {len(iny)} of these courses {verb} an application deadline in {y}. "
+                f"The earliest of those is {d['title']} ({d['provider']}) on {fdate(d['deadline'])}.")
+    stated = sorted([c for c in cs if c.get("deadline")], key=lambda c: (c["deadline"], c["id"]))
+    s = f" None of these courses lists an application deadline in {y}."
+    if not stated: return s + " None of them states a deadline."
+    d = stated[0]
+    return s + (f" The earliest stated deadline in this list is {d['title']} ({d['provider']}) on {fdate(d['deadline'])} "
+                f"({STATUS_LABEL[d['display_status']]}).")
+
+def list_summary(noun, cs, where="", year=None):
+    """Answer-first summary for a course list: open count, associations, earliest open deadline."""
+    live = [c for c in cs if is_live(c)]
+    s = f"As of {GEN}, {open_clause(len(live), len(cs), noun, where)}."
+    s += association_sentence(live or cs)
+    s += earliest_sentence(cs)
+    if year is not None:
+        s += f" This list is every {noun} whose deadline, start date, end date or title contains {year}."
+        s += year_deadline_sentence(cs, year)
+    return s
+
 def country_summary(ct, cs, srcs):
     live = [c for c in cs if is_live(c)]
     if not cs:
@@ -369,8 +417,8 @@ def country_summary(ct, cs, srcs):
         s = f"As of {GEN}, {open_clause(len(live), len(cs), 'football coaching course', ' in ' + ct)}"
         lv = sorted({c["level"] for c in live})
         s += (f" ({and_list(lv)})." if lv else ".")
-        n = next_deadline(cs)
-        if n: s += f" The next deadline is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+        s += association_sentence(live or cs)
+        s += earliest_sentence(cs)
     unread = [x for x in srcs if x["readable"] == "no"]
     if srcs: s += f" We check {counted(len(srcs), 'source page')} for {ct}" + (f"; {len(unread)} could not be read." if unread else ".")
     return s
@@ -380,8 +428,8 @@ def level_summary(lv, cs):
     s = f"As of {GEN}, {open_clause(len(live), len(cs), lv + ' course')}"
     cn = sorted({c["country"] for c in live})
     s += (f", in {and_list(cn)}." if cn else ".")
-    n = next_deadline(cs)
-    if n: s += f" The next deadline is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+    s += association_sentence(live or cs)
+    s += earliest_sentence(cs)
     pr = [c for c in cs if fprice(c.get("price"))]
     if cs: s += f" {len(pr)} of {len(cs)} {'lists' if len(pr) == 1 else 'list'} a price." if pr else " None lists a price."
     return s
@@ -463,18 +511,42 @@ def g_price_groups(cs):
         r = rows.setdefault(k, {"c": c, "n": 0, "checked": c["fetched_at"][:10]}); r["n"] += 1
         r["checked"] = max(r["checked"], c["fetched_at"][:10])
     return sorted(rows.items(), key=lambda x: (x[0][0], x[0][1], x[0][2]))
-def g_page(path, title, desc, body, faq):
+def updated_line():
+    """Visible last-updated date. The datetime matches Article dateModified (the data date, not the build date)."""
+    iso = DATA["generated"][:10]
+    return f'<p class="updated">Last updated <time datetime="{iso}">{e(GEN)}</time>.</p>'
+
+def g_page(path, title, desc, body, faq, faq_in_body=False):
     crumbs = [(BRAND, ""), ("Guides", "guides.html"), (title, path)]
     ld = [{"@context": "https://schema.org", "@type": "Article", "headline": title, "description": desc, "url": BASE + path,
            "dateModified": DATA["generated"][:10], "inLanguage": "en", "author": {"@type": "Organization", "name": BRAND, "url": BASE},
            "publisher": {"@type": "Organization", "name": BRAND, "url": BASE}, "isBasedOn": BASE + "data/courses.json"}]
     if faq: ld.append(seo.faq_ld(faq))
     page(path, title, desc, f"""<main><div class="wrap"><h1>{e(title)}</h1>{body}
-{seo.faq_html(faq) if faq else ""}
+{"" if faq_in_body else (seo.faq_html(faq) if faq else "")}
 <p class="small">Data last checked {e(GEN)}. Course details come from each provider's own pages and can change at any time; always confirm with the provider before you apply. <a href="{{R}}methodology.html">How we gather the data</a>.</p>
 {signup_form("subscribe-mid")}
 {resources_box("../")}
 </div></main>""", ld, crumbs=crumbs)
+
+def c_vs_b_lead(C, B):
+    """Three sentences. Counts and listed prices only. No entry rules, hours or experience."""
+    pc, pb = price_range(C), price_range(B)
+    if pc and pb:
+        prices = f"Where providers list a price, UEFA C prices in this data are {and_list(pc)}, and UEFA B prices are {and_list(pb)}"
+    elif pc or pb:
+        prices = f"Where providers list a price, the listed range is {and_list(pc or pb)}"
+    else:
+        prices = "No course in this comparison lists a price"
+    return (f"As of {GEN}, {BRAND} tracks {counted(len(C), 'UEFA C course')} and {counted(len(B), 'UEFA B course')}. "
+            f"{len([c for c in C if is_live(c)])} UEFA C and {len([c for c in B if is_live(c)])} UEFA B football courses are open for applications or booking. "
+            f"{prices}; format and length are compared only where the provider states them, and this page does not state entry rules, required hours or experience.")
+
+def pathway_lead():
+    """Three sentences. The order is the order of this page, not a rule CoachBadge sets."""
+    return (f"As of {GEN}, the football licence levels on this page run in this order: {and_list(G_ORDER)}. "
+            "The table shows the levels each country's providers list, using that order, and national diploma notes where a federation states a UEFA level. "
+            "Entry rules, required hours and experience are not in this data, and CoachBadge does not set them.")
 
 def guide_c_vs_b():
     C = [c for c in COURSES if c["level"] == "UEFA C"]; B = [c for c in COURSES if c["level"] == "UEFA B"]
@@ -497,14 +569,15 @@ def guide_c_vs_b():
                     f'<td>{e("; ".join(price_range(bb)) or "Not listed")}</td><td>{" · ".join(g_src(c) for c in srcs.values())}</td></tr>')
     fr = [d for d in (DIPLOMAS.get("France") or {}).get("diplomas", []) if d["uefa"] in ("UEFA C", "UEFA B")]
     dip = "".join(f'<li><strong>{e(d["short"])}</strong> ({e(d["name"])}) is stated as {e(d["uefa"])}; cost as stated: {e(diploma_cost(d))}. <a href="{e(d["url"])}" rel="nofollow noopener">Source</a></li>' for d in fr)
-    lead = (f"As of {GEN}, {BRAND} tracks {counted(len(C), 'UEFA C course')} and {counted(len(B), 'UEFA B course')}. "
-            f"{len([c for c in C if is_live(c)])} UEFA C and {len([c for c in B if is_live(c)])} UEFA B courses are open for applications or booking. "
-            "This page compares the two levels using only what the providers' own pages list.")
-    faq = [("How many UEFA B courses are open right now?",
+    lead = c_vs_b_lead(C, B)
+    faq = [("What is the difference between UEFA C and UEFA B in this data?", e(lead)),
+           ("How many UEFA B courses are open right now?",
             f"{e(open_clause(len([c for c in B if is_live(c)]), len(B), 'UEFA B course'))}, as of {e(GEN)}. See the <a href=\"{{R}}level/{slug('UEFA B')}.html\">UEFA B page</a>."),
            ("Where do providers list a price for both UEFA C and UEFA B?",
             e(and_list([ct for ct in both if price_range([c for c in C if c["country"] == ct]) and price_range([c for c in B if c["country"] == ct])]) or "None of the countries we track") + ", in the courses we track. Prices are as listed, in the provider's currency.")]
     body = f"""<p class="answer" id="summary">{e(lead)}</p>
+{updated_line()}
+{seo.faq_html(faq)}
 <h2><span class="bar"></span>Side by side</h2>
 <div style="overflow-x:auto"><table class="info"><thead><tr><th></th><th>UEFA C</th><th>UEFA B</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
 <p class="small">Prices are as the provider lists them, in its own currency, and are not converted. Notes such as funding or accommodation are on each country page.</p>
@@ -512,7 +585,7 @@ def guide_c_vs_b():
 <div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>UEFA C price listed</th><th>UEFA B price listed</th><th>Source pages</th></tr></thead><tbody>{"".join(side)}</tbody></table></div>
 {f'<h2><span class="bar"></span>National diplomas: France</h2><p>France runs its own diplomas; its federation states which UEFA level each one counts as.</p><ul>{dip}</ul>' if dip else ""}
 <p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}level/{slug('UEFA B')}.html">UEFA B courses</a> · <a href="{{R}}guides/uefa-c-licence-cost-by-country.html">UEFA C cost by country</a></p>"""
-    g_page(GUIDES[0][0], GUIDES[0][1], lead[:300], body, faq)
+    g_page(GUIDES[0][0], GUIDES[0][1], lead[:300], body, faq, faq_in_body=True)
 
 def guide_pathway():
     rows = []; empty = []
@@ -528,15 +601,27 @@ def guide_pathway():
         rows.append(f'<tr><td><a href="{{R}}country/{slug(ct)}.html">{e(ct)}</a></td><td>{"<br>".join(lv) or "None in our data"}</td>'
                     f'<td>{dp or "Not in our data"}</td><td>{e("; ".join(provs)) or "Not in our data"}</td></tr>')
     withc = [ct for ct in COUNTRIES if any(c["country"] == ct for c in COURSES)]
-    lead = (f"As of {GEN}, {BRAND} has coaching courses in {counted(len(withc), 'country', 'countries')}"
-            + (f" and national diploma details for {and_list(sorted(k for k, v in DIPLOMAS.items() if v.get('diplomas')))}" if DIPLOMAS else "")
-            + ". This table shows which licence levels each country's providers list, built only from our course data and diploma notes.")
+    lead = pathway_lead()
+    counts = []
+    for l in G_ORDER:
+        n = len([c for c in COURSES if c["level"] == l])
+        if n: counts.append(f"{l} ({n})")
+    others = [l for l in LEVELS if l not in G_ORDER]
+    extra = f" Other labels in the data: {and_list(others)}." if others else ""
+    faq = [("What order does CoachBadge list the UEFA licence levels in?", e(lead)),
+           ("How many courses does this data have at each of those levels?",
+            f"As of {e(GEN)}, the course data has {e(and_list(counts))}.{e(extra)}"),
+           ("Does CoachBadge set the pathway from UEFA C to UEFA Pro?",
+            f"No. {e(CFG['disclaimer'])} Entry rules, required hours and experience are not in this data.")]
     body = f"""<p class="answer" id="summary">{e(lead)}</p>
+{updated_line()}
+{seo.faq_html(faq)}
 <div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>Levels in our data</th><th>National diplomas (UEFA level as stated)</th><th>Providers</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
 <p class="small">"Tracked" counts every course we found on the provider's pages, including closed and upcoming ones. A level missing here may still be offered: associations often publish dates late or only inside a members' login.</p>
 {f'<p>We also check {e(and_list(empty))}, but found no course on the pages we can read. See each <a href="{{R}}countries.html">country page</a> for why.</p>' if empty else ""}
-<p>Compare levels: <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}levels.html">all levels</a></p>"""
-    g_page(GUIDES[1][0], GUIDES[1][1], lead[:300], body, [])
+<p>Compare levels: <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}levels.html">all levels</a></p>
+<p class="small">{e(BRAND)} has courses in {e(counted(len(withc), 'country', 'countries'))}. The order above is the order of this page.</p>"""
+    g_page(GUIDES[1][0], GUIDES[1][1], lead[:300], body, faq, faq_in_body=True)
 
 def guide_c_cost():
     C = [c for c in COURSES if c["level"] == "UEFA C"]
@@ -563,6 +648,107 @@ def build_guides():
 def item_guides():
     return {"@context": "https://schema.org", "@type": "ItemList", "name": "Guides", "itemListElement":
             [{"@type": "ListItem", "position": i + 1, "url": BASE + p, "name": t} for i, (p, t) in enumerate(GUIDES)]}
+
+def level_sort_key(lv):
+    return (G_ORDER.index(lv) if lv in G_ORDER else len(G_ORDER), lv)
+
+def pair_path(lv, ct):
+    return f"level/{slug(lv)}-{slug(ct)}.html"
+
+def year_path(lv, year):
+    return f"level/{slug(lv)}-{year}.html"
+
+def pairs():
+    """Every country and licence level that has at least one course. Existing country and level URLs stay as they are."""
+    keys = sorted({(c["level"], c["country"]) for c in COURSES}, key=lambda x: (level_sort_key(x[0]), x[1]))
+    return [(lv, ct, [c for c in COURSES if c["level"] == lv and c["country"] == ct]) for lv, ct in keys]
+
+def years_in(cs):
+    ys = set()
+    for c in cs:
+        for k in ("deadline", "start_date", "end_date"):
+            v = c.get(k) or ""
+            if len(v) >= 4 and v[:4].isdigit(): ys.add(int(v[:4]))
+        ys.update(int(m) for m in re.findall(r"20\d\d", c.get("title") or ""))
+    return sorted(ys)
+
+def year_groups():
+    out = []
+    for lv in sorted(LEVELS, key=level_sort_key):
+        pool = [c for c in COURSES if c["level"] == lv]
+        for y in years_in(pool):
+            cs = [c for c in pool if year_hits(c, y)]
+            if cs: out.append((lv, y, cs))
+    return out
+
+def cross_links(items):
+    lis = "".join(f'<li><a href="{{R}}{href}">{e(label)} <span class="small">({e(badge)})</span></a></li>' for href, label, badge in items)
+    return f'<ul class="pill-list">{lis}</ul>'
+
+def country_cross(ct):
+    items = []
+    for lv, ctry, cs in pairs():
+        if ctry != ct: continue
+        items.append((pair_path(lv, ct), lv, count_badge([c for c in cs if is_live(c)], cs)))
+    if not items: return ""
+    return f'<h2><span class="bar"></span>By level</h2>{cross_links(items)}'
+
+def level_cross(lv):
+    blocks = []
+    countries = [(pair_path(lv, ct), ct, count_badge([c for c in cs if is_live(c)], cs)) for level, ct, cs in pairs() if level == lv]
+    if countries: blocks.append(f'<h2><span class="bar"></span>By country</h2>{cross_links(countries)}')
+    years = [(year_path(lv, y), str(y), count_badge([c for c in cs if is_live(c)], cs)) for level, y, cs in year_groups() if level == lv]
+    if years: blocks.append(f'<h2><span class="bar"></span>By year</h2>{cross_links(years)}')
+    return "".join(blocks)
+
+def list_faq(question, summary, cs):
+    n = next_deadline(cs)
+    if n:
+        a2 = f"The earliest deadline among open courses is {n['title']} ({n['provider']}) on {fdate(n['deadline'])}."
+    elif any(is_live(c) for c in cs):
+        a2 = f"None of the open courses states a deadline, as of {GEN}."
+    else:
+        a2 = f"No course in this list is open for applications or booking, as of {GEN}, so there is no open deadline."
+    names = sorted({c["provider"] for c in cs})
+    a3 = f"The association is {names[0]}." if len(names) == 1 else f"The associations are {and_list(names)}."
+    return [(question, e(summary)), ("What is the earliest deadline in this list?", e(a2)), ("Which associations run these courses?", e(a3))]
+
+def emit_list_page(path, h1, noun, cs, where, crumbs, question, year=None, srcs=None):
+    ans = list_summary(noun, cs, where, year)
+    faq = list_faq(question, ans, cs)
+    live = [c for c in cs if is_live(c)]
+    rel = "../" * path.count("/")
+    body = (f'<section class="hero"><div class="wrap"><h1>{e(h1)}</h1>'
+            f'<p class="answer" id="summary">{e(ans)}</p>{updated_line()}</div></section>'
+            f'<main><div class="wrap">'
+            + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, rel) for c in live)}</div>' if live
+               else empty_state(srcs or [], rel, where))
+            + signup_form("subscribe-mid")
+            + f'<h2><span class="bar"></span>All courses in this list</h2>{table(cs, rel)}'
+            + seo.faq_html(faq) + resources_box(rel) + "</div></main>")
+    desc = f"{ans} Deadlines, dates and prices from each provider."[:300]
+    page(path, h1, desc, body,
+         [item_list(h1, BASE + path, cs),
+          {"@context": "https://schema.org", "@type": "CollectionPage", "name": h1, "url": BASE + path,
+           "dateModified": DATA["generated"][:10], "isBasedOn": BASE + "data/courses.json"},
+          seo.faq_ld(faq)],
+         crumbs=crumbs, lastmod=max(c["fetched_at"][:10] for c in cs))
+
+def build_slices():
+    for lv, ct, cs in pairs():
+        path = pair_path(lv, ct)
+        srcs = [x for x in ALL_SOURCES if x["country"] == ct and lv in (x.get("levels") or [])]
+        emit_list_page(path, f"{lv} football coaching courses in {ct}", lv + " course", cs, " in " + ct,
+                       [(BRAND, ""), ("Levels", "levels.html"), (lv, f"level/{slug(lv)}.html"), (ct, path)],
+                       f"Which {lv} courses are open in {ct}?", srcs=srcs)
+    for lv, year, cs in year_groups():
+        path = year_path(lv, year)
+        countries = {c["country"] for c in cs}
+        srcs = [x for x in ALL_SOURCES if x["country"] in countries and lv in (x.get("levels") or [])]
+        emit_list_page(path, f"{lv} football coaching courses with {year} dates", lv + " course", cs,
+                       f" with a date or title in {year}",
+                       [(BRAND, ""), ("Levels", "levels.html"), (lv, f"level/{slug(lv)}.html"), (str(year), path)],
+                       f"Which {lv} courses have a deadline in {year}?", year=year, srcs=srcs)
 
 def build():
     if os.path.exists(DIST): shutil.rmtree(DIST)
@@ -614,6 +800,7 @@ def build():
         path = f"country/{slug(ct)}.html"
         b = (f'<section class="hero"><div class="wrap"><h1>Football coaching courses in {e(ct)}</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
              f'<main><div class="wrap">'
+             + country_cross(ct)
              + (f'<h2><span class="bar"></span>Open now in {e(ct)}</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live else empty_state(srcs, "../", " in " + ct))
              + signup_form("subscribe-mid")  # inline signup under the open courses (growth plan, 26 Oct 2026)
             + diplomas_box(ct)
@@ -637,7 +824,8 @@ def build():
         items.append(f'<li><a href="{path}">{e(lv)} <span class="small">({count_badge(live, cs)})</span></a></li>')
         ans = level_summary(lv, cs); faq = level_faq(lv, cs)
         b = (f'<section class="hero"><div class="wrap"><h1>{e(lv)} football coaching courses in Europe</h1><p class="answer" id="summary">{e(ans)}</p></div></section>'
-             f'<main><div class="wrap">' + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live
+             f'<main><div class="wrap">' + level_cross(lv)
+             + (f'<h2><span class="bar"></span>Open now</h2><div class="board">{"".join(card(c, "../") for c in live)}</div>' if live
                                              else empty_state([x for x in ALL_SOURCES if lv in x.get("levels", [])], "../", " at " + lv))
              + signup_form("subscribe-mid")  # inline signup under the open courses (growth plan, 26 Oct 2026)
              + f'<h2><span class="bar"></span>All {e(lv)} courses</h2>{table(cs, "../")}{seo.faq_html(faq)}{resources_box("../")}</div></main>')
@@ -645,6 +833,7 @@ def build():
              [item_list(f"{lv} football coaching courses", BASE + path, cs), seo.faq_ld(faq)],
              crumbs=[(BRAND, ""), ("Levels", "levels.html"), (lv, path)], lastmod=max(c["fetched_at"] for c in cs))
     ldesc = f"Football coaching courses by level: {and_list(LEVELS)}. {len(LIVE)} open as of {GEN}."
+    build_slices()  # level+country and level+year lists; existing /level/ and /country/ URLs stay
     page("levels.html", "Football coaching courses by level", ldesc,
          f'<main><div class="wrap"><h1>Football coaching courses by level</h1><p class="answer-sub">{e(ldesc)}</p><ul class="pill-list">{"".join(items)}</ul></div></main>',
          crumbs=[(BRAND, ""), ("Levels", "levels.html")])
@@ -724,8 +913,19 @@ A few sites refuse automated visitors but show their course pages to people. Tho
 def llms_txt():
     lv_lines = "\n".join(f"- [{lv}]({BASE}level/{slug(lv)}.html): {level_summary(lv, [c for c in COURSES if c['level'] == lv])}" for lv in LEVELS)
     ct_lines = "\n".join(f"- [{ct}]({BASE}country/{slug(ct)}.html): {count_badge([c for c in COURSES if c['country'] == ct and is_live(c)], [c for c in COURSES if c['country'] == ct])}" for ct in COUNTRIES)
-    guide_lines = "\n".join(f"- [{t}]({BASE}{p})" for p, t in GUIDES)
+    def guide_blurb(p):
+        if p.endswith("pathway-by-country.html"): return pathway_lead()
+        if "c-vs-uefa-b" in p: return c_vs_b_lead([c for c in COURSES if c["level"] == "UEFA C"], [c for c in COURSES if c["level"] == "UEFA B"])
+        return "Listed prices copied from each provider page, in that provider's currency, with the source link."
+    guide_lines = "\n".join(f"- [{t}]({BASE}{p}): {guide_blurb(p)}" for p, t in GUIDES)
+    pair_lines = "\n".join(
+        f"- [{lv} in {ct}]({BASE}{pair_path(lv, ct)}): {list_summary(lv + ' course', cs, ' in ' + ct)}"
+        for lv, ct, cs in pairs())
+    year_lines = "\n".join(
+        f"- [{lv} dates in {y}]({BASE}{year_path(lv, y)}): {list_summary(lv + ' course', cs, f' with a date or title in {y}', y)}"
+        for lv, y, cs in year_groups())
     faq = "\n\n".join(f"### {q}\n{seo.text(a)}" for q, a in home_faq())
+    fields = "id, sport, country, provider, level, title, location, language, format, price (amount, currency, note), deadline, application window, start date, end date, status, source URL, fetched_at, and the verbatim evidence sentences"
     return f"""# {BRAND}
 
 > {CFG['tagline']}.
@@ -740,6 +940,12 @@ Status: "Open" only when the page says applications or booking are open (or its 
 Data last checked: {DATA['generated']}. Update cadence: weekly.
 {CFG['disclaimer']} {BRAND} does not run courses, take applications or sell places.
 When citing, please credit {BRAND}, link to the page, and tell readers to confirm with the provider.
+
+## Dataset
+The dataset is the JSON file at {BASE}data/courses.json. It holds {len(COURSES)} football coaching courses. Generated {DATA['generated']}. Build date {TODAY.isoformat()} is only the day the pages were rendered; course facts use the generated date.
+Fields on every course: {fields}.
+A field is present only when the provider page stated it. Price, deadline and dates are never guessed. Status "open" is kept only while the deadline, if the page gave one, has not passed.
+{CFG['disclaimer']} {BRAND} is a football directory. It does not state entry rules, required hours or experience, and it does not award licences.
 
 ## Main pages
 - [Open courses board]({BASE}): every course open now, plus all tracked courses
@@ -760,6 +966,13 @@ When citing, please credit {BRAND}, link to the page, and tell readers to confir
 
 ## By country
 {ct_lines}
+
+## By level and country
+{pair_lines}
+
+## By level and year
+A year page lists courses whose deadline, start date, end date or title contains that year. It states how many of those courses list an application deadline in the year. If none do, it says so and gives the earliest stated deadline instead.
+{year_lines}
 
 ## FAQ
 

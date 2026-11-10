@@ -50,6 +50,35 @@ class TestGuides(unittest.TestCase):
         c = len([x for x in COURSES if x["level"] == "UEFA C"]); b = len([x for x in COURSES if x["level"] == "UEFA B"])
         self.assertIn(f"tracks {c} UEFA C courses and {b} UEFA B courses", t)
 
+    def test_answer_first_guides(self):
+        """Pathway and C vs B open with 2 to 3 dated sentences, a visible date, and a FAQ that matches FAQPage."""
+        order = "UEFA C, UEFA B, UEFA A, UEFA Elite Youth A and UEFA Pro"
+        for p, needle in (("guides/uefa-licence-pathway-by-country.html", order),
+                          ("guides/uefa-c-vs-uefa-b.html", "does not state entry rules")):
+            with self.subTest(p):
+                s = S(p)
+                summ = re.sub(r"\s+", " ", s.select_one("#summary").get_text()).strip()
+                self.assertTrue(summ.startswith("As of "))
+                self.assertIn(needle, summ)
+                n = len([x for x in re.split(r"(?<=[.])\s+", summ) if x])
+                self.assertGreaterEqual(n, 2); self.assertLessEqual(n, 3)
+                self.assertIsNone(re.search(r"[\u2013\u2014]", summ), "no en or em dash in the new summary")
+                art = [json.loads(x.string) for x in s.find_all("script", type="application/ld+json")]
+                art = [o for o in art if o.get("@type") == "Article"][0]
+                tm = s.select_one("p.updated time")
+                self.assertEqual(tm["datetime"], art["dateModified"])
+                self.assertIn(tm.get_text(), s.select_one("p.updated").get_text())
+                self.assertIs(s.select_one("#summary").find_next("p"), s.select_one("p.updated"))
+                faq = [o for o in (json.loads(x.string) for x in s.find_all("script", type="application/ld+json")) if o.get("@type") == "FAQPage"][0]
+                box = s.select_one("section.faq#faq")
+                self.assertGreaterEqual(len(faq["mainEntity"]), 2)
+                self.assertEqual(s.select_one("p.updated").find_next("section").get("id"), "faq")
+                vis = re.sub(r"\s+", " ", box.get_text())
+                for q in faq["mainEntity"]:
+                    self.assertIn(q["name"], [h.get_text() for h in box.select("h3")])
+                    self.assertIn(re.sub(r"\s+", " ", q["acceptedAnswer"]["text"]), vis)
+                self.assertIsNone(re.search(r"official|mandatory|primelogic|stathopoulos", summ, re.I))
+
     def test_no_banned_words(self):
         for p in GUIDES + ["guides.html"]:
             self.assertIsNone(re.search(r"official|mandatory|primelogic|stathopoulos|basketball", open(os.path.join(DIST, p)).read(), re.I), p)

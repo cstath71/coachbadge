@@ -154,8 +154,41 @@ class TestAnswerFirst(unittest.TestCase):
                 live = [r for r in rows if r["data-status"] in ("open", "closing_soon")]
                 summ = s.select_one("#summary").get_text()
                 if not rows: self.assertIn("has not found", summ); continue
-                if live: self.assertIn(f"{len(live)} of the {len(rows)} ", summ)
+                if live:
+                    self.assertIn(f"{len(live)} of the {len(rows)} ", summ)
+                    self.assertRegex(summ, r"association")
+                    if any("Deadline " in r.get_text() for r in live): self.assertIn("earliest deadline", summ)
                 else: self.assertRegex(summ, r"none of the|the one .* is not open")
+
+    def test_level_country_and_year_pages(self):
+        """Slices keep the old country and level URLs and answer from the same rows."""
+        swe = [c for c in COURSES if c["country"] == "Sweden" and c["level"] == "UEFA B"]
+        self.assertTrue(swe)
+        s = S("level/uefa-b-sweden.html")
+        summ = T(s.select_one("#summary").get_text())
+        live = [c for c in swe if c["display_status"] in ("open", "closing_soon")]
+        self.assertIn(f"{len(live)} of the {len(swe)} ", summ)
+        for name in sorted({c["provider"] for c in (live or swe)}): self.assertIn(name, summ)
+        dated = [c for c in live if c.get("deadline")]
+        if dated:
+            first = sorted(dated, key=lambda c: (c["deadline"], c["id"]))[0]
+            self.assertIn(first["deadline"][8:10].lstrip("0") + " ", summ)  # day number, rendered by the builder's month list
+        self.assertTrue(of_type("level/uefa-b-sweden.html", "ItemList"))
+        self.assertEqual(of_type("level/uefa-b-sweden.html", "CollectionPage")[0]["dateModified"], PUB["generated"][:10])
+        a = [c for c in COURSES if c["level"] == "UEFA A"]
+        y = [c for c in a if any((c.get(k) or "").startswith("2027") for k in ("deadline", "start_date", "end_date")) or "2027" in (c.get("title") or "")]
+        page = S("level/uefa-a-2027.html")
+        self.assertEqual(len(page.select("table.courses tbody tr")), len(y))
+        text = T(page.select_one("#summary").get_text())
+        deadlines_2027 = [c for c in y if (c.get("deadline") or "").startswith("2027")]
+        if not deadlines_2027: self.assertIn("None of these courses lists an application deadline in 2027", text)
+        self.assertIn("level/uefa-b-sweden.html", R("llms.txt"))
+        self.assertIn("level/uefa-a-2027.html", R("llms.txt"))
+        self.assertIn("## Dataset", R("llms.txt"))
+        self.assertTrue(R("llms-full.txt").startswith(R("llms.txt")))
+        self.assertTrue(os.path.exists(os.path.join(DIST, "country", "sweden.html")))
+        self.assertTrue(os.path.exists(os.path.join(DIST, "level", "uefa-b.html")))
+        self.assertTrue(os.path.exists(os.path.join(DIST, "level", "uefa-a.html")))
 
     def test_home_faq_numbers(self):
         faq = {q["name"]: q["acceptedAnswer"]["text"] for q in of_type("index.html", "FAQPage")[0]["mainEntity"]}
