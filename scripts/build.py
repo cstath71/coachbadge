@@ -166,6 +166,7 @@ def sticky_bar(r):
 VERIFY = [("google-site-verification", CFG.get("google_site_verification", "")), ("msvalidate.01", CFG.get("msvalidate", ""))]
 OG_IMAGE = BASE + "og.png"; OG_ALT = f"{BRAND}: {CFG['tagline']}"
 PAGES = []  # (url, title, description, lastmod) of every indexable page, for sitemap.xml and llms.txt
+ANSWER_PAGES = []  # (path, h1, lead) filled by answers.build_answers; the homepage and llms.txt list them
 
 def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,follow", crumbs=None, lastmod=None):
     """crumbs: [(name, root-relative path)] ending with this page; adds a visible breadcrumb trail and BreadcrumbList."""
@@ -177,7 +178,7 @@ def page(path, title, desc, body, jsonld=None, extra_head="", robots="index,foll
     verify = "".join(f'<meta name="{k}" content="{e(v)}">' for k, v in VERIFY if v)
     crumb_nav = seo.breadcrumb_html(crumbs, r) if crumbs else ""
     nav = [("", "Courses"), ("countries.html", "Countries"), ("levels.html", "Levels"),
-           ("guides.html", "Guides"), ("methodology.html", "Methodology"), ("about.html", "About")]
+           ("guides.html", "Guides"), ("answers.html", "Answers"), ("methodology.html", "Methodology"), ("about.html", "About")]
     doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}">
@@ -584,7 +585,7 @@ def guide_c_vs_b():
 <h2><span class="bar"></span>Countries with both levels in our data</h2>
 <div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>UEFA C price listed</th><th>UEFA B price listed</th><th>Source pages</th></tr></thead><tbody>{"".join(side)}</tbody></table></div>
 {f'<h2><span class="bar"></span>National diplomas: France</h2><p>France runs its own diplomas; its federation states which UEFA level each one counts as.</p><ul>{dip}</ul>' if dip else ""}
-<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}level/{slug('UEFA B')}.html">UEFA B courses</a> · <a href="{{R}}guides/uefa-c-licence-cost-by-country.html">UEFA C cost by country</a></p>"""
+<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}level/{slug('UEFA B')}.html">UEFA B courses</a> · <a href="{{R}}guides/uefa-c-licence-cost-by-country.html">UEFA C cost by country</a> · <a href="{{R}}answers/uefa-c-vs-uefa-b-licence-difference.html">UEFA C vs UEFA B licence difference football coaching</a></p>"""
     g_page(GUIDES[0][0], GUIDES[0][1], lead[:300], body, faq, faq_in_body=True)
 
 def guide_pathway():
@@ -619,7 +620,7 @@ def guide_pathway():
 <div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>Levels in our data</th><th>National diplomas (UEFA level as stated)</th><th>Providers</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div>
 <p class="small">"Tracked" counts every course we found on the provider's pages, including closed and upcoming ones. A level missing here may still be offered: associations often publish dates late or only inside a members' login.</p>
 {f'<p>We also check {e(and_list(empty))}, but found no course on the pages we can read. See each <a href="{{R}}countries.html">country page</a> for why.</p>' if empty else ""}
-<p>Compare levels: <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}levels.html">all levels</a></p>
+<p>Compare levels: <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}levels.html">all levels</a> · <a href="{{R}}answers/uefa-football-coaching-licence-pathway.html">UEFA football coaching licence pathway C B A Pro order</a></p>
 <p class="small">{e(BRAND)} has courses in {e(counted(len(withc), 'country', 'countries'))}. The order above is the order of this page.</p>"""
     g_page(GUIDES[1][0], GUIDES[1][1], lead[:300], body, faq, faq_in_body=True)
 
@@ -636,14 +637,16 @@ def guide_c_cost():
 <div style="overflow-x:auto"><table class="info"><thead><tr><th>Country</th><th>Provider</th><th>Price listed</th><th>Provider's note</th><th>Courses</th><th>Source</th></tr></thead><tbody>{rows}</tbody></table></div>
 <p class="small">Prices are not converted between currencies. Funding, member rates and what is included (for example board and lodging) differ by provider; the note column repeats what the page says.</p>
 {f'<p>We also track UEFA C courses from {e(and_list(unpriced))}, but their pages do not list a price, so they are not in this table.</p>' if unpriced else ""}
-<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a></p>"""
+<p>See every course: <a href="{{R}}level/{slug('UEFA C')}.html">UEFA C courses</a> · <a href="{{R}}guides/uefa-c-vs-uefa-b.html">UEFA C vs UEFA B</a> · <a href="{{R}}cost/uefa-c.html">How much does a UEFA C licence cost in different countries</a></p>"""
     g_page(GUIDES[2][0], GUIDES[2][1], lead[:300], body, [])
 
 def build_guides():
     guide_c_vs_b(); guide_pathway(); guide_c_cost()
     lst = "".join(f'<li><a href="{{R}}{p}">{e(t)}</a></li>' for p, t in GUIDES)
+    ans = "".join(f'<li><a href="{{R}}{p}">{e(h)}</a></li>' for p, h, _lead in ANSWER_PAGES)
     page("guides.html", "Guides: UEFA licences compared", f"Comparisons of football coaching licences built from the courses {BRAND} tracks: UEFA C vs UEFA B, the licence pathway by country and UEFA C cost by country.",
          f"""<main><div class="wrap"><h1>Guides</h1><p>Comparisons built only from the courses {e(BRAND)} tracks and the providers' own pages. Every number links to its source.</p><ul>{lst}</ul>
+<h2><span class="bar"></span>Short answers</h2><ul class="answers">{ans}</ul>
 {resources_box("")}</div></main>""", [item_guides()], crumbs=[(BRAND, ""), ("Guides", "guides.html")])
 def item_guides():
     return {"@context": "https://schema.org", "@type": "ItemList", "name": "Guides", "itemListElement":
@@ -764,12 +767,15 @@ def build():
            "disclaimer": CFG["disclaimer"], "license": "All rights reserved. Linking and short quotes with credit and a link are welcome.",
            "courses": [{k: v for k, v in c.items()} for c in COURSES]}
     json.dump(pub, open(os.path.join(DIST, "data", "courses.json"), "w"), ensure_ascii=False, indent=1)
+    import answers
+    answers.build_answers(sys.modules[__name__])
     # home
     board = "".join(card(c, "") for c in LIVE) or '<p class="note">No course is open right now on the pages we could read.</p>'
     soon = [c for c in LIVE if c["display_status"] == "closing_soon"]
     by_level = {}
     for c in LIVE: by_level.setdefault(c["level"], set()).add(c["country"])
     qa = "".join(f"<li><strong>{e(l)}:</strong> open in {e(', '.join(sorted(v)))}.</li>" for l, v in sorted(by_level.items()))
+    answer_lis = "".join(f'<li><a href="{p}">{e(h)}</a></li>' for p, h, _lead in ANSWER_PAGES)
     faq = home_faq()
     body = f"""<section class="hero"><div class="wrap"><h1>{e(CFG['tagline'])}</h1>
 <p class="answer" id="summary">{e(summary_sentence())} {e(scope_sentence())}</p>
@@ -782,6 +788,9 @@ def build():
 <div class="board">{board}</div>
 <h2><span class="bar"></span>Quick answers</h2><ul>{qa}</ul>
 <p class="small">Many associations publish dates late or only inside members' portals. Countries with no open course are not necessarily closed: see each <a href="countries.html">country page</a> for what we could and could not read.</p>
+<h2><span class="bar"></span>Answers</h2>
+<p>Short answers counted from this data. Each one states the date and the count.</p>
+<ul class="answers">{answer_lis}</ul>
 <h2><span class="bar"></span>All tracked courses</h2>
 {table(COURSES, "")}
 {seo.faq_html(faq)}
@@ -918,6 +927,7 @@ def llms_txt():
         if "c-vs-uefa-b" in p: return c_vs_b_lead([c for c in COURSES if c["level"] == "UEFA C"], [c for c in COURSES if c["level"] == "UEFA B"])
         return "Listed prices copied from each provider page, in that provider's currency, with the source link."
     guide_lines = "\n".join(f"- [{t}]({BASE}{p}): {guide_blurb(p)}" for p, t in GUIDES)
+    answer_lines = "\n".join(f"- [{h}]({BASE}{p}): {lead}" for p, h, lead in ANSWER_PAGES)
     pair_lines = "\n".join(
         f"- [{lv} in {ct}]({BASE}{pair_path(lv, ct)}): {list_summary(lv + ' course', cs, ' in ' + ct)}"
         for lv, ct, cs in pairs())
@@ -957,6 +967,12 @@ A field is present only when the provider page stated it. Price, deadline and da
 - [Coaching resources]({BASE}resources.html): tools for coaches (affiliate links, kept apart from the course data)
 - [Data as JSON]({BASE}data/courses.json): every course with its fields and evidence
 - [Full text for AI assistants]({BASE}llms-full.txt): every course in plain text
+- [Football coaching course answers]({BASE}answers.html): the question pages below
+
+## Answers
+Each answer is counted from the course data. The date is the data date.
+- [Football coaching course answers]({BASE}answers.html): index of the question pages below
+{answer_lines}
 
 ## Guides (comparisons built from the course data)
 {guide_lines}
