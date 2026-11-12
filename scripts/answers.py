@@ -240,7 +240,7 @@ def emit(B, path, h1, lead, after, faq, item_lists, lastmod):
     ld.append({"@context": "https://schema.org", "@type": "Dataset", "name": h1, "description": lead,
                "url": B.BASE + path, "dateModified": B.DATA["generated"][:10], "inLanguage": "en",
                "creator": {"@type": "Organization", "name": B.BRAND, "url": B.BASE},
-               "isBasedOn": B.BASE + "data/courses.json"})
+               "isBasedOn": B.BASE + "data/courses.json", "license": B.BASE + "terms.html"})
     ld.append(B.seo.faq_ld(pairs))
     body = f"""<main><div class="wrap"><h1>{B.e(h1)}</h1>
 <p class="answer" id="summary">{B.e(lead)}</p>

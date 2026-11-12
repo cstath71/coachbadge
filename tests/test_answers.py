@@ -222,6 +222,7 @@ class TestAnswerPages(unittest.TestCase):
                 self.assertEqual(norm(ps[0].get_text()), summary)
                 ds, = of_type(s, "Dataset")
                 self.assertEqual(ds["dateModified"], GENERATED)
+                self.assertEqual(ds["license"], BASE + "terms.html")
                 self.assertEqual(norm(ds["description"]), summary)
                 art, = of_type(s, "Article")
                 self.assertEqual(art["dateModified"], GENERATED)
